@@ -1,6 +1,8 @@
 
 import os
-from flask import Flask, render_template_string, jsonify
+@app.route("/")
+def home():
+    return Response(PAGE, mimetype="text/html")
 
 app = Flask(__name__)
 
