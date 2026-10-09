@@ -1,6 +1,5 @@
-
-import os
-from flask import Flask, Response, jsonify
+```python
+from flask import Flask, Response
 
 app = Flask(__name__)
 
@@ -9,235 +8,416 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Florida Shadows</title>
+<title>Florida Shadows | State Trooper Horror Files</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#020609;color:#e5faff;font:14px Consolas,monospace;overflow:hidden}
-canvas{width:100vw;height:100vh;display:block;image-rendering:pixelated}
-#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 2px 3px #000}
-.panel{background:#041019e8;border:1px solid #5b879b;padding:12px;box-shadow:0 0 18px #092737}
-#brand{position:absolute;top:15px;left:20px;font-size:clamp(20px,4vw,38px);font-weight:bold;letter-spacing:2px}
-#brand span{color:#ff304b}
-#sub{font-size:10px;letter-spacing:3px;color:#9bbac6}
-#stats{position:absolute;top:95px;left:20px;width:230px;font-size:12px}
-.bar{height:10px;background:#18252b;border:1px solid #6b8995;margin:5px 0 10px}
-.fill{height:100%;width:100%}.hp{background:#ff304b}.battery{background:#26dfff}
-#map{position:absolute;right:18px;top:18px;width:160px;height:105px;border:1px solid #83a5b3;background:#071812}
-#objectives{position:absolute;right:18px;top:138px;width:220px;line-height:1.8;font-size:12px}
-#dispatch{position:absolute;left:20px;bottom:20px;width:min(450px,calc(100vw - 40px));line-height:1.5;font-size:12px}
-#dispatch b{color:#ffc75b}
-#controls{position:absolute;right:18px;bottom:18px;line-height:1.8;text-align:right;font-size:11px}
-#prompt{position:absolute;bottom:22%;left:50%;transform:translateX(-50%);background:#06131dee;border:1px solid #72eaff;padding:10px;display:none}
-#overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse,#0a1b26d9,#010306f7)}
-.card{width:min(580px,92vw);padding:30px;text-align:center;background:#030b12f5;border:1px solid #6b94a5;box-shadow:0 0 60px #123746}
-.kicker{font-size:11px;letter-spacing:3px;color:#9acbdb}
-.title{font-size:clamp(38px,8vw,70px);font-weight:1000;line-height:.95;margin:20px 0;text-shadow:0 0 20px #244c60}
-.title span{color:#ff304b}
-.desc{color:#b6c9d2;line-height:1.8;margin:20px 0}
-button{pointer-events:auto;background:#0b3545;color:white;border:1px solid #9defff;padding:14px 24px;font:bold 13px Consolas;letter-spacing:2px;cursor:pointer}
-button:hover{background:#17637a}
-.small{font-size:10px;color:#829ba7;line-height:1.8;margin-top:20px}
-#toast{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);color:#ffe3a0;font-weight:bold;text-align:center;opacity:0}
-@media(max-width:600px){#stats{top:90px;width:175px;font-size:10px}#map{width:110px;height:75px}#objectives{top:105px;width:140px;font-size:10px}#controls{display:none}}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050907;color:#e4e8dd;font-family:Consolas,monospace}
+canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+#overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;overflow:auto;background:radial-gradient(ellipse at center,#243027,#070b09 70%)}
+#overlay:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#fff06 4px)}
+.screen{position:relative;width:min(720px,94vw);padding:32px 24px;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:5px;color:#a4b09f;margin-bottom:20px}
+h1{font-family:Georgia,serif;font-size:clamp(42px,9vw,82px);line-height:.91;letter-spacing:2px;margin:0;color:#e2e3d7;text-shadow:0 5px #171d18,0 0 35px #8b9d7a25}
+.subtitle{font-size:11px;letter-spacing:4px;color:#b35b51;margin:22px 0 28px}
+.description{max-width:520px;margin:0 auto 25px;color:#b0b9ac;font-size:12px;line-height:2}
+button{display:block;width:min(350px,90%);margin:10px auto;padding:15px;background:#111915;border:1px solid #627166;color:#e4e8dc;font:12px Consolas,monospace;letter-spacing:2px;cursor:pointer;transition:.15s}
+button:hover{background:#28372c;border-color:#d0d8c6;transform:translateY(-2px)}
+button.primary{background:#652322;border-color:#a64d46}
+button.primary:hover{background:#8c2c29}
+.small{margin-top:23px;font-size:10px;line-height:1.9;color:#859083}
+.content{text-align:left;max-width:590px;margin:24px auto;font-size:13px;line-height:2;color:#c8d0c3}
+.content h2{font-size:12px;letter-spacing:3px;color:#c6ac7c;margin-top:20px}
+.content strong{color:#f0ebdc}
+.quote{text-align:center;font-family:Georgia,serif;font-style:italic;color:#a7b39e;margin-top:24px}
+#hud{display:none;position:fixed;inset:0;pointer-events:none}
+.panel{padding:10px 12px;background:#070b09d9;border:1px solid #4d5c50;box-shadow:0 4px 18px #0008}
+#top{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+#brand{font-size:10px;letter-spacing:2px;color:#b8c2b2}
+#objective{font-size:11px;line-height:1.7;margin-top:8px;max-width:310px}
+#stats{text-align:right;font-size:11px;line-height:1.9;min-width:130px}
+#healthbar{height:5px;background:#462927;margin-top:3px}
+#healthfill{height:100%;width:100%;background:#b4473d}
+#bottom{position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:end;gap:8px}
+#radio{max-width:460px;font-size:10px;line-height:1.7;color:#c6cebf}
+#controls{text-align:right;font-size:9px;line-height:1.8;color:#aab5a7}
+#prompt{position:absolute;bottom:85px;left:50%;transform:translateX(-50%);display:none;background:#050807e8;border:1px solid #8b9a8c;padding:12px;font-size:11px;white-space:nowrap}
+#message{position:absolute;top:27%;left:50%;transform:translateX(-50%);width:90%;max-width:600px;text-align:center;font-size:14px;line-height:1.9;text-shadow:0 2px 5px #000}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#eee;font-size:20px}
+#mini{position:absolute;right:16px;top:118px;width:100px;height:100px;background:#06100bd9;border:1px solid #5b6a5c}
+#scare{display:none;position:fixed;inset:0;z-index:8;background:#000;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#scare .face{font-size:min(45vw,250px);color:#b52622;text-shadow:0 0 45px #f00}
+#scare p{font-size:11px;letter-spacing:4px}
+@media(max-width:600px){#controls{display:none}#mini{width:75px;height:75px;top:105px}#objective{max-width:220px;font-size:10px}#stats{font-size:10px;min-width:105px}.panel{padding:8px}#radio{max-width:75%;font-size:9px}}
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
+
 <div id="hud">
- <div id="brand">FLORIDA <span>SHADOWS</span><div id="sub">STATE TROOPER HORROR FILES</div></div>
- <div id="stats" class="panel">UNIT 07 / NIGHT SHIFT
- <div style="margin-top:12px">HEALTH <span id="hpnum" style="float:right">100%</span>
- <div class="bar"><div id="hp" class="fill hp"></div></div>
- FLASHLIGHT <span id="batnum" style="float:right">100%</span>
- <div class="bar"><div id="bat" class="fill battery"></div></div>
- AMMO <span id="ammo" style="float:right">6 / 12</span></div></div>
- <canvas id="map" width="160" height="105"></canvas>
- <div id="objectives" class="panel"><b>CASE OBJECTIVES</b><div id="objtext"></div></div>
- <div id="dispatch" class="panel"><b>DISPATCH:</b> Unit 07, radio check. Reports of an abandoned patrol car near Cypress Mile. Proceed with caution.</div>
- <div id="controls" class="panel">WASD / ARROWS — MOVE<br>SHIFT — SPRINT<br>E — INVESTIGATE<br>F — FLASHLIGHT<br>SPACE / CLICK — FIRE<br>R — RELOAD</div>
- <div id="prompt"></div><div id="toast"></div>
+ <div id="top">
+  <div class="panel">
+   <div id="brand">FLORIDA HIGHWAY PATROL // CASE 07-19</div>
+   <div id="objective">OBJECTIVE: Investigate the abandoned checkpoint.</div>
+  </div>
+  <div class="panel" id="stats">
+   <div id="clock">02:13 AM</div>
+   <div>HEALTH <span id="health">100</span>%</div>
+   <div id="healthbar"><div id="healthfill"></div></div>
+   <div>AMMO <span id="ammo">6</span> / <span id="reserve">18</span></div>
+   <div>CLUES <span id="clues">0</span>/5</div>
+  </div>
+ </div>
+ <canvas id="mini" width="100" height="100"></canvas>
+ <div id="crosshair">+</div>
+ <div id="message"></div>
+ <div id="prompt"></div>
+ <div id="bottom">
+  <div class="panel" id="radio">RADIO: Dispatch, do you copy? ... Dispatch?</div>
+  <div class="panel" id="controls">WASD / ARROWS — MOVE<br>SHIFT — SPRINT<br>E — INVESTIGATE<br>F — FLASHLIGHT<br>R — RELOAD<br>CLICK / SPACE — FIRE</div>
+ </div>
 </div>
-<div id="overlay"><div class="card">
- <div class="kicker">FLORIDA HIGHWAY PATROL • CASE 07-113</div>
- <div class="title">FLORIDA<br><span>SHADOWS</span></div>
- STATE TROOPER HORROR FILES
- <div class="desc">02:13 AM. A patrol unit has disappeared on Cypress Mile.<br><br>Your radio is receiving a signal from somewhere deep inside the swamp.<br><b>If you see lights between the trees, do not assume they belong to a car.</b></div>
- <button id="start">BEGIN NIGHT PATROL</button>
- <div class="small">WASD TO MOVE • E TO INVESTIGATE • F TOGGLE FLASHLIGHT<br>HEADPHONES RECOMMENDED</div>
-</div></div>
+
+<div id="overlay"><div class="screen" id="screen"></div></div>
+<div id="scare"><div class="face">☠</div><p>YOU SHOULD NOT HAVE LOOKED BACK.</p></div>
+
 <script>
-(()=>{
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-const map=document.getElementById('map'),mc=map.getContext('2d');
-let W,H,dpr,camX=0,camY=0,time=0,last=0,running=false,dead=false,won=false;
-function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
-addEventListener('resize',resize);resize();
-const WORLD={w:2600,h:1900},keys={};
-const p={x:540,y:840,a:0,hp:100,bat:100,ammo:6,flash:true,inv:0};
-let seed=123456;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
-const trees=[],puddles=[],rain=[];
-for(let i=0;i<320;i++)trees.push({x:rand()*WORLD.w,y:rand()*WORLD.h,r:12+rand()*30,c:rand()});
-for(let i=0;i<100;i++)puddles.push({x:rand()*WORLD.w,y:rand()*WORLD.h,w:10+rand()*65,h:3+rand()*11});
-for(let i=0;i<200;i++)rain.push({x:rand()*W,y:rand()*H,l:8+rand()*18,s:250+rand()*450});
+"use strict";
+const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
+const mini=document.getElementById("mini"),mctx=mini.getContext("2d");
+let W=innerWidth,H=innerHeight,DPR=1;
+function resize(){W=innerWidth;H=innerHeight;DPR=Math.min(devicePixelRatio||1,2);canvas.width=W*DPR;canvas.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener("resize",resize);resize();
+
+const overlay=document.getElementById("overlay"),screen=document.getElementById("screen");
+const world={w:3200,h:2600};
+let mode="menu",keys={},elapsed=0,last=0,now=0,noticeTime=0,scareTime=0,shootFlash=0;
+let mouse={x:W/2,y:H/2};
+let player={x:450,y:420,hp:100,ammo:6,reserve:18,clues:0,angle:0,flash:true,invuln:0};
+let camera={x:0,y:0};
+let monster={x:2350,y:1750,active:false,stalk:0,seen:0};
+let radio="RADIO: Dispatch, do you copy? ... Dispatch?";
+let notice="";
+let seed=91823;
+function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+const trees=[];
+for(let i=0;i<440;i++)trees.push({x:rand()*world.w,y:rand()*world.h,r:12+rand()*23,c:Math.floor(rand()*4)});
+const puddles=[];
+for(let i=0;i<95;i++)puddles.push({x:rand()*world.w,y:rand()*world.h,w:10+rand()*50,h:3+rand()*12});
 const buildings=[
-{x:330,y:730,w:135,h:60,type:'car'},
-{x:1030,y:530,w:340,h:170,type:'motel'},
-{x:1550,y:420,w:100,h:150,type:'tower'},
-{x:2110,y:950,w:150,h:90,type:'checkpoint'},
-{x:770,y:1190,w:180,h:120,type:'shed'},
-{x:1900,y:1290,w:210,h:135,type:'house'}
+ {x:760,y:340,w:330,h:230,name:"CHECKPOINT",color:"#46483c"},
+ {x:1250,y:650,w:430,h:300,name:"CYPRESS MOTEL",color:"#51443a"},
+ {x:2010,y:1000,w:300,h:240,name:"PATROL SHED",color:"#354039"},
+ {x:2500,y:1840,w:270,h:300,name:"RADIO TOWER",color:"#3b4840"},
+ {x:470,y:1500,w:360,h:270,name:"RANGER CABIN",color:"#4c4033"}
 ];
 const clues=[
-{x:590,y:820,name:'Bloodied dash camera',got:false},
-{x:1200,y:625,name:'Motel room key',got:false},
-{x:1780,y:1060,name:'Torn uniform patch',got:false}
+ {x:1000,y:490,name:"Bloodied Incident Report",found:false},
+ {x:1500,y:800,name:"Damaged Body Camera",found:false},
+ {x:2160,y:1150,name:"Missing Trooper's Badge",found:false},
+ {x:720,y:1700,name:"Motel Guest Ledger",found:false},
+ {x:2670,y:2010,name:"Transmission Recording",found:false}
 ];
-let carChecked=false,towerFixed=false,checkpoint=false;
-const monster={x:2050,y:770,active:false,stun:0};
-function box(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
-function label(s,x,y,size,c){ctx.fillStyle=c;ctx.font=size+'px Consolas';ctx.fillText(s,x,y)}
-function dist(x,y,a,b){return Math.hypot(x-a,y-b)}
-function camera(){camX=Math.max(0,Math.min(WORLD.w-W,p.x-W/2));camY=Math.max(0,Math.min(WORLD.h-H,p.y-H/2))}
-function drawWorld(){
- camera();ctx.save();ctx.translate(-camX,-camY);
- box(0,0,WORLD.w,WORLD.h,'#071712');
- for(let i=0;i<700;i++){let x=(i*137)%WORLD.w,y=(i*241)%WORLD.h;box(x,y,2+i%4,1,'#10271d')}
- // Main wet highway
- box(0,900,WORLD.w,142,'#151c1e');box(0,900,WORLD.w,3,'#77715a');box(0,1039,WORLD.w,3,'#615d49');
- for(let x=0;x<WORLD.w;x+=100)box(x,968,48,4,'#b6a979');
- // Side road
- ctx.strokeStyle='#202728';ctx.lineWidth=60;ctx.beginPath();ctx.moveTo(1330,970);ctx.bezierCurveTo(1400,1100,1500,1220,1770,1320);ctx.stroke();
- ctx.strokeStyle='#77715a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(1330,938);ctx.bezierCurveTo(1400,1068,1500,1188,1770,1288);ctx.stroke();
- for(const q of puddles){box(q.x,q.y,q.w,q.h,'#09252a');box(q.x+3,q.y+q.h/2,q.w*.6,1,'#20505a')}
- // Layered swamp trees
- for(const t of trees){
- if(t.x<camX-60||t.x>camX+W+60||t.y<camY-60||t.y>camY+H+60)continue;
- box(t.x-4,t.y,8,t.r,'#211e18');
- ctx.fillStyle=t.c>.5?'#09251b':'#0b3022';ctx.beginPath();ctx.arc(t.x,t.y-t.r*.3,t.r,0,7);ctx.fill();
- ctx.fillStyle='#153b2b';ctx.beginPath();ctx.arc(t.x-t.r*.3,t.y-t.r*.5,t.r*.6,0,7);ctx.fill();
- ctx.fillStyle='#06170f';ctx.beginPath();ctx.arc(t.x+t.r*.28,t.y-t.r*.2,t.r*.65,0,7);ctx.fill();
- }
- for(const b of buildings){
- if(b.type==='motel'){
- box(b.x-12,b.y+135,b.w+24,18,'#04090b');box(b.x,b.y,b.w,b.h,'#37342c');box(b.x+8,b.y+8,b.w-16,30,'#544936');
- for(let i=0;i<5;i++){let x=b.x+14+i*63;box(x,b.y+52,48,65,'#171e20');box(x+5,b.y+58,38,48,i%3===0?'#d99a45':'#9e572d');box(x+8,b.y+62,32,40,'#302f26');box(x+4,b.y+122,40,8,'#9a784a')}
- box(b.x+80,b.y-18,180,25,'#171d1e');box(b.x+86,b.y-16,168,20,'#ad2030');
- ctx.shadowColor='#ff244b';ctx.shadowBlur=20;box(b.x+88,b.y-14,164,3,'#ff6571');ctx.shadowBlur=0;label('CYPRESS MILE',b.x+98,b.y-1,13,'#ffe1d7');
- }else if(b.type==='car'){
- box(b.x,b.y+13,b.w,35,'#070b0d');box(b.x+17,b.y,b.w-35,50,'#c9d3d0');box(b.x+42,b.y+4,42,22,'#182e39');box(b.x+91,b.y+4,24,22,'#182e39');box(b.x+5,b.y+2,22,8,'#ff244b');box(b.x+95,b.y+2,22,8,'#28dfff');box(b.x+44,b.y+27,55,12,'#101719');label('FHP',b.x+49,b.y+37,9,'#fff');
- }else if(b.type==='tower'){
- box(b.x+42,b.y+5,8,140,'#414b49');
- for(let i=0;i<5;i++){let y=b.y+20+i*25;ctx.strokeStyle='#64716d';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(b.x+10,y);ctx.lineTo(b.x+80,y+18);ctx.stroke()}
- ctx.strokeStyle='#626d69';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(b.x+46,b.y+5);ctx.lineTo(b.x+5,b.y+140);ctx.moveTo(b.x+46,b.y+5);ctx.lineTo(b.x+91,b.y+140);ctx.stroke();
- ctx.shadowColor='#ff263d';ctx.shadowBlur=20;box(b.x+42,b.y-5,8,10,'#ff273d');ctx.shadowBlur=0;
- }else if(b.type==='checkpoint'){
- box(b.x,b.y,b.w,75,'#30332a');box(b.x+12,b.y+10,b.w-24,25,'#14291f');label('COUNTY',b.x+43,b.y+27,12,'#c0d2b7');label('CHECKPOINT',b.x+20,b.y+43,10,'#c0d2b7');box(b.x+8,b.y+76,b.w-16,7,'#d1b95b');
+const objectives=[
+ "OBJECTIVE: Investigate the abandoned checkpoint.",
+ "OBJECTIVE: Search the roadside motel.",
+ "OBJECTIVE: Find the remaining evidence.",
+ "OBJECTIVE: Locate the missing trooper's patrol car.",
+ "OBJECTIVE: Reach the radio tower and call for help."
+];
+
+function menu(which="menu"){
+ mode="menu";overlay.style.display="flex";
+ if(which==="how"){
+  screen.innerHTML=`<div class="eyebrow">FIELD MANUAL // REVISION 04</div><h1 style="font-size:48px">HOW TO PLAY</h1><div class="content">
+  <h2>CONTROLS</h2><strong>WASD / ARROWS</strong> — Move through the swamp.<br><strong>SHIFT</strong> — Sprint, but noise attracts attention.<br><strong>E</strong> — Inspect evidence and search structures.<br><strong>F</strong> — Toggle flashlight.<br><strong>R</strong> — Reload your service weapon.<br><strong>LEFT CLICK / SPACE</strong> — Fire your weapon.<br>
+  <h2>YOUR ASSIGNMENT</h2>Investigate the checkpoint, search the buildings, collect five pieces of evidence, and reach the radio tower. Your flashlight helps you see, but it may reveal things you would rather not see.<h2>FIELD WARNING</h2>Something is moving between the trees. It does not always chase you. Sometimes it simply watches.</div><button class="primary" onclick="menu('menu')">BACK TO MENU</button>`;
+ }else if(which==="credits"){
+  screen.innerHTML=`<div class="eyebrow">CASE FILE // ACKNOWLEDGEMENTS</div><h1 style="font-size:52px">CREDITS</h1><div class="content" style="text-align:center"><h2>SPECIAL THANKS</h2><p>Special thanks to <strong>Mayumi Alingarog (Yumi, Mimi, Yumimi)</strong>, my classmate and fellow developer, for being very helpful, kind, and respectful throughout the journey.</p><p>Thank you for the support, inspiration, and encouragement that helped make this project possible.</p><h2>CREATED FOR SCREAM JAM 2026</h2><div class="quote">Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.</div></div><button class="primary" onclick="menu('menu')">BACK TO MENU</button>`;
+ }else if(which==="dead"){
+  screen.innerHTML=`<div class="eyebrow">OFFICER DOWN // FILE SEALED</div><h1 style="font-size:60px">NO<br>RESPONSE</h1><p class="description">The radio kept transmitting after your body camera stopped.</p><button class="primary" onclick="startGame()">TRY AGAIN</button><button onclick="menu('credits')">CREDITS</button><button onclick="menu('menu')">MAIN MENU</button>`;
+ }else if(which==="win"){
+  screen.innerHTML=`<div class="eyebrow">TRANSMISSION SENT</div><h1 style="font-size:60px">CASE<br>UNSEALED</h1><p class="description">The tower answers. Through the static, you hear a second voice—using your own call sign.</p><button class="primary" onclick="menu('credits')">CREDITS</button><button onclick="menu('menu')">MAIN MENU</button>`;
  }else{
- box(b.x,b.y,b.w,b.h,'#302e29');box(b.x+12,b.y+12,b.w-24,24,'#131d20');box(b.x+25,b.y+45,35,42,'#b47a43');box(b.x+95,b.y+45,35,42,'#7d5637');box(b.x+b.w/2-12,b.y+b.h-37,25,37,'#17191a');
- }}
- for(const c of clues)if(!c.got){let pulse=.5+.5*Math.sin(time*4+c.x);ctx.fillStyle='rgba(255,190,65,'+(.3+pulse*.6)+')';ctx.beginPath();ctx.arc(c.x,c.y,9+pulse*5,0,7);ctx.fill();label('!',c.x-3,c.y+4,12,'#fff1b4')}
- if(monster.active){
- let bob=Math.sin(time*5)*4;ctx.fillStyle='#020406';ctx.beginPath();ctx.ellipse(monster.x,monster.y,18,32+bob,0,0,7);ctx.fill();box(monster.x-12,monster.y+15,8,32,'#020406');box(monster.x+6,monster.y+15,8,32,'#020406');
- ctx.shadowColor='#ff002b';ctx.shadowBlur=15;box(monster.x-8,monster.y-14,4,3,'#ff243b');box(monster.x+5,monster.y-14,4,3,'#ff243b');ctx.shadowBlur=0;
+  screen.innerHTML=`<div class="eyebrow">FLORIDA HIGHWAY PATROL PRESENTS</div><h1>FLORIDA<br>SHADOWS</h1><div class="subtitle">STATE TROOPER HORROR FILES</div><p class="description">A routine midnight welfare check becomes an investigation into something the official reports refuse to acknowledge.</p><button class="primary" onclick="startGame()">BEGIN NIGHT PATROL</button><button onclick="menu('how')">HOW TO PLAY</button><button onclick="menu('credits')">CREDITS</button><div class="small">FICTIONAL HORROR EXPERIENCE · SCREAM JAM 2026<br>HEADPHONES RECOMMENDED · YOU ARE NOT ALONE</div>`;
  }
- // Player sprite
- ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
- ctx.fillStyle='#020507';ctx.beginPath();ctx.ellipse(2,7,13,17,0,0,7);ctx.fill();
- box(-9,-9,18,18,'#263d49');box(-8,-13,16,8,'#aab9b9');box(-10,-16,20,4,'#17232b');box(-3,-7,6,5,'#d4a66c');box(7,-3,18,5,'#b9d2d6');ctx.restore();
- // Flashlight beam
- if(p.flash){let g=ctx.createRadialGradient(p.x,p.y,10,p.x+Math.cos(p.a)*160,p.y+Math.sin(p.a)*160,225);g.addColorStop(0,'rgba(210,238,210,.20)');g.addColorStop(1,'rgba(210,238,210,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.arc(p.x,p.y,245,p.a-.42,p.a+.42);ctx.closePath();ctx.fill()}
- ctx.restore();
- // Night vignette
- let v=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.15,W/2,H/2,Math.max(W,H)*.72);v.addColorStop(0,'rgba(0,4,8,.03)');v.addColorStop(1,'rgba(0,2,7,.82)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
- // Rain overlay
- ctx.strokeStyle='rgba(151,202,224,.28)';ctx.lineWidth=1;
- for(const r of rain){r.y+=r.s*.016;r.x-=r.s*.003;if(r.y>H){r.y=-20;r.x=rand()*W}ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.lineTo(r.x-3,r.y+r.l);ctx.stroke()}
 }
-function drawMap(){
- mc.fillStyle='#071511';mc.fillRect(0,0,160,105);
- mc.strokeStyle='#374c3f';mc.lineWidth=8;mc.beginPath();mc.moveTo(0,52);mc.lineTo(160,52);mc.stroke();
- mc.strokeStyle='#514d3a';mc.lineWidth=2;mc.beginPath();mc.moveTo(85,0);mc.lineTo(85,105);mc.stroke();
- for(const b of buildings){mc.fillStyle=b.type==='motel'?'#c38b44':'#587b70';mc.fillRect(b.x/WORLD.w*160,b.y/WORLD.h*105,Math.max(3,b.w/WORLD.w*160),Math.max(3,b.h/WORLD.h*105))}
- for(const c of clues)if(!c.got){mc.fillStyle='#ffce54';mc.fillRect(c.x/WORLD.w*160,c.y/WORLD.h*105,3,3)}
- mc.fillStyle='#fff';mc.fillRect(p.x/WORLD.w*160-2,p.y/WORLD.h*105-2,5,5)
+menu();
+
+function startGame(){
+ player={x:450,y:420,hp:100,ammo:6,reserve:18,clues:0,angle:0,flash:true,invuln:0};
+ monster={x:2350,y:1750,active:false,stalk:0,seen:0};
+ clues.forEach(c=>c.found=false);
+ elapsed=0;now=0;notice="";noticeTime=0;scareTime=0;shootFlash=0;
+ radio="RADIO: Dispatch, do you copy? ... Dispatch?";
+ document.getElementById("radio").textContent=radio;
+ document.getElementById("clues").textContent="0";
+ document.getElementById("ammo").textContent="6";
+ document.getElementById("reserve").textContent="18";
+ document.getElementById("health").textContent="100";
+ document.getElementById("healthfill").style.width="100%";
+ document.getElementById("objective").textContent=objectives[0];
+ document.getElementById("hud").style.display="block";
+ overlay.style.display="none";mode="playing";last=performance.now();
 }
-function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.opacity=1;clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.style.opacity=0,2200)}
-function dispatch(s){document.getElementById('dispatch').innerHTML='<b>DISPATCH:</b> '+s}
-function hud(){
- document.getElementById('hp').style.width=p.hp+'%';document.getElementById('hpnum').textContent=Math.ceil(p.hp)+'%';
- document.getElementById('bat').style.width=p.bat+'%';document.getElementById('batnum').textContent=Math.ceil(p.bat)+'%';
- document.getElementById('ammo').textContent=p.ammo+' / 12';
- let n=clues.filter(c=>c.got).length;
- document.getElementById('objtext').innerHTML=(carChecked?'☑':'□')+' Inspect patrol car<br>'+(n===3?'☑':'□')+' Collect evidence ('+n+'/3)<br>'+(towerFixed?'☑':'□')+' Restore radio tower<br>'+(checkpoint?'☑':'□')+' Reach checkpoint';
-}
-function nearest(){
- let out=null,best=95;
- for(const b of buildings){let d=dist(p.x,p.y,b.x+b.w/2,b.y+b.h/2);if(d<best){best=d;out={type:b.type,b}}}
- for(const c of clues){let d=dist(p.x,p.y,c.x,c.y);if(!c.got&&d<best){best=d;out={type:'clue',c}}}
- return out;
-}
-function interact(){
- const n=nearest();if(!n){toast('Nothing nearby to investigate.');return}
- if(n.type==='clue'){n.c.got=true;toast('EVIDENCE: '+n.c.name);dispatch('Evidence secured. I do not like what this implies.');if(clues.every(c=>c.got)){monster.active=true;dispatch('Something just came online near the tower. Get out of there.')}hud();return}
- if(n.type==='car'){carChecked=true;toast('PATROL CAR: blood on the seat. Dash camera missing.');dispatch('This is not the first unit to disappear here.')}
- else if(n.type==='motel'){toast('MOTEL: room six is chained from the outside.');dispatch('Motel owner is missing. Do not enter room six.')}
- else if(n.type==='tower'){towerFixed=true;monster.active=true;toast('RADIO TOWER RESTORED');dispatch('...DO NOT TRUST THE PERSON WALKING BESIDE YOU...')}
- else if(n.type==='checkpoint'){if(clues.filter(c=>c.got).length>=2){checkpoint=true;toast('CHECKPOINT REACHED. CASE TRANSMITTED.');dispatch('Copy, Unit 07. We have your coordinates.')}else toast('Checkpoint locked. Find at least two evidence items.')}
- else toast('Locked. Check the surrounding area.');
- hud();
+function setRadio(s){radio=s;document.getElementById("radio").textContent=s}
+function say(s,d=3){notice=s;noticeTime=d;document.getElementById("message").textContent=s}
+function finish(win){mode=win?"win":"dead";document.getElementById("hud").style.display="none";menu(win?"win":"dead")}
+function reload(){
+ const n=Math.min(6-player.ammo,player.reserve);
+ if(n>0){player.ammo+=n;player.reserve-=n;document.getElementById("ammo").textContent=player.ammo;document.getElementById("reserve").textContent=player.reserve;setRadio("RADIO: Magazine seated. Keep moving.")}
 }
 function shoot(){
- if(p.ammo<=0){toast('EMPTY — PRESS R TO RELOAD');return}
- p.ammo--;if(monster.active){let d=dist(p.x,p.y,monster.x,monster.y),a=Math.atan2(monster.y-p.y,monster.x-p.x),diff=Math.atan2(Math.sin(a-p.a),Math.cos(a-p.a));if(d<360&&Math.abs(diff)<.35){monster.stun=2;toast('HIT! IT IS STILL MOVING.')}else toast('Your shot vanishes into the swamp.')}else toast('The gunshot echoes through the trees.');hud();
+ if(mode!=="playing")return;
+ if(player.ammo<=0){say("CLICK. EMPTY.",1);return}
+ player.ammo--;shootFlash=.1;document.getElementById("ammo").textContent=player.ammo;
+ let d=Math.hypot(monster.x-player.x,monster.y-player.y);
+ if(monster.active&&d<420){
+  let a=Math.atan2(monster.y-player.y,monster.x-player.x);
+  let diff=Math.abs(Math.atan2(Math.sin(a-player.angle),Math.cos(a-player.angle)));
+  if(diff<.4){monster.stalk++;say("The shape recoils into the rain.",1.4);if(monster.stalk>=4){monster.x+=Math.cos(a+2)*260;monster.y+=Math.sin(a+2)*260;monster.stalk=0}}
+ }else if(Math.random()<.12)say("The shot disappears into the trees.",1.3);
 }
-function endGame(win){
- running=false;document.getElementById('overlay').style.display='flex';
- document.querySelector('.kicker').textContent=win?'CASE FILE TRANSMITTED':'SIGNAL LOST';
- document.querySelector('.title').innerHTML=win?'CASE <span>FILED</span>':'UNIT <span>LOST</span>';
- document.querySelector('.desc').innerHTML=win?'Evidence transmitted. Dispatch confirms receipt. The radio is still whispering your name.':'Your radio continues to transmit after your body stops moving. Somewhere in the swamp, another unit receives your call sign.';
- document.getElementById('start').textContent='RESTART NIGHT PATROL';
+function interact(){
+ let best=null,dist=110;
+ for(const c of clues)if(!c.found){let d=Math.hypot(c.x-player.x,c.y-player.y);if(d<dist){best=c;dist=d}}
+ if(best){
+  best.found=true;player.clues++;document.getElementById("clues").textContent=player.clues;
+  say("EVIDENCE LOGGED: "+best.name.toUpperCase(),3);
+  setRadio("RADIO: Evidence logged. Dispatch is not responding.");
+  if(player.clues===1){monster.active=true;setRadio("RADIO: ...Officer? There is someone behind you.")}
+  if(player.clues===5){setRadio("RADIO: Tower coordinates received. Get there now.");}
+  return;
+ }
+ for(const b of buildings){
+  const d=Math.hypot(b.x+b.w/2-player.x,b.y+b.h/2-player.y);
+  if(d<Math.max(b.w,b.h)*.65+70){
+   if(b.name==="RADIO TOWER"&&player.clues>=5){finish(true);return}
+   say(b.name+": The door is jammed. Search the perimeter for evidence.",3);
+   setRadio("RADIO: No entry. Check the surrounding area.");return;
+  }
+ }
+ say("Nothing useful nearby. Check the roadside and structures.",2);
 }
+addEventListener("keydown",e=>{
+ keys[e.key.toLowerCase()]=true;
+ if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
+ if(mode==="playing"){
+  if(e.key.toLowerCase()==="f")player.flash=!player.flash;
+  if(e.key.toLowerCase()==="r")reload();
+  if(e.key.toLowerCase()==="e")interact();
+  if(e.code==="Space")shoot();
+ }
+});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener("mousemove",e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+canvas.addEventListener("mousedown",shoot);
+let mouse={x:W/2,y:H/2};
+
 function update(dt){
- time+=dt;p.inv=Math.max(0,p.inv-dt);
- let dx=0,dy=0;
- if(keys.w||keys.ArrowUp)dy--;if(keys.s||keys.ArrowDown)dy++;if(keys.a||keys.ArrowLeft)dx--;if(keys.d||keys.ArrowRight)dx++;
- if(dx||dy){let l=Math.hypot(dx,dy);dx/=l;dy/=l;p.a=Math.atan2(dy,dx);let speed=keys.Shift?220:145;p.x=Math.max(15,Math.min(WORLD.w-15,p.x+dx*speed*dt));p.y=Math.max(15,Math.min(WORLD.h-15,p.y+dy*speed*dt))}
- p.bat=p.flash?Math.max(0,p.bat-dt*.65):Math.min(100,p.bat+dt*.35);if(p.bat<=0)p.flash=false;
- if(monster.active&&monster.stun<=0){let d=dist(p.x,p.y,monster.x,monster.y);if(d<650){monster.x+=(p.x-monster.x)/d*45*dt;monster.y+=(p.y-monster.y)/d*45*dt;if(d<35&&p.inv<=0){p.hp-=13;p.inv=1.2;dispatch('IT IS RIGHT BEHIND YOU. MOVE!');if(p.hp<=0){endGame(false)}}}}else monster.stun=Math.max(0,monster.stun-dt);
- hud();drawMap();if(checkpoint&&clues.every(c=>c.got)&&towerFixed)endGame(true);
+ if(mode!=="playing")return;
+ elapsed+=dt;now+=dt;shootFlash=Math.max(0,shootFlash-dt);
+ let vx=0,vy=0;
+ if(keys.w||keys.arrowup)vy--;if(keys.s||keys.arrowdown)vy++;
+ if(keys.a||keys.arrowleft)vx--;if(keys.d||keys.arrowright)vx++;
+ const len=Math.hypot(vx,vy)||1;vx/=len;vy/=len;
+ const speed=155*(keys.shift?1.55:1);
+ player.x=Math.max(25,Math.min(world.w-25,player.x+vx*speed*dt));
+ player.y=Math.max(25,Math.min(world.h-25,player.y+vy*speed*dt));
+ if(vx||vy)player.angle=Math.atan2(vy,vx);
+ if(Math.abs(mouse.x-W/2)>5||Math.abs(mouse.y-H/2)>5)player.angle=Math.atan2(mouse.y-H/2,mouse.x-W/2);
+ camera.x=Math.max(0,Math.min(world.w-W,player.x-W/2));
+ camera.y=Math.max(0,Math.min(world.h-H,player.y-H/2));
+ if(monster.active){
+  monster.seen+=dt;
+  const dx=player.x-monster.x,dy=player.y-monster.y,d=Math.hypot(dx,dy)||1;
+  const target=d<260?105:320;
+  if(d>target){monster.x+=dx/d*Math.min(d-target,48*dt);monster.y+=dy/d*Math.min(d-target,48*dt)}
+  if(d<100&&player.invuln<=0){
+   player.hp-=15;player.invuln=1.2;say("IT FOUND YOU.",1);
+   setRadio("RADIO: [SCREAMING STATIC]");
+   if(Math.random()<.35)jumpscare();
+  }
+  if(d>900&&monster.seen>12){monster.x=player.x+(Math.random()<.5?-1:1)*(320+Math.random()*180);monster.y=player.y+(Math.random()<.5?-1:1)*(280+Math.random()*180)}
+  if(d<340&&Math.random()<dt*.12)say("You hear wet footsteps behind you.",2);
+ }
+ player.invuln=Math.max(0,player.invuln-dt);
+ noticeTime-=dt;if(noticeTime<=0)document.getElementById("message").textContent="";
+ scareTime=Math.max(0,scareTime-dt);
+ if(player.hp<=0){finish(false);return}
+ document.getElementById("health").textContent=Math.max(0,Math.ceil(player.hp));
+ document.getElementById("healthfill").style.width=Math.max(0,player.hp)+"%";
+ document.getElementById("clock").textContent="02:"+String(Math.floor((13+elapsed/3)%60)).padStart(2,"0")+" AM";
+ let objectiveIndex=player.clues===0?0:player.clues===1?1:player.clues<5?2:4;
+ document.getElementById("objective").textContent=objectives[objectiveIndex];
+ let nearest=null,nd=120;
+ for(const c of clues)if(!c.found){let d=Math.hypot(c.x-player.x,c.y-player.y);if(d<nd){nearest=c;nd=d}}
+ const prompt=document.getElementById("prompt");
+ if(nearest){prompt.style.display="block";prompt.textContent="[ E ] INVESTIGATE: "+nearest.name}
+ else if(buildings.some(b=>Math.hypot(b.x+b.w/2-player.x,b.y+b.h/2-player.y)<180)){prompt.style.display="block";prompt.textContent="[ E ] SEARCH STRUCTURE"}
+ else prompt.style.display="none";
 }
-function loop(ts){let dt=Math.min(.035,(ts-last)/1000||0);last=ts;if(running)update(dt);drawWorld();requestAnimationFrame(loop)}
-addEventListener('keydown',e=>{
- let k=e.key.length===1?e.key.toLowerCase():e.key;
- if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[k]=true;
- if(!running)return;
- if(k==='e')interact();if(k==='f')p.flash=!p.flash;
- if(k===' '||k==='Spacebar')shoot();if(k==='r'){p.ammo=6;toast('MAGAZINE RELOADED')}
- if(k==='Tab'){e.preventDefault();let o=document.getElementById('objectives');o.style.display=o.style.display==='none'?'block':'none'}
-});
-addEventListener('keyup',e=>{keys[e.key.length===1?e.key.toLowerCase():e.key]=false});
-canvas.addEventListener('mousemove',e=>{if(running)p.a=Math.atan2(e.clientY+camY-p.y,e.clientX+camX-p.x)});
-canvas.addEventListener('click',()=>{if(running)shoot()});
-document.getElementById('start').addEventListener('click',()=>{
- p.x=540;p.y=840;p.hp=100;p.bat=100;p.ammo=6;p.flash=true;p.inv=0;
- clues.forEach(c=>c.got=false);carChecked=false;towerFixed=false;checkpoint=false;monster.active=false;monster.stun=0;
- running=true;document.getElementById('overlay').style.display='none';
- dispatch('Unit 07, radio check. Abandoned patrol car near Cypress Mile. Proceed with caution.');hud();
-});
-hud();requestAnimationFrame(loop);
-})();
+
+function jumpscare(){
+ if(scareTime>0)return;
+ scareTime=1;
+ const s=document.getElementById("scare");s.style.display="flex";
+ setTimeout(()=>{s.style.display="none"},450);
+}
+function draw(){
+ ctx.fillStyle="#101913";ctx.fillRect(0,0,W,H);
+ // Pixelated swamp ground
+ for(let y=-10;y<H+20;y+=30)for(let x=-10;x<W+20;x+=36){
+  let wx=x+camera.x,wy=y+camera.y,n=Math.sin(wx*.03+wy*.021);
+  ctx.fillStyle=n>.65?"#1b291e":n<-.55?"#0c1510":"#132017";
+  ctx.fillRect(x,y,18+Math.abs(n)*12,2);
+ }
+ // Winding wet road
+ ctx.beginPath();
+ for(let y=0;y<=world.h;y+=35){
+  let x=1500+Math.sin(y*.0017)*380+Math.sin(y*.004)*85-camera.x;
+  if(y===0)ctx.moveTo(x,y-camera.y);else ctx.lineTo(x,y-camera.y);
+ }
+ ctx.strokeStyle="#2d322e";ctx.lineWidth=145;ctx.stroke();
+ ctx.strokeStyle="#5a6057";ctx.lineWidth=2;ctx.setLineDash([24,30]);ctx.stroke();ctx.setLineDash([]);
+ for(const p of puddles){
+  const x=p.x-camera.x,y=p.y-camera.y;if(x<-70||y<-40||x>W+70||y>H+40)continue;
+  ctx.fillStyle="#273a35";ctx.beginPath();ctx.ellipse(x,y,p.w,p.h,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#4a5d53";ctx.lineWidth=1;ctx.stroke();
+ }
+ for(const t of trees){
+  const x=t.x-camera.x,y=t.y-camera.y;if(x<-65||y<-65||x>W+65||y>H+65)continue;
+  ctx.fillStyle="#070c09";ctx.beginPath();ctx.ellipse(x+5,y+9,t.r*1.35,t.r*.8,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=["#17251b","#1b2b20","#213024","#18251d"][t.c];
+  ctx.beginPath();ctx.arc(x,y,t.r,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="#2d3b2a";ctx.fillRect(x-2,y-t.r*.5,4,t.r);
+ }
+ for(const b of buildings){
+  const x=b.x-camera.x,y=b.y-camera.y;
+  if(x<-b.w-40||y<-b.h-40||x>W+40||y>H+40)continue;
+  ctx.fillStyle="#050706";ctx.fillRect(x+10,y+14,b.w,b.h);
+  ctx.fillStyle=b.color;ctx.fillRect(x,y,b.w,b.h);
+  ctx.fillStyle="#252d27";ctx.fillRect(x-8,y-8,b.w+16,20);
+  ctx.fillStyle="#626e60";ctx.fillRect(x,y,b.w,4);
+  for(let wx=x+22;wx<x+b.w-15;wx+=65){
+   ctx.fillStyle="#101a18";ctx.fillRect(wx,y+47,28,38);
+   ctx.fillStyle=Math.sin(now*2+wx)>.7?"#a17e47":"#263a33";
+   ctx.fillRect(wx+4,y+51,20,29);
+   ctx.fillStyle="#1c2520";ctx.fillRect(wx,y+b.h-32,25,32);
+  }
+  ctx.fillStyle="#c2bca0";ctx.font="10px monospace";ctx.fillText(b.name,x+12,y+25);
+  if(b.name==="RADIO TOWER"){
+   ctx.strokeStyle="#637568";ctx.lineWidth=3;ctx.beginPath();
+   ctx.moveTo(x+b.w/2,y);ctx.lineTo(x+b.w/2-20,y-150);
+   ctx.lineTo(x+b.w/2+20,y-150);ctx.closePath();ctx.stroke();
+   ctx.fillStyle="#ba3029";ctx.fillRect(x+b.w/2-3,y-157,6,7);
+  }
+ }
+ // Abandoned patrol car
+ const carx=1100-camera.x,cary=1100-camera.y;
+ ctx.fillStyle="#070a09";ctx.fillRect(carx-29,cary-16,62,34);
+ ctx.fillStyle="#202925";ctx.fillRect(carx-25,cary-19,55,28);
+ ctx.fillStyle="#a1a79a";ctx.fillRect(carx-12,cary-16,24,4);
+ ctx.fillStyle="#a22e2a";ctx.fillRect(carx+1,cary-23,10,5);
+ ctx.fillStyle="#293e41";ctx.fillRect(carx-18,cary-11,14,8);ctx.fillRect(carx+9,cary-11,14,8);
+ ctx.fillStyle="#090a09";ctx.fillRect(carx-20,cary+11,12,5);ctx.fillRect(carx+17,cary+11,12,5);
+ // Evidence markers
+ for(const c of clues)if(!c.found){
+  const x=c.x-camera.x,y=c.y-camera.y;
+  ctx.fillStyle="#d5bc7a";ctx.fillRect(x-3,y-3,6,6);
+  ctx.fillStyle="#d5bc7840";ctx.beginPath();ctx.arc(x,y,12+Math.sin(now*3)*3,0,Math.PI*2);ctx.fill();
+ }
+ // The Smiler
+ if(monster.active){
+  const x=monster.x-camera.x,y=monster.y-camera.y,d=Math.hypot(player.x-monster.x,player.y-monster.y);
+  if(x>-100&&y>-100&&x<W+100&&y<H+100){
+   const scale=Math.max(.65,Math.min(1.5,440/Math.max(d,1)));
+   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+   ctx.fillStyle="#050605";ctx.beginPath();ctx.ellipse(0,0,18,39,0,0,Math.PI*2);ctx.fill();
+   ctx.fillRect(-13,-6,26,53);
+   ctx.beginPath();ctx.ellipse(0,-38,13,17,0,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle="#bb2821";ctx.fillRect(-7,-42,4,3);ctx.fillRect(4,-42,4,3);
+   ctx.strokeStyle="#070807";ctx.lineWidth=7;ctx.beginPath();
+   ctx.moveTo(-12,2);ctx.lineTo(-25,36);ctx.moveTo(12,2);ctx.lineTo(23,36);ctx.stroke();
+   ctx.restore();
+  }
+ }
+ // Player character
+ const px=player.x-camera.x,py=player.y-camera.y;
+ ctx.fillStyle="#050606";ctx.beginPath();ctx.ellipse(px,py+9,13,7,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle=player.invuln>0&&Math.floor(now*12)%2?"#a64b43":"#809184";
+ ctx.fillRect(px-7,py-10,14,20);
+ ctx.fillStyle="#c7bea5";ctx.fillRect(px-5,py-18,10,10);
+ ctx.strokeStyle="#090c0a";ctx.lineWidth=4;ctx.beginPath();
+ ctx.moveTo(px-4,py+8);ctx.lineTo(px-6,py+16);ctx.moveTo(px+4,py+8);ctx.lineTo(px+6,py+16);ctx.stroke();
+ // Flashlight beam and darkness
+ ctx.save();
+ ctx.fillStyle="#020504";ctx.fillRect(0,0,W,H);
+ ctx.globalCompositeOperation="destination-out";
+ const glow=ctx.createRadialGradient(px,py,25,px,py,player.flash?Math.max(W,H)*.65:180);
+ glow.addColorStop(0,"rgba(0,0,0,1)");glow.addColorStop(.6,"rgba(0,0,0,.84)");glow.addColorStop(1,"rgba(0,0,0,0)");
+ ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ if(player.flash){
+  ctx.translate(px,py);ctx.rotate(player.angle);
+  const beam=ctx.createRadialGradient(0,0,10,0,0,410);
+  beam.addColorStop(0,"rgba(0,0,0,.94)");beam.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,410,-.42,.42);ctx.closePath();ctx.fill();
+ }
+ ctx.restore();
+ // Atmospheric fog and rain
+ const fog=ctx.createLinearGradient(0,0,0,H);
+ fog.addColorStop(0,"rgba(17,28,21,.12)");fog.addColorStop(1,"rgba(2,6,4,.5)");
+ ctx.fillStyle=fog;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle="#b8c5bd36";ctx.lineWidth=1;
+ for(let i=0;i<95;i++){
+  let rx=(i*137+now*95)%W,ry=(i*79+now*230)%(H+20);
+  ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-4,ry+11);ctx.stroke();
+ }
+ if(shootFlash>0){ctx.fillStyle="#e6dfbb";ctx.fillRect(W/2-3,H/2-3,6,6)}
+ drawMini();
+}
+function drawMini(){
+ mctx.fillStyle="#07100b";mctx.fillRect(0,0,100,100);
+ mctx.strokeStyle="#4b554b";mctx.lineWidth=5;mctx.beginPath();
+ for(let y=0;y<=world.h;y+=40){let x=(1500+Math.sin(y*.0017)*380+Math.sin(y*.004)*85)/world.w*100; if(y===0)mctx.moveTo(x,y/world.h*100);else mctx.lineTo(x,y/world.h*100)}
+ mctx.stroke();
+ for(const b of buildings){mctx.fillStyle="#7d806d";mctx.fillRect(b.x/world.w*100,b.y/world.h*100,3,3)}
+ for(const c of clues)if(!c.found){mctx.fillStyle="#d9bb70";mctx.fillRect(c.x/world.w*100,c.y/world.h*100,2,2)}
+ if(monster.active){mctx.fillStyle="#c32c26";mctx.fillRect(monster.x/world.w*100-1,monster.y/world.h*100-1,3,3)}
+ mctx.fillStyle="#f1eee0";mctx.fillRect(player.x/world.w*100-2,player.y/world.h*100-2,4,4);
+}
+
+function frame(ts){
+ const dt=Math.min(.04,(ts-(last||ts))/1000||0);last=ts;
+ if(mode==="playing")update(dt);
+ if(mode==="playing")draw();else drawMenuBackground();
+ requestAnimationFrame(frame);
+}
+function drawMenuBackground(){
+ ctx.fillStyle="#080e0a";ctx.fillRect(0,0,W,H);
+ for(let i=0;i<80;i++){
+  const x=(i*197+now*8)%W,y=(i*83+now*19)%H;
+  ctx.fillStyle=i%3?"#111d14":"#1c291c";ctx.fillRect(x,y,2,2);
+ }
+ ctx.strokeStyle="#202c22";ctx.lineWidth=2;
+ for(let i=0;i<18;i++){
+  const x=i*W/17;
+  ctx.beginPath();ctx.moveTo(x,H);ctx.lineTo(x+Math.sin(i)*25,H*.25);ctx.stroke();
+ }
+ ctx.fillStyle="#0b120d";ctx.fillRect(0,H*.78,W,H*.22);
+}
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>"""
 
 @app.route("/")
-def home():
+def index():
     return Response(HTML, mimetype="text/html")
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "online", "game": "Florida Shadows"})
+    return {"status": "online", "game": "Florida Shadows"}
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", "5000"))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=5000, debug=False)
+```
