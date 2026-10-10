@@ -133,6 +133,31 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
   color: #e18a81;
   margin-top: 4px;
 }
+#survivorLocator {
+  display:none;
+  position:fixed;
+  z-index:8;
+  top:116px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(330px,86vw);
+  padding:8px 12px 9px;
+  border:1px solid #8aa978;
+  border-left:4px solid #b9e18b;
+  background:linear-gradient(110deg,rgba(7,18,11,.96),rgba(15,34,19,.93));
+  box-shadow:0 0 18px rgba(130,205,105,.17),0 5px 20px #0009;
+  color:#e3efcf;
+  text-align:left;
+  pointer-events:none;
+  text-shadow:0 2px 4px #000;
+  animation:locatorPulse 2.3s ease-in-out infinite;
+}
+#survivorLocator.visible { display:block; }
+#survivorLocator .locator-kicker { color:#b0d28e; font-size:9px; letter-spacing:1.8px; margin-bottom:4px; }
+#survivorLocator .locator-main { font-weight:bold; font-size:12px; letter-spacing:.5px; }
+#survivorLocator .locator-sub { margin-top:4px; color:#b3c2aa; font-size:10px; line-height:1.45; }
+#survivorLocator .locator-range { color:#f0dd9a; }
+@keyframes locatorPulse { 0%,100% { box-shadow:0 0 12px rgba(130,205,105,.12),0 5px 20px #0009; } 50% { box-shadow:0 0 23px rgba(130,205,105,.28),0 5px 20px #0009; } }
 #healthbar,
 #staminabar {
   width: 152px;
@@ -764,6 +789,32 @@ body.game-active.mobile-mode #minimap {
   width: 85px;
   height: 85px;
 }
+#voiceSubtitle {
+  position:fixed;
+  z-index:14;
+  left:50%;
+  bottom:clamp(78px,13vh,150px);
+  width:min(620px,90vw);
+  transform:translateX(-50%) translateY(8px);
+  display:none;
+  padding:11px 15px 12px;
+  text-align:center;
+  color:#d5d9ca;
+  background:linear-gradient(90deg,rgba(4,8,6,.15),rgba(3,5,4,.94) 18%,rgba(3,5,4,.94) 82%,rgba(4,8,6,.15));
+  border-top:1px solid #52604e;
+  border-bottom:1px solid #52604e;
+  text-shadow:0 2px 5px #000;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .22s,transform .22s;
+}
+#voiceSubtitle.active { display:block; opacity:1; transform:translateX(-50%) translateY(0); animation:whisperFlicker .14s steps(2,end) 3; }
+#voiceWho { display:block; margin-bottom:5px; color:#b79a76; font-size:9px; letter-spacing:2px; }
+#voiceWords { font-size:clamp(11px,1.6vw,15px); letter-spacing:1.1px; line-height:1.5; font-style:italic; }
+#voiceSubtitle.left #voiceWho { color:#a6bc9b; text-align:left; }
+#voiceSubtitle.right #voiceWho { color:#ad8e8e; text-align:right; }
+@keyframes whisperFlicker { 0%,100% { filter:none; } 50% { filter:blur(.65px); opacity:.62; } }
+@media(max-width:700px) { #voiceSubtitle { bottom:170px; width:94vw; padding:8px 10px; } #voiceWords { font-size:10px; } }
 #damageFlash {
   position: fixed;
   inset: 0;
@@ -842,6 +893,9 @@ body.game-active.mobile-mode #minimap {
     width: 78px;
     height: 78px;
   }
+  #survivorLocator { top:calc(136px + 37vh + 8px); width:min(270px,88vw); padding:7px 9px; }
+  #survivorLocator .locator-main { font-size:10px; }
+  #survivorLocator .locator-sub { font-size:9px; }
   .menu-actions button {
     padding: 11px 6px;
     font-size: 10px;
@@ -871,6 +925,7 @@ body.game-active.mobile-mode #minimap {
   <div id="laneAdvice">Keep to the right of the double yellow lines.</div>
 </div>
 <div id="damageFlash"></div>
+<div id="voiceSubtitle" aria-live="polite" aria-atomic="true"><span id="voiceWho">UNKNOWN TRANSMISSION</span><span id="voiceWords"></span></div>
 <div id="hud">
   <div id="topbar">
     <div class="hudbox">
@@ -894,6 +949,11 @@ body.game-active.mobile-mode #minimap {
       <div class="micro">AMMO <span id="ammo">6</span>/<span id="reserve">24</span> · EVIDENCE <span id="evidence">0/5</span> · SURVIVORS <span id="survivors">0/2</span> · LIGHT <span id="battery">100%</span></div>
     </div>
     <canvas id="minimap" width="132" height="132"></canvas>
+  </div>
+  <div id="survivorLocator" aria-live="polite">
+    <div class="locator-kicker">SEARCH AND RESCUE TRACKER</div>
+    <div id="survivorLocatorMain" class="locator-main">SIGNAL SEARCH INITIALIZING</div>
+    <div id="survivorLocatorSub" class="locator-sub">Follow the highlighted marker.</div>
   </div>
   <button id="objectiveToggle">CASE FILE [J]</button>
 </div>
@@ -923,6 +983,7 @@ body.game-active.mobile-mode #minimap {
     <p class="intro">Some scripted scares pretend to reveal a character's personnel file, address, or other private records. These are fictional story effects. They use only the selected in-game officer name and invented text.</p>
     <p class="intro"><b>Privacy:</b> This game does not ask for, access, collect, store, or transmit your real name, home address, contacts, camera, microphone, or precise location. Do not enter real private information into any game field or message.</p>
     <label class="disclaimer-choice"><input id="enablePersonalScares" type="checkbox" checked><span>Enable fictional “personal file” jumpscares. Uncheck this to disable those specific scares; other horror elements remain.</span></label>
+    <label class="disclaimer-choice"><input id="enableVoiceWhispers" type="checkbox" checked><span>Enable eerie synthesized whispers and false radio transmissions. These use fictional dialogue only. You can turn them off here.</span></label>
     <div class="page-buttons"><button id="dismissDisclaimer">I understand — continue</button></div>
   </div>
 </div>
@@ -1083,7 +1144,11 @@ const state={
   pendingCharacter:'hugo',
   controlMode:'desktop',
   pendingMode:'desktop',
-  options:{shake:true,subtitles:true,personalScares:true},
+  options:{shake:true,subtitles:true,personalScares:true,voiceWhispers:true},
+  voiceCaptionTimer:0,
+  voiceCooldown:0,
+  voiceAmbientTimer:16,
+  voiceEventFlags:{},
   personalScareTimer:0,
   personalScareCooldown:0,
   personalScareCount:0,
@@ -1265,6 +1330,113 @@ function updatePersonalScare(dt){
   if(state.personalScareTimer>0){
     state.personalScareTimer=Math.max(0,state.personalScareTimer-dt);
     if(state.personalScareTimer===0){$('personalScare').classList.remove('active');$('personalScare').setAttribute('aria-hidden','true');}
+  }
+}
+function voiceNoise(side='center',strength=.12){
+  if(!audioContext||!masterGain||state.mute)return;
+  try{
+    const length=Math.floor(audioContext.sampleRate*.68);
+    const buffer=audioContext.createBuffer(1,length,audioContext.sampleRate);
+    const values=buffer.getChannelData(0);
+    for(let i=0;i<length;i++)values[i]=(Math.random()*2-1)*(.65+Math.random()*.35);
+    const source=audioContext.createBufferSource();
+    source.buffer=buffer;
+    const high=audioContext.createBiquadFilter();
+    high.type='highpass';high.frequency.value=390;
+    const low=audioContext.createBiquadFilter();
+    low.type='lowpass';low.frequency.value=1650;
+    const gain=audioContext.createGain();
+    const pan=audioContext.createStereoPanner?audioContext.createStereoPanner():null;
+    const now=audioContext.currentTime;
+    gain.gain.setValueAtTime(.001,now);
+    gain.gain.linearRampToValueAtTime(strength,now+.08);
+    gain.gain.setValueAtTime(strength*.72,now+.26);
+    gain.gain.exponentialRampToValueAtTime(.001,now+.66);
+    source.connect(high);high.connect(low);low.connect(gain);
+    if(pan){pan.pan.value=side==='left'?-0.82:side==='right'?.82:0;gain.connect(pan);pan.connect(masterGain)}else gain.connect(masterGain);
+    source.start(now);source.stop(now+.7);
+    tone(side==='left'?94:side==='right'?87:91,.42,'triangle',.045,-28);
+  }catch(error){}
+}
+function speakWhisper(line,side='center'){
+  if(!state.options.voiceWhispers)return;
+  voiceNoise(side,.065);
+  try{
+    if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance)return;
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(line);
+    utterance.lang='en-US';
+    utterance.rate=.70+Math.random()*.12;
+    utterance.pitch=.28+Math.random()*.16;
+    utterance.volume=.56;
+    const voices=window.speechSynthesis.getVoices();
+    const candidates=voices.filter(v=>/^en(-|_)/i.test(v.lang));
+    if(candidates.length)utterance.voice=candidates[Math.floor(Math.random()*candidates.length)];
+    window.speechSynthesis.speak(utterance);
+  }catch(error){}
+}
+function triggerWhisper(line,side='center',who='VOICE UNDER THE STATIC'){
+  if(!state.options.voiceWhispers||state.voiceCooldown>0)return false;
+  const subtitle=$('voiceSubtitle');
+  const words=$('voiceWords');
+  const sender=$('voiceWho');
+  if(subtitle&&words&&sender){
+    words.textContent='“'+line+'”';
+    sender.textContent=who+(side==='left'?' · LEFT CHANNEL':side==='right'?' · RIGHT CHANNEL':' · CLOSE TO THE MIC');
+    subtitle.className='active '+side;
+    state.voiceCaptionTimer=Math.max(3.1,Math.min(5.5,line.length*.055));
+  }
+  state.voiceCooldown=4.7;
+  state.intensity=Math.max(state.intensity,.22);
+  state.screenShake=Math.max(state.screenShake,.08);
+  speakWhisper(line,side);
+  return true;
+}
+function oneShotWhisper(key,line,side='center',who='VOICE UNDER THE STATIC'){
+  if(state.voiceEventFlags[key])return;
+  if(triggerWhisper(line,side,who))state.voiceEventFlags[key]=true;
+}
+function updateWhispers(dt){
+  state.voiceCooldown=Math.max(0,state.voiceCooldown-dt);
+  if(state.voiceCaptionTimer>0){
+    state.voiceCaptionTimer=Math.max(0,state.voiceCaptionTimer-dt);
+    if(state.voiceCaptionTimer===0){const subtitle=$('voiceSubtitle');if(subtitle)subtitle.className='';}
+  }
+  if(!state.options.voiceWhispers||!state.running||state.paused||state.gameOver)return;
+  if(state.prologueStage==='drive'){
+    if(state.driveProgress>10)oneShotWhisper('drive10','Don’t look in the back seat.', 'right','UNIDENTIFIED VOICE');
+    if(state.driveProgress>31)oneShotWhisper('drive31','Your partner is not in the car with you.', 'left','VOICE ON A DEAD CHANNEL');
+    if(state.driveProgress>58)oneShotWhisper('drive58','You have already passed this road.', 'center','VOICE UNDER THE ENGINE');
+    if(state.driveProgress>82)oneShotWhisper('drive82','When you arrive, leave the headlights on. It hates the light.', 'right','UNIDENTIFIED VOICE');
+    if(state.prologueTimer>12&&!state.voiceEventFlags.driveRadio){
+      oneShotWhisper('driveRadio','Unit fourteen is already there. It is standing beside your car.', 'left','DISPATCH // IMPOSSIBLE TRANSMISSION');
+    }
+  }else if(state.prologueStage==='arrival'){
+    if(state.prologueTimer>1.6)oneShotWhisper('arrival16','Do not open the door. That is not your partner outside.', 'right','VOICE FROM THE REAR SEAT');
+    if(state.prologueTimer>5.5)oneShotWhisper('arrival55','It knows which one you are.', 'center','VOICE IN THE RADIO SPEAKER');
+  }else if(state.prologueStage==='swamp'){
+    if(state.elapsed>2.8)oneShotWhisper('swamp28','Keep the light moving. It can hear you thinking.', 'left','WHISPER FROM THE TREES');
+    if(state.elapsed>9)oneShotWhisper('swamp9','Officer '+specs[state.selectedCharacter].name.replace('Officer ','')+'… please turn around.', 'right','VOICE JUST BEHIND YOU');
+    if(state.elapsed>20)oneShotWhisper('swamp20','I can see the little light shaking in your hand.', 'center','UNKNOWN CHANNEL');
+    if(evidence>=1)oneShotWhisper('firstEvidence','You found it. Now put it back before it notices.', 'left','VOICE IN THE RECORDER');
+    if(state.floor==='inside')oneShotWhisper('insideVoice','There is one more person in this room than you can see.', 'right','VOICE FROM INSIDE THE WALL');
+    if(monster&&monster.active&&dist(player.x,player.y,monster.x,monster.y)<360)oneShotWhisper('nearMonster','Don’t point that light at me. I’m the one who called you.', 'center','THE SMILER');
+    state.voiceAmbientTimer-=dt;
+    if(state.elapsed>24&&state.voiceAmbientTimer<=0){
+      const lines=[
+        ['Your radio is breathing. Can you hear it?','left','LOW WHISPER'],
+        ['Don’t answer if you hear your own voice.','right','VOICE BEHIND THE TREES'],
+        ['The car is still running. Something is in the back seat.','center','DISTANT RADIO'],
+        ['You left somebody behind.','left','CHILDLIKE WHISPER'],
+        ['I saw you before you were born.','right','BROKEN TRANSMISSION'],
+        ['This is not the way out. You know that.','center','VOICE IN THE FOG'],
+        ['Officer… your partner has been dead for three days.','left','DISPATCH // CORRUPTED'],
+        ['Stop walking. Listen to the footsteps behind yours.','right','VOICE CLOSE TO YOUR EAR']
+      ];
+      const picked=choose(lines);
+      if(triggerWhisper(picked[0],picked[1],picked[2]))state.voiceAmbientTimer=19+Math.random()*17;
+      else state.voiceAmbientTimer=1.1;
+    }
   }
 }
 function toast(message,duration=2.5){
@@ -1490,8 +1662,8 @@ function makeObjects(){
     {id:'exit',x:2920,y:2300,type:'exit',name:'Patrol truck extraction',detail:'A unit is waiting on the county road.',icon:'▰'}
   ];
   survivors=[
-    {id:'ana',x:1020,y:792,name:'Mara',found:false,following:false,delivered:false,hp:1,dialogue:'Please, please get me out of here. It keeps calling from the trees.'},
-    {id:'wade',x:1815,y:1360,name:'Eli',found:false,following:false,delivered:false,hp:1,dialogue:'I heard my partner on the radio. He was standing right in front of me when it spoke.'}
+    {id:'ana',x:1110,y:660,name:'Mara',found:false,following:false,delivered:false,hp:1,dialogue:'Please, please get me out of here. It keeps calling from the trees.'},
+    {id:'wade',x:1970,y:1450,name:'Eli',found:false,following:false,delivered:false,hp:1,dialogue:'I heard my partner on the radio. He was standing right in front of me when it spoke.'}
   ];
 }
 function makeRoom(name){
@@ -1597,6 +1769,13 @@ function resetGame(){
   state.lastBuildingExit=null;
   state.sceneFade=0;
   state.horrorBeat=0;
+  state.voiceCaptionTimer=0;
+  state.voiceCooldown=0;
+  state.voiceAmbientTimer=13+Math.random()*8;
+  state.voiceEventFlags={};
+  $('voiceSubtitle').className='';
+  $('voiceWords').textContent='';
+  if('speechSynthesis' in window)window.speechSynthesis.cancel();
   state.personalScareTimer=0;
   state.personalScareCooldown=0;
   state.personalScareCount=0;
@@ -1671,7 +1850,8 @@ function exitPatrolCar(){
   lastSafe={x:player.x,y:player.y};
   state.elapsed=0;state.horrorBeat=0;state.lightningNext=3.2;state.sceneFade=.78;
   updateHUD();updateObjectives();
-  toast('SCENE LOG: No backup. No witnesses. WASD / ARROWS TO MOVE. E SEARCHES. F FLASHLIGHT.',4);
+  toast('RESCUE TRACKER ONLINE: FOLLOW THE GREEN SOS MARKERS. MARA IS BY THE RANGER STATION; ELI IS ALONG THE SOUTHEAST ROAD.',5.2);
+  partnerExchange('survivorSignalBriefing','I have two weak bodycam heat signatures. Mara is near the ranger station; Eli is further along the southeast county road. Green SOS markers should show their positions.','Copy. I will follow the green markers and bring them back.');
   tone(58,.8,'triangle',.07,-25);
 }
 function driveTrafficLane(i){
@@ -1779,6 +1959,7 @@ function updateDriveLaneHUD(){
 function updatePrologue(dt){
   state.prologueTimer+=dt;
   updatePersonalScare(dt);
+  updateWhispers(dt);
   if(state.prologueStage==='drive'){
     const forward=keys.w||keys.arrowup;
     const brake=keys.s||keys.arrowdown;
@@ -2366,7 +2547,7 @@ function nearestInteractable(){
   for(const s of survivors){
     if(s.delivered)continue;
     const d=dist(player.x,player.y,s.x,s.y);
-    if(d<76&&d<best){best=d;found=s;}
+    if(d<112&&d<best){best=d;found=s;}
   }
   return found;
 }
@@ -2539,6 +2720,38 @@ function updateObjectives(){
   const tasks=currentTasks();
   $('taskList').innerHTML=tasks.map(t=>'<div class="task-row '+(t.done?'done':'')+'"><div class="task-mark">'+(t.done?'✓':'□')+'</div><div class="task-copy">'+escapeHTML(t.text)+'</div></div>').join('');
 }
+function updateSurvivorLocator(){
+  const box=$('survivorLocator');
+  const main=$('survivorLocatorMain');
+  const sub=$('survivorLocatorSub');
+  if(!box||!main||!sub)return;
+  if(!state.running||state.prologueStage!=='swamp'||state.gameOver){box.classList.remove('visible');return;}
+  box.classList.add('visible');
+  if(state.floor==='inside'){
+    main.textContent='SURVIVOR SIGNAL: OUTSIDE';
+    sub.textContent='Exit this building, then follow the green signal arrow to the nearest missing person.';
+    return;
+  }
+  const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+  const followers=survivors.filter(s=>s.following&&!s.delivered);
+  const delivered=survivors.filter(s=>s.delivered).length;
+  if(missing.length){
+    const target=missing[0];
+    const d=dist(player.x,player.y,target.x,target.y);
+    const a=angleTo(player.x,player.y,target.x,target.y);
+    const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
+    const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
+    main.innerHTML=''+escapeHTML(target.name.toUpperCase())+' <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    const phrase=d<112?'YOU ARE CLOSE — PRESS E / SEARCH TO RESCUE.':d<360?'SIGNAL STRONG — FOLLOW THE GREEN BEACON.':'SIGNAL WEAK — FOLLOW THE EDGE ARROW AND GREEN MINIMAP MARKER.';
+    sub.textContent='RESCUED: '+delivered+'/'+survivors.length+' SAFE · '+phrase;
+  }else if(followers.length){
+    main.textContent='SURVIVORS LOCATED: '+followers.map(s=>s.name.toUpperCase()).join(' + ');
+    sub.textContent='They are following you. Reach the extraction vehicle together; do not leave them behind.';
+  }else{
+    main.textContent='ALL SURVIVORS ACCOUNTED FOR';
+    sub.textContent=''+delivered+'/'+survivors.length+' safe. Continue with evidence and truck keys.';
+  }
+}
 function updateHUD(){
   if(!player)return;
   $('health').textContent=player.hp>70?'CONDITION: STABLE':player.hp>35?'CONDITION: WOUNDED':'CONDITION: CRITICAL';
@@ -2559,6 +2772,7 @@ function updateHUD(){
   else if(completeSurvivors<2){$('objective').textContent='Find the missing people '+completeSurvivors+'/2.';}
   else if(!state.keysFound){$('objective').textContent='Find the patrol truck keys.';}
   else{$('objective').textContent='Reach the roadside extraction point.';}
+  updateSurvivorLocator();
   const near=player&&state.running?nearestInteractable():null;
   if(near){
     $('prompt').textContent='E / SEARCH — '+String(near.name||'Investigate').toUpperCase();
@@ -2937,6 +3151,7 @@ function update(dt){
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
   updatePersonalScare(dt);
   state.elapsed+=dt;
+  updateWhispers(dt);
   state.missionClock+=dt;
   updatePartnerChat();
   if(state.options.personalScares&&state.elapsed>19&&state.personalScareCount===2&&state.personalScareCooldown<=0)triggerPersonalScare('duplicate');
@@ -3537,6 +3752,7 @@ function drawWorld(){
   drawRain();
   drawLighting();
   drawPatrolSirenWorldGlow();
+  drawSurvivorGuidance();
   drawMini();
   if(state.sceneFade>0){ctx.fillStyle='rgba(0,0,0,'+state.sceneFade+')';ctx.fillRect(0,0,W,H);}
 }
@@ -3676,6 +3892,56 @@ function drawLightingInterior(){
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
 }
+function drawSurvivorGuidance(){
+  if(state.prologueStage!=='swamp'||state.floor!=='outside'||!state.running)return;
+  const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+  if(!missing.length)return;
+  const target=missing[0];
+  const d=dist(player.x,player.y,target.x,target.y);
+  const sx=target.x-camera.x;
+  const sy=target.y-camera.y;
+  const onScreen=sx>22&&sy>22&&sx<W-22&&sy<H-22;
+  if(onScreen){
+    const pulse=.5+.5*Math.sin(state.elapsed*4.2);
+    const bx=sx,by=sy-25;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    const glow=ctx.createRadialGradient(bx,by,2,bx,by,28+12*pulse);
+    glow.addColorStop(0,'rgba(179,255,143,.55)');
+    glow.addColorStop(.35,'rgba(122,220,115,.20)');
+    glow.addColorStop(1,'rgba(122,220,115,0)');
+    ctx.fillStyle=glow;ctx.fillRect(bx-44,by-44,88,88);
+    ctx.restore();
+    ctx.strokeStyle='rgba(188,255,157,'+(.65+.3*pulse)+')';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(bx,by,8+4*pulse,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#d8ffc0';ctx.beginPath();ctx.moveTo(bx,by-5);ctx.lineTo(bx+5,by);ctx.lineTo(bx,by+5);ctx.lineTo(bx-5,by);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(168,235,143,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,by+10);ctx.lineTo(sx,sy-13);ctx.stroke();
+    ctx.fillStyle='rgba(3,10,5,.88)';ctx.fillRect(sx-58,sy-51,116,15);
+    ctx.strokeStyle='#87ba72';ctx.strokeRect(sx-58,sy-51,116,15);
+    ctx.fillStyle='#d5f2b7';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('SOS · '+target.name.toUpperCase(),sx,sy-40);
+    if(d<135){ctx.fillStyle='#f1e4ae';ctx.font='bold 10px monospace';ctx.fillText('E / SEARCH TO HELP',sx,sy-62);}
+  }else{
+    const pxp=clamp(player.x-camera.x,0,W);
+    const pyp=clamp(player.y-camera.y,0,H);
+    const vx=sx-pxp;
+    const vy=sy-pyp;
+    const angle=Math.atan2(vy,vx);
+    const marginX=Math.min(52,W*.13),marginTop=155,marginBottom=H-150;
+    const scaleX=vx>0?(W-marginX-pxp)/vx:vx<0?(marginX-pxp)/vx:Infinity;
+    const scaleY=vy>0?(marginBottom-pyp)/vy:vy<0?(marginTop-pyp)/vy:Infinity;
+    let scale=Math.min(scaleX>0?scaleX:Infinity,scaleY>0?scaleY:Infinity);
+    if(!Number.isFinite(scale))scale=1;
+    let ax=pxp+vx*scale,ay=pyp+vy*scale;
+    ax=clamp(ax,marginX,W-marginX);ay=clamp(ay,marginTop,marginBottom);
+    ctx.save();ctx.translate(ax,ay);ctx.rotate(angle+Math.PI/2);
+    ctx.fillStyle='#b9f49b';ctx.strokeStyle='#122211';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(10,10);ctx.lineTo(0,5);ctx.lineTo(-10,10);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();
+    ctx.fillStyle='rgba(3,10,5,.88)';ctx.fillRect(ax-48,ay+14,96,16);
+    ctx.strokeStyle='#87ba72';ctx.strokeRect(ax-48,ay+14,96,16);
+    ctx.fillStyle='#d5f2b7';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(target.name.toUpperCase()+' · '+Math.round(d)+'m',ax,ay+25);
+  }
+}
 function drawMini(){
   const mw=mini.width;
   const mh=mini.height;
@@ -3717,9 +3983,16 @@ function drawMini(){
   }
   for(const s of survivors){
     if(s.delivered)continue;
-    mctx.fillStyle=s.following?'#9ac58a':'#6d9b83';
-    mctx.fillRect(s.x/WORLD.w*mw-2,s.y/WORLD.h*mh-2,4,4);
+    const sx=s.x/WORLD.w*mw;
+    const sy=s.y/WORLD.h*mh;
+    const pulse=.5+.5*Math.sin(state.elapsed*4.2+(s.id==='wade'?1.4:0));
+    mctx.beginPath();mctx.arc(sx,sy,5+2*pulse,0,Math.PI*2);
+    mctx.strokeStyle=s.following?'rgba(183,225,143,.65)':'rgba(177,255,144,'+(0.55+.4*pulse)+')';mctx.lineWidth=1.4;mctx.stroke();
+    mctx.fillStyle=s.following?'#e0f1b1':'#a9ff88';mctx.fillRect(sx-3,sy-3,7,7);
+    mctx.strokeStyle='#071009';mctx.lineWidth=1;mctx.strokeRect(sx-3,sy-3,7,7);
+    mctx.fillStyle='#071009';mctx.font='bold 6px monospace';mctx.textAlign='center';mctx.textBaseline='middle';mctx.fillText(s.id==='ana'?'M':'E',sx,sy+.2);
   }
+  mctx.fillStyle='#b8dfa0';mctx.font='bold 7px monospace';mctx.textAlign='left';mctx.textBaseline='top';mctx.fillText('M/E = SURVIVOR',5,4);
   mctx.fillStyle='#fff0bc';
   mctx.fillRect(player.x/WORLD.w*mw-2,player.y/WORLD.h*mh-2,5,5);
   if(monster&&monster.active){
@@ -3908,14 +4181,17 @@ function bindEvents(){
   $('backCredits').addEventListener('click',()=>setScreen('menu'));
   $('disclaimerBtn').addEventListener('click',()=>{
     $('enablePersonalScares').checked=state.options.personalScares;
+    $('enableVoiceWhispers').checked=state.options.voiceWhispers;
     $('disclaimerPanel').classList.remove('hidden');
   });
   $('dismissDisclaimer').addEventListener('click',()=>{
     state.options.personalScares=$('enablePersonalScares').checked;
+    state.options.voiceWhispers=$('enableVoiceWhispers').checked;
     $('disclaimerPanel').classList.add('hidden');
-    toast(state.options.personalScares?'FICTIONAL PERSONAL-FILE SCARES ENABLED.':'PERSONAL-FILE SCARES DISABLED.',1.6);
+    toast(state.options.voiceWhispers?'VOICE WHISPERS ENABLED. THE RADIO MAY LIE.':'VOICE WHISPERS DISABLED.',1.8);
   });
   $('enablePersonalScares').addEventListener('change',e=>state.options.personalScares=e.target.checked);
+  $('enableVoiceWhispers').addEventListener('change',e=>state.options.voiceWhispers=e.target.checked);
   $('objectiveToggle').addEventListener('click',openObjectives);
   $('closeObjectives').addEventListener('click',closeOverlay);
   $('closeInventory').addEventListener('click',closeOverlay);
