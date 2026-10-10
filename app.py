@@ -610,6 +610,82 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
   color: #8f9b8d;
   font-size: 18px;
 }
+
+#partnerChat {
+  display:none;
+  position:fixed;
+  z-index:5;
+  top:14px;
+  left:14px;
+  width:min(292px,31vw);
+  max-height:24vh;
+  overflow:hidden;
+  color:#e7ebdf;
+  background:linear-gradient(180deg,rgba(5,12,10,.96),rgba(8,15,12,.90));
+  border:1px solid #70816d;
+  box-shadow:0 5px 24px #000b,inset 0 0 0 1px #17231a;
+  text-shadow:0 1px 3px #000;
+  pointer-events:none;
+}
+body.prologue-mode.prologue-drive #partnerChat,
+body.prologue-mode.prologue-arrival #partnerChat,
+body.game-active:not(.prologue-mode) #partnerChat { display:block; }
+body.game-active:not(.prologue-mode) #partnerChat { top:142px; }
+.partner-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:8px 10px;
+  background:#1b2a20;
+  border-bottom:1px solid #4e624d;
+  color:#d7d8bc;
+  font-size:10px;
+  letter-spacing:1px;
+}
+.partner-live { color:#9fc18c; white-space:nowrap; }
+.partner-live::before { content:"● "; color:#8cc77c; }
+#partnerMessages { padding:7px 8px 8px; display:flex; flex-direction:column; gap:6px; max-height:calc(24vh - 34px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none; }
+.partner-message { max-width:96%; padding:6px 8px; font-size:10px; line-height:1.45; white-space:pre-wrap; overflow-wrap:anywhere; background:#151e18; border-left:2px solid #8ca47e; }
+.partner-message.outgoing { align-self:flex-end; background:#20231b; border-left:0; border-right:2px solid #c5ae70; color:#e1d8bc; }
+.partner-sender { display:block; margin-bottom:2px; color:#a7c19a; font-size:8px; letter-spacing:.7px; }
+.partner-message.outgoing .partner-sender { color:#d2b979; }
+#driveLaneHUD {
+  display:none;
+  position:fixed;
+  z-index:4;
+  top:84px;
+  right:14px;
+  width:min(250px,31vw);
+  padding:9px 10px 10px;
+  color:#e5eadc;
+  background:rgba(4,9,7,.91);
+  border:1px solid #77846b;
+  box-shadow:0 5px 22px #0009;
+  pointer-events:none;
+}
+body.prologue-mode.prologue-drive #driveLaneHUD { display:block; }
+.drive-lane-kicker { font-size:9px; color:#b0c3a2; letter-spacing:1.2px; }
+#driveLaneLabel { margin:5px 0 7px; font-size:12px; font-weight:bold; color:#e3dfc3; }
+.lane-track { position:relative; height:24px; display:grid; grid-template-columns:1fr 12px 1fr; gap:2px; border:1px solid #566354; background:#121812; overflow:hidden; }
+.lane-track .lane-oncoming { background:repeating-linear-gradient(135deg,#242c2b 0 6px,#303a36 6px 12px); }
+.lane-track .lane-center { z-index:1; background:linear-gradient(90deg,#a7904e 0 30%,#e2cb78 30% 42%,#31301f 42% 58%,#e2cb78 58% 70%,#a7904e 70%); }
+.lane-track .lane-travel { background:repeating-linear-gradient(135deg,#1f2e22 0 6px,#304331 6px 12px); }
+#laneMarker { position:absolute; z-index:2; left:75%; top:1px; width:4px; height:20px; background:#fff4bc; border:1px solid #151711; box-shadow:0 0 8px #fff2ab; transform:translateX(-50%); }
+.lane-labels { display:flex; justify-content:space-between; margin-top:4px; color:#9da99a; font-size:8px; }
+#laneAdvice { margin-top:6px; color:#c4cebd; font-size:9px; line-height:1.4; }
+@media(max-width:700px) {
+  #partnerChat { width:min(240px,57vw); max-height:23vh; top:8px; left:8px; }
+  body.game-active:not(.prologue-mode) #partnerChat { top:128px; }
+  #partnerMessages { max-height:calc(23vh - 34px); }
+  .partner-head { font-size:9px; padding:6px 7px; }
+  .partner-message { font-size:9px; padding:5px 6px; }
+  #driveLaneHUD { top:8px; right:8px; width:min(195px,40vw); padding:7px; }
+  .drive-lane-kicker { font-size:8px; }
+  #driveLaneLabel { font-size:10px; }
+  #laneAdvice { font-size:8px; }
+}
+
 #touchControls {
   display: none;
   position: fixed;
@@ -769,6 +845,17 @@ body.game-active.mobile-mode #minimap {
 </head>
 <body>
 <canvas id="game"></canvas>
+<div id="partnerChat" aria-live="polite" aria-label="Partner officer radio chat">
+  <div class="partner-head"><span id="partnerTitle">SECURE OFFICER CHAT</span><span class="partner-live">LINK ACTIVE</span></div>
+  <div id="partnerMessages"></div>
+</div>
+<div id="driveLaneHUD" aria-label="Driving lane indicator">
+  <div class="drive-lane-kicker">PATROL VEHICLE · LANE ASSIST</div>
+  <div id="driveLaneLabel">RIGHT / TRAVEL LANE</div>
+  <div class="lane-track"><div class="lane-oncoming"></div><div class="lane-center"></div><div class="lane-travel"></div><div id="laneMarker"></div></div>
+  <div class="lane-labels"><span>ONCOMING</span><span>DOUBLE YELLOW</span><span>YOUR LANE</span></div>
+  <div id="laneAdvice">Keep to the right of the double yellow lines.</div>
+</div>
 <div id="damageFlash"></div>
 <div id="hud">
   <div id="topbar">
@@ -1008,6 +1095,8 @@ const state={
   driveWiper:0,
   driveSkid:0,
   driveHydroplane:0,
+  partnerSent:{},
+  partnerChatCount:0,
   lastBuildingExit:null,
   sceneFade:0,
   horrorBeat:0,
@@ -1518,6 +1607,7 @@ function resetGame(){
   ambientTimer=0;
   initializeAssets();
   $('officerName').textContent=spec.name.toUpperCase();
+  resetPartnerChat();
   $('hud').style.display='block';
   document.body.classList.add('game-active','prologue-mode','prologue-call');
   applyControlMode();
@@ -1544,7 +1634,7 @@ function setPrologueStage(stage){
   document.body.classList.toggle('prologue-drive',stage==='drive');
   document.body.classList.toggle('prologue-arrival',stage==='arrival');
   document.body.classList.toggle('prologue-mode',stage!=='swamp');
-  if(stage==='drive'){state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;state.driveCollisionCooldown=1.2;state.driveCrashTimer=0;state.driveDamage=0;state.driveCollisionCount=0;state.driveWheel=0;state.driveGear=1;state.driveRpm=900;state.driveWiper=0;state.driveSkid=0;state.driveHydroplane=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
+  if(stage==='drive'){if(!state.partnerSent||Object.keys(state.partnerSent).length===0)resetPartnerChat();state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;state.driveCollisionCooldown=1.2;state.driveCrashTimer=0;state.driveDamage=0;state.driveCollisionCount=0;state.driveWheel=0;state.driveGear=1;state.driveRpm=900;state.driveWiper=0;state.driveSkid=0;state.driveHydroplane=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
   if(stage==='arrival'){state.driveSpeed=0;sound('radio');tone(76,.75,'triangle',.08,-34);}
 }
 function acceptDispatch(){
@@ -1576,6 +1666,74 @@ function driveTrafficLane(i){
 }
 function currentDriveLane(){
   return .25+state.driveLane*.48;
+}
+function partnerOfficerKey(){return state.selectedCharacter==='yumi'?'hugo':'yumi';}
+function partnerOfficerName(){return specs[partnerOfficerKey()].name;}
+function resetPartnerChat(){
+  state.partnerSent={};
+  state.partnerChatCount=0;
+  const title=$('partnerTitle');
+  const box=$('partnerMessages');
+  if(title)title.textContent=partnerOfficerName().toUpperCase()+' // SECURE CHAT';
+  if(box)box.replaceChildren();
+  addPartnerMessage('Secure channel connected. I’m staying on your line.','incoming');
+}
+function addPartnerMessage(message,side='incoming'){
+  const box=$('partnerMessages');
+  if(!box)return;
+  const row=document.createElement('div');
+  row.className='partner-message '+(side==='outgoing'?'outgoing':'incoming');
+  const sender=document.createElement('span');
+  sender.className='partner-sender';
+  sender.textContent=side==='outgoing'?'YOU':partnerOfficerName().toUpperCase();
+  const copy=document.createElement('span');
+  copy.textContent=message;
+  row.append(sender,copy);
+  box.appendChild(row);
+  while(box.children.length>5)box.removeChild(box.firstElementChild);
+  box.scrollTop=box.scrollHeight;
+  state.partnerChatCount++;
+}
+function partnerExchange(key,incoming,outgoing){
+  if(state.partnerSent[key])return;
+  state.partnerSent[key]=true;
+  addPartnerMessage(incoming,'incoming');
+  if(outgoing)setTimeout(()=>{
+    if(state.running&&!state.gameOver)addPartnerMessage(outgoing,'outgoing');
+  },850);
+}
+function updatePartnerChat(){
+  const stage=state.prologueStage;
+  if(stage==='drive'){
+    const p=state.driveProgress;
+    if(p>=7)partnerExchange('drive7','You good? Dispatch says you’re the only unit heading out. Watch the standing water.','Copy. I’m rolling to Mile Marker 9.');
+    if(p>=21)partnerExchange('drive21','My map shows two patrol units under your call sign. You should only be seeing one.','I’m the only car on this road.');
+    if(p>=39)partnerExchange('drive39','Your siren is coming through my radio, but your unit signal says the lightbar is off.','The red and blue lights are flashing right in front of me.');
+    if(p>=60)partnerExchange('drive60','Don’t stop for anyone standing on the shoulder. Especially anyone in uniform.','Who else would be out here?');
+    if(p>=81)partnerExchange('drive81','Dashcam feed just caught someone in your back seat. Keep driving. Don’t look.','There’s nobody behind me. I’m not looking.');
+  }else if(stage==='arrival'){
+    if(state.prologueTimer>2.5)partnerExchange('arrival2','I just lost your camera feed. I can still hear the engine, but the picture is gone.','Stay on the line. I’m stepping out now.');
+  }else if(stage==='swamp'){
+    if(state.elapsed>5.2)partnerExchange('swamp5','Your bodycam shows you standing beside the cruiser. Something is standing exactly where you were.','I’m looking at the car. There’s nothing there.');
+    if(state.elapsed>16)partnerExchange('swamp16','That voice on channel two isn’t me. I haven’t said a word for the last minute.','Then who keeps answering my radio?');
+    if(evidence>=1)partnerExchange('evidence1','I’m getting text from the case file. It says “stop trusting the person on this chat.”','Is that supposed to be a joke?');
+    if(evidence>=3)partnerExchange('evidence3','I can see your flashlight on the live feed. There is a second beam moving beside yours.','I only have one flashlight.');
+    if(state.rescued>=1)partnerExchange('rescued1','The survivor’s file says they were rescued here years ago. Their name is on a report dated tomorrow.','I’m bringing them out. Keep the channel open.');
+  }
+}
+function updateDriveLaneHUD(){
+  const value=currentDriveLane();
+  const marker=$('laneMarker');
+  const label=$('driveLaneLabel');
+  const advice=$('laneAdvice');
+  if(marker)marker.style.left=(clamp((value+.5),0,1)*100)+'%';
+  let text='RIGHT / TRAVEL LANE',tip='Keep to the right of the double yellow lines.',color='#e3dfc3';
+  if(value<-.12){text='ONCOMING LANE';tip='DANGER: steer right immediately to avoid head-on traffic.';color='#f17669';}
+  else if(value<.10){text='CROSSING CENTERLINE';tip='Move right. The double yellow lines are directly beneath you.';color='#f0c56f';}
+  else if(value>.405){text='RIGHT SHOULDER';tip='You are drifting off the road. Steer left gently.';color='#f17669';}
+  else if(state.driveNearMissTimer>0){text='RIGHT LANE · CLOSE PASS';tip='Traffic passed close by. Hold your lane.';color='#f0d48c';}
+  if(label){label.textContent=text;label.style.color=color;}
+  if(advice)advice.textContent=tip;
 }
 function updatePrologue(dt){
   state.prologueTimer+=dt;
@@ -1686,6 +1844,8 @@ function updatePrologue(dt){
   }
   for(const r of raindrops){r.y+=r.speed*dt*.65;r.x-=r.speed*.16*dt;if(r.y>H+15){r.y=-15;r.x=Math.random()*W;}if(r.x<-15)r.x=W+10;}
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
+  updatePartnerChat();
+  if(state.prologueStage==='drive')updateDriveLaneHUD();
 }
 function poly(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();}
 function strokePoly(points,color,width=1){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.stroke();}
@@ -2032,7 +2192,19 @@ function drawDriveScene(){
   ctx.strokeStyle='#596057';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=segments;i++){const z=i/segments;const x=centerAt(z)-halfAt(z);if(i===0)ctx.moveTo(x,yAt(z));else ctx.lineTo(x,yAt(z));}for(let i=segments;i>=0;i--){const z=i/segments;ctx.lineTo(centerAt(z)+halfAt(z),yAt(z));}ctx.stroke();
   for(let i=0;i<26;i++){
     const z=((i/26+state.driveScroll*.009)%1);const y=yAt(z);const half=halfAt(z);const c=centerAt(z);const dashH=2+z*24;const dashW=1+z*2;
-    if(i%2===0){px(c-dashW*1.9,y-dashH*.5,dashW,dashH,'#c4ad65');px(c+dashW*.9,y-dashH*.5,dashW,dashH,'#c4ad65');}
+    if(i%2===0){
+      const lineGap=3+z*8;
+      const lineWidth=1.4+z*3.0;
+      const lineHeight=2+z*28;
+      px(c-lineGap-lineWidth,y-lineHeight*.5,lineWidth,lineHeight,'#665a34');
+      px(c+lineGap,y-lineHeight*.5,lineWidth,lineHeight,'#665a34');
+      px(c-lineGap+1,y-lineHeight*.5,lineWidth*.66,lineHeight,'#f2d46d');
+      px(c+lineGap+1,y-lineHeight*.5,lineWidth*.66,lineHeight,'#f2d46d');
+      if((city||suburb)&&z>.28){
+        px(c-half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
+        px(c+half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
+      }
+    }
     const edgeWidth=1+z*3;
     if(i%2===0){px(c-half*.98,y-dashH*.5,edgeWidth,dashH,'#b7c3b5');px(c+half*.98-edgeWidth,y-dashH*.5,edgeWidth,dashH,'#b7c3b5');}
     if(city&&i%3===0){px(c-half*.50,y-dashH*.36,Math.max(1,dashW*.6),dashH*.7,'#888e7c');px(c+half*.50,y-dashH*.36,Math.max(1,dashW*.6),dashH*.7,'#888e7c');}
@@ -2081,6 +2253,7 @@ function drawDriveScene(){
   ctx.restore();
   const barW=Math.min(500,W*.54),barX=(W-barW)/2,barY=H*.075;px(barX-8,barY-10,barW+16,60,'rgba(3,7,5,.86)');ctx.strokeStyle='#47574b';ctx.strokeRect(barX-8,barY-10,barW+16,60);ctx.fillStyle='#bfc8b3';ctx.font='bold 12px monospace';ctx.textAlign='left';ctx.fillText('ROUTE 9  /  DISPATCH DESTINATION',barX,barY+7);px(barX,barY+18,barW,9,'#263129');px(barX+2,barY+20,(barW-4)*progress,5,progress>.82?'#b34a43':'#b6b17a');ctx.fillStyle='#e5e2d4';ctx.textAlign='right';ctx.fillText(Math.floor(progress*100)+'%',barX+barW,barY+7);
   ctx.textAlign='center';ctx.fillStyle=playerLane>.43||playerLane<-.43?'#e86c62':state.driveNearMissTimer>0?'#e6d391':'#d8ddce';ctx.font='bold '+Math.max(11,Math.min(15,W*.016))+'px monospace';ctx.fillText(playerLane>.43||playerLane<-.43?'WARNING: ROAD EDGE':state.driveNearMissTimer>0?'CLOSE PASS — KEEP YOUR LANE':state.driveSpeed<4?'HOLD W / UP TO START MOVING':'W/↑ ACCELERATE   S/↓ BRAKE   A/D STEER',W/2,H*.615);
+  updateDriveLaneHUD();
   const integrity=Math.max(0,100-state.driveDamage);px(W*.72,H*.86,W*.20,6,'#090e0b');px(W*.72+2,H*.86+2,W*.196*(integrity/100),2,integrity<35?'#d34a42':integrity<65?'#c2a65e':'#829b76');ctx.textAlign='left';ctx.fillStyle=integrity<35?'#ef7268':'#b6c3a8';ctx.font='bold 9px monospace';ctx.fillText('VEHICLE CONDITION '+Math.round(integrity)+'%',W*.72,H*.855);
   if(state.driveSkid>.05){ctx.fillStyle='rgba(190,207,195,'+state.driveSkid*.12+')';ctx.fillRect(0,H*.52,W,H*.28);}
   if(state.driveCrashTimer>0){
@@ -2724,6 +2897,7 @@ function update(dt){
   updatePersonalScare(dt);
   state.elapsed+=dt;
   state.missionClock+=dt;
+  updatePartnerChat();
   if(state.options.personalScares&&state.elapsed>19&&state.personalScareCount===2&&state.personalScareCooldown<=0)triggerPersonalScare('duplicate');
   if(state.horrorBeat===0&&state.elapsed>4.8){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you beside the car.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.7;state.screenShake=.15;}
   if(state.horrorBeat===1&&state.elapsed>10.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED.',3.1);}
