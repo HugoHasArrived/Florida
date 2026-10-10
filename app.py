@@ -612,24 +612,25 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 }
 
 #partnerChat {
-  display:none;
   position:fixed;
-  z-index:5;
+  z-index:8;
   top:14px;
   left:14px;
-  width:min(292px,31vw);
-  max-height:24vh;
+  width:min(310px,34vw);
+  max-height:36vh;
   overflow:hidden;
+  display:none;
+  flex-direction:column;
   color:#e7ebdf;
-  background:linear-gradient(180deg,rgba(5,12,10,.96),rgba(8,15,12,.90));
-  border:1px solid #70816d;
+  background:linear-gradient(180deg,rgba(5,12,10,.98),rgba(8,15,12,.96));
+  border:1px solid #82927c;
   box-shadow:0 5px 24px #000b,inset 0 0 0 1px #17231a;
   text-shadow:0 1px 3px #000;
-  pointer-events:none;
+  pointer-events:auto;
 }
 body.prologue-mode.prologue-drive #partnerChat,
 body.prologue-mode.prologue-arrival #partnerChat,
-body.game-active:not(.prologue-mode) #partnerChat { display:block; }
+body.game-active:not(.prologue-mode) #partnerChat { display:flex; }
 body.game-active:not(.prologue-mode) #partnerChat { top:142px; }
 .partner-head {
   display:flex;
@@ -645,11 +646,17 @@ body.game-active:not(.prologue-mode) #partnerChat { top:142px; }
 }
 .partner-live { color:#9fc18c; white-space:nowrap; }
 .partner-live::before { content:"● "; color:#8cc77c; }
-#partnerMessages { padding:7px 8px 8px; display:flex; flex-direction:column; gap:6px; max-height:calc(24vh - 34px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none; }
+#partnerMessages { padding:7px 8px 8px; display:flex; flex-direction:column; gap:6px; max-height:calc(36vh - 84px); min-height:58px; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; flex:1 1 auto; }
 .partner-message { max-width:96%; padding:6px 8px; font-size:10px; line-height:1.45; white-space:pre-wrap; overflow-wrap:anywhere; background:#151e18; border-left:2px solid #8ca47e; }
 .partner-message.outgoing { align-self:flex-end; background:#20231b; border-left:0; border-right:2px solid #c5ae70; color:#e1d8bc; }
 .partner-sender { display:block; margin-bottom:2px; color:#a7c19a; font-size:8px; letter-spacing:.7px; }
 .partner-message.outgoing .partner-sender { color:#d2b979; }
+#partnerComposer { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px; padding:6px; border-top:1px solid #485847; background:#080e0b; pointer-events:auto; }
+#partnerInput { display:block; width:100%; min-width:0; padding:8px 9px; border:1px solid #4a5b4a; border-radius:0; background:#111a13; color:#f1f0df; font-size:11px; line-height:1.2; letter-spacing:0; text-transform:none; user-select:text; -webkit-user-select:text; pointer-events:auto; }
+#partnerInput::placeholder { color:#849183; opacity:1; }
+#partnerInput:focus { outline:1px solid #d0b773; border-color:#d0b773; }
+#partnerSend { padding:7px 9px; font-size:9px; letter-spacing:.5px; white-space:nowrap; }
+.partner-hint { padding:0 8px 5px; color:#788676; font-size:8px; line-height:1.3; }
 #driveLaneHUD {
   display:none;
   position:fixed;
@@ -675,9 +682,11 @@ body.prologue-mode.prologue-drive #driveLaneHUD { display:block; }
 .lane-labels { display:flex; justify-content:space-between; margin-top:4px; color:#9da99a; font-size:8px; }
 #laneAdvice { margin-top:6px; color:#c4cebd; font-size:9px; line-height:1.4; }
 @media(max-width:700px) {
-  #partnerChat { width:min(240px,57vw); max-height:23vh; top:8px; left:8px; }
+  #partnerChat { width:min(270px,66vw); max-height:37vh; top:8px; left:8px; }
   body.game-active:not(.prologue-mode) #partnerChat { top:128px; }
-  #partnerMessages { max-height:calc(23vh - 34px); }
+  #partnerMessages { max-height:calc(37vh - 84px); min-height:44px; }
+  #partnerInput { padding:7px 6px; font-size:10px; }
+  #partnerSend { padding:7px 6px; font-size:8px; }
   .partner-head { font-size:9px; padding:6px 7px; }
   .partner-message { font-size:9px; padding:5px 6px; }
   #driveLaneHUD { top:8px; right:8px; width:min(195px,40vw); padding:7px; }
@@ -845,9 +854,14 @@ body.game-active.mobile-mode #minimap {
 </head>
 <body>
 <canvas id="game"></canvas>
-<div id="partnerChat" aria-live="polite" aria-label="Partner officer radio chat">
+<div id="partnerChat" aria-label="Partner officer radio chat">
   <div class="partner-head"><span id="partnerTitle">SECURE OFFICER CHAT</span><span class="partner-live">LINK ACTIVE</span></div>
-  <div id="partnerMessages"></div>
+  <div id="partnerMessages" aria-live="polite" aria-relevant="additions text"></div>
+  <form id="partnerComposer" autocomplete="off">
+    <input id="partnerInput" type="text" maxlength="180" placeholder="Message your partner…" aria-label="Type a message to the other officer" autocomplete="off" spellcheck="false">
+    <button id="partnerSend" type="submit">SEND ↗</button>
+  </form>
+  <div class="partner-hint">ENTER TO SEND · SECURE CHANNEL</div>
 </div>
 <div id="driveLaneHUD" aria-label="Driving lane indicator">
   <div class="drive-lane-kicker">PATROL VEHICLE · LANE ASSIST</div>
@@ -1702,6 +1716,33 @@ function partnerExchange(key,incoming,outgoing){
     if(state.running&&!state.gameOver)addPartnerMessage(outgoing,'outgoing');
   },850);
 }
+function partnerReplyFor(message){
+  const text=message.toLowerCase();
+  if(/\b(help|scared|afraid|panic|hurt|injured)\b/.test(text))return state.prologueStage==='drive'?'I’m here. Keep your eyes on the road and keep moving toward Mile Marker 9. I can’t get another unit cleared to you.':'Stay with me. Keep the flashlight up and move toward the next marked objective. I am not seeing anyone else on your camera.';
+  if(/\b(where|location|position|map)\b/.test(text))return state.prologueStage==='drive'?'Your tracker says Mile Marker 9, but the road feed keeps looping. Read the signs, not the GPS.':'Your signal is moving even when the map says you’re standing still. Follow the evidence markers and don’t trust the minimap blindly.';
+  if(/\b(backup|police|dispatch|unit)\b/.test(text))return 'Dispatch says you are still the only unit assigned to this call. I’m checking the roster again. Please don’t answer any other voice using our call signs.';
+  if(/\b(smiler|monster|creature|thing|figure|someone|person)\b/.test(text))return 'Don’t approach it. Keep distance and use the light only when you need to. If it stops moving, that does not mean it is gone.';
+  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'Easy on the gas. Stay right of the double yellow lines, brake before the bend, and watch for headlights that do not move.';
+  if(/\b(evidence|clue|file|case)\b/.test(text))return 'Copy. Log everything you find, but don’t read the personnel details over the radio. The file system has been showing records that do not exist.';
+  if(/\b(hello|hey|hi|you there|copy)\b/.test(text))return 'I’m here. Radio is clear on my end, although I keep hearing your microphone open when you are not speaking.';
+  if(/\b(trust|fake|real|you)\b/.test(text))return 'Listen carefully: I will never ask you for your real name, address, or personal details. If a message asks for that, it is not me.';
+  if(state.prologueStage==='drive')return 'Received. I’m staying on the channel. Keep the vehicle steady and keep watching the shoulder—something is pacing your car.';
+  return 'Received. I’m still here on the secure channel. Keep moving, keep your flashlight ready, and tell me if you see another figure.';
+}
+function sendPartnerChat(){
+  const input=$('partnerInput');
+  if(!input)return;
+  const message=input.value.trim();
+  if(!message)return;
+  if(!state.running||state.gameOver){toast('CHAT CHANNEL IS NOT ACTIVE.',1.3);return;}
+  if(!['drive','arrival','swamp'].includes(state.prologueStage)){toast('WAIT UNTIL THE DISPATCH CALL CONNECTS.',1.4);return;}
+  input.value='';
+  addPartnerMessage(message,'outgoing');
+  const reply=partnerReplyFor(message);
+  window.setTimeout(()=>{
+    if(state.running&&!state.gameOver)addPartnerMessage(reply,'incoming');
+  },450+Math.random()*550);
+}
 function updatePartnerChat(){
   const stage=state.prologueStage;
   if(stage==='drive'){
@@ -1726,7 +1767,7 @@ function updateDriveLaneHUD(){
   const marker=$('laneMarker');
   const label=$('driveLaneLabel');
   const advice=$('laneAdvice');
-  if(marker)marker.style.left=(clamp((value+.5),0,1)*100)+'%';
+  if(marker){marker.style.left=(clamp((value+.5),0,1)*100)+'%';marker.style.background=value<.1?'#ff796e':value>.405?'#ff796e':'#fff4bc';}
   let text='RIGHT / TRAVEL LANE',tip='Keep to the right of the double yellow lines.',color='#e3dfc3';
   if(value<-.12){text='ONCOMING LANE';tip='DANGER: steer right immediately to avoid head-on traffic.';color='#f17669';}
   else if(value<.10){text='CROSSING CENTERLINE';tip='Move right. The double yellow lines are directly beneath you.';color='#f0c56f';}
@@ -1752,7 +1793,7 @@ function updatePrologue(dt){
       state.driveSpeed=Math.max(0,state.driveSpeed-(state.driveSpeed>70?3.2:5.4)*dt);
     }
     if(brake)state.driveSpeed=Math.max(0,state.driveSpeed-(state.driveSpeed>45?58:42)*dt);
-    state.driveLane=clamp(state.driveLane+state.driveWheel*dt*(.24+state.driveSpeed*.0068)*handling,-1.3,1.0);
+    state.driveLane=clamp(state.driveLane+state.driveWheel*dt*(.11+state.driveSpeed*.0032)*handling,-1.3,1.0);
     const playerLane=currentDriveLane();
     const curve=Math.sin(state.driveScroll*.0012+.9)*.20+Math.sin(state.driveScroll*.00047+2.2)*.10;
     if(state.driveSpeed>58&&Math.abs(curve)>.17&&Math.abs(state.driveWheel)<.15){
@@ -2196,10 +2237,10 @@ function drawDriveScene(){
       const lineGap=3+z*8;
       const lineWidth=1.4+z*3.0;
       const lineHeight=2+z*28;
-      px(c-lineGap-lineWidth,y-lineHeight*.5,lineWidth,lineHeight,'#665a34');
-      px(c+lineGap,y-lineHeight*.5,lineWidth,lineHeight,'#665a34');
-      px(c-lineGap+1,y-lineHeight*.5,lineWidth*.66,lineHeight,'#f2d46d');
-      px(c+lineGap+1,y-lineHeight*.5,lineWidth*.66,lineHeight,'#f2d46d');
+      px(c-lineGap-lineWidth-1,y-lineHeight*.5,lineWidth+2,lineHeight,'#211f17');
+      px(c+lineGap-1,y-lineHeight*.5,lineWidth+2,lineHeight,'#211f17');
+      px(c-lineGap-lineWidth*.20,y-lineHeight*.5,lineWidth*.76,lineHeight,'#ffe88b');
+      px(c+lineGap+lineWidth*.24,y-lineHeight*.5,lineWidth*.76,lineHeight,'#ffe88b');
       if((city||suburb)&&z>.28){
         px(c-half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
         px(c+half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
@@ -3435,7 +3476,7 @@ function drawLighting(){
   const working=flashlight&&flashlightBattery>0;
   const angle=flashlightAngle();
   const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
-  drawMaskCone(x,y,angle,flicker?92:510,.245,state.lightning>0?.16:.997,working?23:5);
+  drawMaskCone(x,y,angle,flicker?92:510,.245,state.lightning>0?0.16:(working?0.79:0.91),working?30:8);
   if(state.lightning>0){
     ctx.fillStyle='rgba(191,211,204,'+Math.min(.84,state.lightning*1.15)+')';
     ctx.fillRect(0,0,W,H);
@@ -3444,8 +3485,8 @@ function drawLighting(){
   }
   const vignette=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.78);
   vignette.addColorStop(0,'rgba(0,0,0,0)');
-  vignette.addColorStop(.63,'rgba(0,0,0,.09)');
-  vignette.addColorStop(1,'rgba(0,0,0,.58)');
+  vignette.addColorStop(.63,'rgba(0,0,0,.055)');
+  vignette.addColorStop(1,'rgba(0,0,0,.44)');
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
   if(monster&&monster.active){
@@ -3615,7 +3656,7 @@ function drawLightingInterior(){
   const y=player.y-camera.y+shakeY;
   const working=flashlight&&flashlightBattery>0;
   const angle=flashlightAngle();
-  drawMaskCone(x,y,angle,working?355:1,.26,.998,working?18:4);
+  drawMaskCone(x,y,angle,working?355:1,.26,working?0.82:0.92,working?24:7);
   const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
   if(flicker){
     ctx.fillStyle='rgba(0,0,0,.62)';
@@ -3631,7 +3672,7 @@ function drawLightingInterior(){
   const vignette=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.8);
   vignette.addColorStop(0,'rgba(0,0,0,0)');
   vignette.addColorStop(.62,'rgba(0,0,0,.08)');
-  vignette.addColorStop(1,'rgba(0,0,0,.56)');
+  vignette.addColorStop(1,'rgba(0,0,0,.43)');
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
 }
@@ -3826,6 +3867,8 @@ function drawPortraits(){
   });
 }
 function bindEvents(){
+  const partnerComposer=$('partnerComposer');
+  if(partnerComposer)partnerComposer.addEventListener('submit',e=>{e.preventDefault();sendPartnerChat();});
   $('start').addEventListener('click',()=>{audioStart();resetGame();});
   $('characterBtn').addEventListener('click',()=>{
     state.pendingCharacter=state.selectedCharacter;
@@ -3953,6 +3996,11 @@ function toggleFlashlight(){
   toast(flashlight?'FLASHLIGHT ON. STAY ALERT.':'FLASHLIGHT OFF. MOVE QUIETLY.',1.3);
 }
 function onKeyDown(e){
+  if(e.target&&e.target.id==='partnerInput'){
+    if(e.key==='Enter'){e.preventDefault();sendPartnerChat();}
+    if(e.key==='Escape'){e.preventDefault();e.target.blur();}
+    return;
+  }
   const key=e.key.toLowerCase();
   keys[key]=true;
   if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(key))e.preventDefault();
