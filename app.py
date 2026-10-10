@@ -2423,6 +2423,10 @@ function drawDriveDashboardDetails(){
   ctx.fillStyle='#7f8a79';ctx.font='7px monospace';ctx.textAlign='left';ctx.fillText('BELT  ABS  ENG  BRAKE  WARN',W*.40,H*.899);
 }
 function drawDriveScene(){
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+  ctx.filter='none';
+  ctx.shadowBlur=0;
   const progress=state.driveProgress/100;
   const city=progress<.39;
   const suburb=progress>=.39&&progress<.68;
@@ -2478,11 +2482,11 @@ function drawDriveScene(){
   const leftShoulder=[],rightShoulder=[];
   for(let i=0;i<=segments;i++){const z=i/segments;const c=centerAt(z),h=halfAt(z);leftShoulder.push([c-h-W*.035*z,yAt(z)]);}
   for(let i=segments;i>=0;i--){const z=i/segments;const c=centerAt(z),h=halfAt(z);rightShoulder.push([c+h+W*.035*z,yAt(z)]);}
-  poly(leftShoulder.concat(rightShoulder),city?'#293631':suburb?'#29392e':'#293b2b');
+  poly(leftShoulder.concat(rightShoulder),city?'#3c4a41':suburb?'#3c4d39':'#3d5339');
   const roadPoly=[];
   for(let i=0;i<=segments;i++){const z=i/segments;roadPoly.push([centerAt(z)-halfAt(z),yAt(z)]);}
   for(let i=segments;i>=0;i--){const z=i/segments;roadPoly.push([centerAt(z)+halfAt(z),yAt(z)]);}
-  poly(roadPoly,city?'#3a4445':suburb?'#3e4945':'#404a45');
+  poly(roadPoly,city?'#626b6b':suburb?'#646f68':'#606c5c');
   const wet=ctx.createLinearGradient(0,horizon,0,H);wet.addColorStop(0,'rgba(153,174,171,.10)');wet.addColorStop(.45,'rgba(177,196,190,.19)');wet.addColorStop(1,'rgba(194,204,184,.28)');
   ctx.save();ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.fillStyle=wet;ctx.fill();ctx.restore();
   ctx.save();ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.clip();ctx.globalCompositeOperation='screen';const headlightWash=ctx.createRadialGradient(W*.5,H*.76,Math.max(8,W*.018),W*.5,H*.76,Math.max(W*.48,H*.72));headlightWash.addColorStop(0,'rgba(255,242,194,.30)');headlightWash.addColorStop(.36,'rgba(227,236,206,.22)');headlightWash.addColorStop(.72,'rgba(196,216,203,.10)');headlightWash.addColorStop(1,'rgba(196,216,203,0)');ctx.fillStyle=headlightWash;ctx.fillRect(0,horizon,W,H-horizon);ctx.restore();
@@ -2526,6 +2530,17 @@ function drawDriveScene(){
     const signZ=.28;const signX=centerAt(signZ)-halfAt(signZ)-W*.045;const signY=yAt(signZ)-H*.04;
     if(signX>-W*.1&&signX<W*1.1){px(signX,signY,Math.max(3,W*.004),H*.045,'#242a25');px(signX-W*.055,signY-H*.012,W*.105,H*.032,'#22382d');ctx.strokeStyle='#b3bb9d';ctx.lineWidth=1;ctx.strokeRect(signX-W*.055,signY-H*.012,W*.105,H*.032);ctx.fillStyle='#d2d6be';ctx.font='bold '+Math.max(8,W*.010)+'px monospace';ctx.textAlign='center';ctx.fillText('MILE 9',signX,signY+H*.009);}
   }
+  ctx.save();
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+  ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.clip();
+  const roadVisibility=ctx.createLinearGradient(0,horizon,0,H*.76);
+  roadVisibility.addColorStop(0,'rgba(205,215,189,.22)');
+  roadVisibility.addColorStop(.38,'rgba(221,226,202,.38)');
+  roadVisibility.addColorStop(1,'rgba(236,230,196,.52)');
+  ctx.fillStyle=roadVisibility;ctx.fillRect(0,horizon,W,H*.76-horizon);
+  ctx.restore();
+  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   drawTrafficCars(horizon,centerAt(1),topHalf,bottomHalf,city||suburb);
   drawDrivePixelDetails(horizon,centerAt,halfAt,yAt,city,suburb);
   const beam=ctx.createRadialGradient(W*.5,H*.65,5,W*.5,H*.75,H*.72);beam.addColorStop(0,'rgba(231,228,190,.20)');beam.addColorStop(.28,'rgba(209,215,189,.105)');beam.addColorStop(1,'rgba(218,226,210,0)');ctx.fillStyle=beam;ctx.fillRect(0,H*.28,W,H*.72);
@@ -2576,7 +2591,9 @@ function drawDriveScene(){
     px(cx-2,cy-2,4,4,'#e8eee1');
     ctx.restore();
   }
-  drawVignette(.30);
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+  drawVignette(.035);
 }
 function drawArrivalScene(){
   px(0,0,W,H,'#040706');const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#07100d');grad.addColorStop(.68,'#0d1710');grad.addColorStop(1,'#030504');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
@@ -2593,6 +2610,10 @@ function drawArrivalScene(){
 }
 function drawVignette(strength=.72){const v=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.16,W*.5,H*.48,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.7,'rgba(0,0,0,'+(strength*.25)+')');v.addColorStop(1,'rgba(0,0,0,'+strength+')');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
 function drawPrologue(){
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+  ctx.filter='none';
+  ctx.shadowBlur=0;
   screenJitter();
   if(state.prologueStage==='call')drawPrologueCall();
   else if(state.prologueStage==='drive')drawDriveScene();
@@ -3921,6 +3942,10 @@ function drawLighting(){
 }
 
 function drawWorld(){
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation='source-over';
+  ctx.filter='none';
+  ctx.shadowBlur=0;
   if(state.prologueStage!=='swamp'){drawPrologue();return;}
   screenJitter();
   if(state.floor==='inside'){
