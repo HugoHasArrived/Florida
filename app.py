@@ -82,6 +82,10 @@ button:disabled {
   background: #09110d;
   cursor: crosshair;
 }
+body.prologue-mode #hud { display: none !important; }
+body.prologue-mode.prologue-call #touchControls,
+body.prologue-mode.prologue-arrival #touchControls { display: none !important; }
+body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 #hud {
   display: none;
   position: fixed;
@@ -317,7 +321,7 @@ button:disabled {
 }
 .selection-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin: 18px 0;
 }
@@ -381,6 +385,70 @@ button:disabled {
   padding: 6px 0 6px 16px;
   border-left: 2px solid #963d40;
   color: #c4cebf;
+  line-height: 1.8;
+}
+.credits-panel {
+  background: linear-gradient(145deg, rgba(10, 18, 13, .98), rgba(5, 8, 7, .98));
+  border-color: #76664a;
+}
+.credits-hero {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin: 18px 0 22px;
+  background: linear-gradient(110deg, #17221a, #0a100c);
+  border: 1px solid #485544;
+}
+.credits-mark {
+  display: grid;
+  flex: 0 0 58px;
+  height: 58px;
+  place-items: center;
+  border: 2px solid #9b4644;
+  background: #160e0e;
+  color: #e4c98d;
+  font-size: 22px;
+  font-weight: 900;
+  text-shadow: 2px 2px #4d1b1d;
+}
+.credits-hero b, .credits-hero span, .credits-hero small {
+  display: block;
+}
+.credits-hero b {
+  color: #e8dfc7;
+  font-size: 17px;
+  letter-spacing: 2px;
+}
+.credits-hero span {
+  margin-top: 5px;
+  color: #c5b487;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.credits-hero small {
+  margin-top: 7px;
+  color: #96a293;
+  font-size: 10px;
+}
+.credit-name {
+  display: inline-block;
+  margin-top: 8px;
+  color: #f0d7a0;
+  font-size: 20px;
+  letter-spacing: .5px;
+}
+.credit-alias {
+  color: #b7a57f;
+  font-size: 11px;
+}
+.credits-lines p {
+  margin: 11px 0 0;
+}
+.credits-quote {
+  border-color: #65563a;
+  color: #e0d2ac;
+  font-style: italic;
   line-height: 1.8;
 }
 .rule-list {
@@ -694,13 +762,12 @@ body.game-active.mobile-mode #minimap {
   <div class="panel">
     <div class="kicker">Personnel records</div>
     <h2 class="section-title">Choose your officer</h2>
-    <p class="intro">Each officer has a different field specialty. Your choice changes movement, resilience, and starting equipment.</p>
+    <p class="intro">Choose one playable lead: one boy officer or one girl officer. Your choice changes movement, resilience, and starting equipment.</p>
     <div class="selection-strip">
-      <button class="character selected" data-char="reyes"><div class="avatar"><canvas id="charArt0" width="64" height="64"></canvas></div><strong>OFFICER REYES</strong><small>Balanced field kit<br>Reliable and steady</small></button>
-      <button class="character" data-char="morgan"><div class="avatar"><canvas id="charArt1" width="64" height="64"></canvas></div><strong>DEPUTY MORGAN</strong><small>Extra health<br>Hard to take down</small></button>
-      <button class="character" data-char="blake"><div class="avatar"><canvas id="charArt2" width="64" height="64"></canvas></div><strong>TROOPER BLAKE</strong><small>Fast response<br>Quick on their feet</small></button>
+      <button class="character selected" data-char="hugo"><div class="avatar"><canvas id="charArt0" width="64" height="64"></canvas></div><strong>BOY · OFFICER HUGO</strong><small>Male playable character<br>Steady aim · Balanced field kit</small></button>
+      <button class="character" data-char="yumi"><div class="avatar"><canvas id="charArt1" width="64" height="64"></canvas></div><strong>GIRL · OFFICER YUMI</strong><small>Female playable character<br>Quick response · Longer stamina</small></button>
     </div>
-    <div class="info-card" id="characterDetails"><b>OFFICER REYES</b><br>Experienced patrol officer. Balanced speed, stamina, and health.</div>
+    <div class="info-card" id="characterDetails"><b>BOY · OFFICER HUGO</b><br>Experienced male patrol officer with a balanced field kit.</div>
     <div class="page-buttons"><button id="confirmCharacter">Confirm selection</button><button id="backCharacter">Back to menu</button></div>
   </div>
 </div>
@@ -722,7 +789,10 @@ body.game-active.mobile-mode #minimap {
     <div class="kicker">Field manual</div>
     <h2 class="section-title">Survive the night shift</h2>
     <div class="rule-list">
-      <div class="rule"><b>01 / INVESTIGATE</b>Recover five pieces of evidence. Stand near glowing objects and press E or tap SEARCH.</div>
+      <div class="rule"><b>01 / ANSWER THE CALL</b>Begin inside your patrol car. Press E or tap the screen to accept dispatch.</div>
+      <div class="rule"><b>02 / DRIVE TO MILE MARKER 9</b>Hold W / Up to accelerate, A / D or arrows to steer, and S / Down to brake. Mobile players use the direction pad.</div>
+      <div class="rule"><b>03 / YOU ARE ALONE</b>Arrive at the roadside and press E or SEARCH to leave the car. Backup is unavailable.</div>
+      <div class="rule"><b>04 / INVESTIGATE</b>Recover five pieces of evidence. Stand near glowing objects and press E or tap SEARCH.</div>
       <div class="rule"><b>02 / RESCUE</b>Find two missing people. They will follow you once you help them.</div>
       <div class="rule"><b>03 / STAY ALIVE</b>The Smiler stalks noisy officers. Sprinting and gunshots draw its attention.</div>
       <div class="rule"><b>04 / FIGHT SMART</b>Shots can interrupt the creature but will not kill it. Smaller marsh crawlers can be killed.</div>
@@ -734,12 +804,16 @@ body.game-active.mobile-mode #minimap {
   </div>
 </div>
 <div id="creditsPanel" class="overlay hidden">
-  <div class="panel">
-    <div class="kicker">Case contributors</div>
-    <h2 class="section-title">Credits</h2>
-    <div class="credits-lines"><b>FLORIDA SHADOWS — STATE TROOPER HORROR FILES</b><br>Original browser-based pixel horror project<br>Created for Scream Jam 2026</div>
-    <div class="credits-lines"><b>Special thanks to Mayumi Alingarog (Yumi, Mimi, Yumimi)</b><br>My classmate and fellow developer, for being very helpful, kind, and respectful throughout the journey.</div>
-    <div class="info-card">“Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.”</div>
+  <div class="panel credits-panel">
+    <div class="kicker">The people behind the case file</div>
+    <h2 class="section-title">Credits & Appreciation</h2>
+    <div class="credits-hero">
+      <div class="credits-mark">FS</div>
+      <div><b>FLORIDA SHADOWS</b><span>STATE TROOPER HORROR FILES</span><small>Pixel horror project · Scream Jam 2026</small></div>
+    </div>
+    <div class="credits-lines"><b>WITH APPRECIATION TO</b><br><strong class="credit-name">Mayumi Alingarog</strong><br><span class="credit-alias">Also known as Yumi, Mimi, and Yumimi</span><p>To Mayumi Alingarog, my classmate and fellow developer: thank you for being such a helpful, kind, and respectful person. Your support, encouragement, and willingness to share this creative journey mean a lot. Your kindness makes collaboration better, and I am grateful to have you as a classmate and fellow developer.</p><p>This project is a little more special because of the people who offer encouragement along the way. Thank you for being one of them.</p></div>
+    <div class="credits-lines"><b>TO EVERYONE WHO PLAYS</b><br>Thank you for stepping into the swamp, investigating the case, and helping bring this horror story to life. Keep exploring, keep creating, and never ignore strange sounds on the radio.</div>
+    <div class="info-card credits-quote">“Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.”</div>
     <div class="page-buttons"><button id="backCredits">Return to menu</button></div>
   </div>
 </div>
@@ -796,24 +870,33 @@ body.game-active.mobile-mode #minimap {
 const $=id=>document.getElementById(id);
 const canvas=$('game');
 const ctx=canvas.getContext('2d',{alpha:false});
+const lightCanvas=document.createElement('canvas');
+const lightCtx=lightCanvas.getContext('2d');
 const mini=$('minimap');
 const mctx=mini.getContext('2d');
 const WORLD={w:3200,h:2500};
 const TILE=32;
 const specs={
-  reyes:{name:'Officer Reyes',color:'#29372d',shirt:'#777650',speed:158,hp:100,stamina:100,ammo:6,reserve:24},
-  morgan:{name:'Deputy Morgan',color:'#2e3f37',shirt:'#555b4a',speed:145,hp:125,stamina:112,ammo:7,reserve:28},
-  blake:{name:'Trooper Blake',color:'#263c32',shirt:'#8a7952',speed:178,hp:90,stamina:120,ammo:5,reserve:30}
+  hugo:{name:'Officer Hugo',color:'#29372d',shirt:'#777650',speed:158,hp:110,stamina:105,ammo:6,reserve:24,gender:'male',hair:'#29231c'},
+  yumi:{name:'Officer Yumi',color:'#303d36',shirt:'#817552',speed:174,hp:95,stamina:125,ammo:6,reserve:26,gender:'female',hair:'#201a18'}
 };
 const state={
   screen:'menu',
-  selectedCharacter:'reyes',
-  pendingCharacter:'reyes',
+  selectedCharacter:'hugo',
+  pendingCharacter:'hugo',
   controlMode:'desktop',
   pendingMode:'desktop',
   options:{shake:true,subtitles:true},
   running:false,
   paused:false,
+  prologueStage:'call',
+  prologueTimer:0,
+  driveProgress:0,
+  driveSpeed:0,
+  driveLane:0,
+  driveScroll:0,
+  driveShake:0,
+  horrorBeat:0,
   gameOver:false,
   won:false,
   floor:'outside',
@@ -903,9 +986,12 @@ function resize(){
   H=innerHeight;
   canvas.width=Math.floor(W*dpr);
   canvas.height=Math.floor(H*dpr);
+  lightCanvas.width=canvas.width;
+  lightCanvas.height=canvas.height;
   canvas.style.width=W+'px';
   canvas.style.height=H+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
+  lightCtx.setTransform(dpr,0,0,dpr,0,0);
 }
 window.addEventListener('resize',resize);
 resize();
@@ -930,6 +1016,9 @@ function setScreen(name){
     document.body.classList.remove('game-active');
   }
   if(name==='menu')drawMenuArt();
+  if(name!=='game'){
+    document.body.classList.remove('prologue-mode','prologue-call','prologue-drive','prologue-arrival');
+  }
 }
 function toast(message,duration=2.5){
   $('toast').textContent=message;
@@ -1144,7 +1233,7 @@ function makeRoom(name){
 }
 function resetGame(){
   const spec=specs[state.selectedCharacter];
-  player={x:260,y:260,r:10,angle:0,speed:spec.speed,hp:spec.hp,maxHp:spec.hp,stamina:spec.stamina,maxStamina:spec.stamina,step:0,moving:false,hidden:false,invulnerable:0,flash:0,footstep:0};
+  player={x:310,y:330,r:10,angle:0,speed:spec.speed,hp:spec.hp,maxHp:spec.hp,stamina:spec.stamina,maxStamina:spec.stamina,step:0,moving:false,hidden:false,invulnerable:0,flash:0,footstep:0};
   health=player.hp;
   stamina=player.stamina;
   ammo=spec.ammo;
@@ -1158,7 +1247,7 @@ function resetGame(){
   particles=[];
   crawlers=[];
   for(let i=0;i<5;i++){
-    crawlers.push({x:760+i*410,y:420+(i%3)*450,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false});
+    crawlers.push({x:760+i*410,y:420+(i%3)*450,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false,hiddenUntil:14});
   }
   monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0};
   makeObjects();
@@ -1183,6 +1272,14 @@ function resetGame(){
   state.saves=0;
   state.floor='outside';
   state.room=null;
+  state.prologueStage='call';
+  state.prologueTimer=0;
+  state.driveProgress=0;
+  state.driveSpeed=0;
+  state.driveLane=0;
+  state.driveScroll=0;
+  state.driveShake=0;
+  state.horrorBeat=0;
   state.gameOver=false;
   state.reloadActive=false;
   state.won=false;
@@ -1203,14 +1300,13 @@ function resetGame(){
   initializeAssets();
   $('officerName').textContent=spec.name.toUpperCase();
   $('hud').style.display='block';
-  document.body.classList.add('game-active');
+  document.body.classList.add('game-active','prologue-mode','prologue-call');
   applyControlMode();
   setScreen('game');
   updateHUD();
   updateObjectives();
   audioStart();
   tone(280,.15,'sine',.08,160);
-  toast('DISPATCH: Check the checkpoint. Unit 14 has gone silent.',3.5);
   state.lastFrame=performance.now();
   requestAnimationFrame(loop);
 }
@@ -1222,6 +1318,136 @@ function applyControlMode(){
 function activeOverlay(){
   return ['menu','character','controls','how','credits','objectives','inventory','pause','ending','radio'].includes(state.screen);
 }
+function setPrologueStage(stage){
+  state.prologueStage=stage;
+  state.prologueTimer=0;
+  document.body.classList.toggle('prologue-call',stage==='call');
+  document.body.classList.toggle('prologue-drive',stage==='drive');
+  document.body.classList.toggle('prologue-arrival',stage==='arrival');
+  document.body.classList.toggle('prologue-mode',stage!=='swamp');
+  if(stage==='drive'){state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
+  if(stage==='arrival'){state.driveSpeed=0;sound('radio');tone(76,.75,'triangle',.08,-34);}
+}
+function acceptDispatch(){
+  if(state.prologueStage!=='call')return;
+  audioStart();
+  setPrologueStage('drive');
+}
+function exitPatrolCar(){
+  if(state.prologueStage!=='arrival')return;
+  setPrologueStage('swamp');
+  player.x=310;player.y=330;player.angle=.72;
+  camera.x=clamp(player.x-W/2,0,WORLD.w-W);
+  camera.y=clamp(player.y-H/2,0,WORLD.h-H);
+  state.elapsed=0;state.horrorBeat=0;state.lightningNext=4;
+  updateHUD();updateObjectives();
+  toast('SCENE LOG: No backup. No witnesses. The radio is still transmitting.',4);
+  tone(58,.8,'triangle',.07,-25);
+}
+function updatePrologue(dt){
+  state.prologueTimer+=dt;
+  if(state.prologueStage==='drive'){
+    const forward=keys.w||keys.arrowup;
+    const brake=keys.s||keys.arrowdown;
+    const steer=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);
+    if(forward)state.driveSpeed=Math.min(100,state.driveSpeed+31*dt);
+    else state.driveSpeed=Math.max(0,state.driveSpeed-8*dt);
+    if(brake)state.driveSpeed=Math.max(0,state.driveSpeed-72*dt);
+    state.driveLane=clamp(state.driveLane+steer*dt*(.78+state.driveSpeed*.009),-1.15,1.15);
+    state.driveScroll+=dt*(10+state.driveSpeed*1.8);
+    state.driveShake=Math.max(0,state.driveShake-dt*2.8);
+    if(Math.abs(state.driveLane)>.83){
+      state.driveSpeed=Math.max(18,state.driveSpeed-24*dt);
+      state.driveShake=Math.min(1,state.driveShake+dt*.8);
+      if(Math.random()<dt*.9)tone(90,.08,'square',.025,-20);
+    }
+    state.driveProgress+=dt*(.30+state.driveSpeed*.038)*(Math.abs(state.driveLane)>.9?.58:1);
+    if(state.prologueTimer>7&&state.prologueTimer<7.08)sound('radio');
+    if(state.driveProgress>=100){state.driveProgress=100;setPrologueStage('arrival');}
+  }
+  for(const r of raindrops){r.y+=r.speed*dt*.65;r.x-=r.speed*.16*dt;if(r.y>H+15){r.y=-15;r.x=Math.random()*W;}if(r.x<-15)r.x=W+10;}
+}
+function poly(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();}
+function strokePoly(points,color,width=1){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.stroke();}
+function drawRadioScreen(x,y,w,h,active){
+  px(x,y,w,h,'#070c09');px(x+3,y+3,w-6,h-6,'#17271c');px(x+7,y+7,w-14,h-14,'#09150e');
+  ctx.fillStyle=active?'#b9c9a0':'#7a8876';ctx.font='bold 10px monospace';ctx.textAlign='left';ctx.fillText(active?'FSP DISPATCH':'NO SIGNAL',x+10,y+17);
+  for(let i=0;i<14;i++){const hh=2+Math.abs(Math.sin(state.prologueTimer*5+i*1.4))*(active?12:3);px(x+10+i*5,y+h-11-hh,3,hh,active?'#789d72':'#354437');}
+  px(x+w-18,y+9,4,4,active?'#bf5149':'#3a463b');
+}
+function drawPrologueCall(){
+  px(0,0,W,H,'#050907');
+  const sky=ctx.createLinearGradient(0,0,0,H*.7);sky.addColorStop(0,'#080f13');sky.addColorStop(.55,'#182324');sky.addColorStop(1,'#0e1513');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.72);
+  const horizon=H*.38;
+  for(let i=0;i<24;i++){const bw=22+(i*37)%66,bh=55+(i*53)%Math.max(70,H*.34),x=(i*91-state.prologueTimer*3)%(W+bw)-bw;const y=horizon-bh;px(x,y,bw,bh,i%4===0?'#1a282a':'#101d20');px(x+3,y+6,bw-6,3,'#2a3735');for(let wy=y+14;wy<horizon-9;wy+=13)for(let wx=x+6;wx<x+bw-5;wx+=12)if(seeded(Math.floor(wx),Math.floor(wy))>.48)px(wx,wy,4,5,Math.sin(state.prologueTimer*2+wx)>.88?'#b5a06e':'#39483e');}
+  poly([[0,horizon],[W*.32,horizon-8],[W*.69,horizon-3],[W,horizon+10],[W,H*.73],[0,H*.73]],'#18211d');
+  ctx.strokeStyle='rgba(175,199,194,.34)';ctx.lineWidth=1;for(const r of raindrops){ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.lineTo(r.x-5,r.y+15);ctx.stroke();}
+  poly([[0,H*.77],[W*.16,H*.57],[W*.84,H*.57],[W,H*.77],[W,H],[0,H]],'#101613');
+  poly([[0,H*.79],[W*.27,H*.65],[W*.73,H*.65],[W,H*.79],[W,H],[0,H]],'#202620');
+  px(0,H*.77,W,H*.23,'#090d0b');
+  for(let i=0;i<8;i++){const x=W*.12+i*W*.11;px(x,H*.78,2,H*.08,'#26302a');px(x-13,H*.81,28,3,'#3c4035');}
+  const dashY=H*.70;poly([[0,dashY],[W*.19,H*.64],[W*.81,H*.64],[W,dashY],[W,H],[0,H]],'#171d19');poly([[0,H*.78],[W*.22,H*.68],[W*.78,H*.68],[W,H*.78],[W,H],[0,H]],'#252a23');
+  px(W*.1,H*.76,W*.8,4,'#454639');px(W*.13,H*.79,W*.74,2,'#111612');
+  ctx.save();ctx.translate(W*.50,H*.91);ctx.strokeStyle='#050706';ctx.lineWidth=Math.max(11,W*.018);ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.16,Math.PI*1.05,Math.PI*1.95);ctx.stroke();ctx.strokeStyle='#596052';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.16,Math.PI*1.05,Math.PI*1.95);ctx.stroke();ctx.restore();
+  drawRadioScreen(W*.065,H*.755,W*.23,H*.10,true);
+  px(W*.72,H*.76,W*.19,H*.11,'#050706');px(W*.73,H*.77,W*.17,H*.075,'#121b14');ctx.fillStyle='#a7b492';ctx.font='bold '+Math.max(10,Math.floor(W*.012))+'px monospace';ctx.textAlign='center';ctx.fillText('02:17 AM',W*.815,H*.80);ctx.fillStyle='#cb5a50';ctx.fillText('UNIT 14 / LOST',W*.815,H*.825);
+  px(W*.39,H*.77,W*.22,H*.075,'#0a0d0b');px(W*.405,H*.79,W*.19,H*.012,'#455047');px(W*.405,H*.81,W*.13,H*.008,'#262f27');
+  px(0,0,W,Math.max(4,H*.012),'#060908');
+  const pw=Math.min(690,W-34),ph=Math.min(220,H*.34),bx=(W-pw)/2,by=H*.09;
+  px(bx-3,by-3,pw+6,ph+6,'#0a0d0b');px(bx,by,pw,ph,'rgba(5,10,8,.94)');strokePoly([[bx,by],[bx+pw,by],[bx+pw,by+ph],[bx,by+ph]],'#75816b',1);
+  px(bx+17,by+17,4,ph-34,'#ad4a43');ctx.textAlign='left';ctx.fillStyle='#b8c5a8';ctx.font='bold 12px monospace';ctx.fillText('INCOMING DISPATCH // PRIORITY CALL',bx+34,by+31);
+  ctx.fillStyle='#e9e6d6';ctx.font='bold '+Math.max(16,Math.min(24,W*.026))+'px monospace';ctx.fillText('MILE MARKER 9 — OFFICER NEEDS ASSISTANCE',bx+34,by+67);
+  ctx.fillStyle='#aab4a3';ctx.font=Math.max(11,Math.min(15,W*.015))+'px monospace';ctx.fillText('Unit 14 abandoned its patrol vehicle. One deputy missing.',bx+34,by+98);ctx.fillText('No backup units available. Weather is getting worse.',bx+34,by+120);
+  ctx.fillStyle='#d6b87a';ctx.font='bold '+Math.max(11,Math.min(14,W*.014))+'px monospace';ctx.fillText('DISPATCH: “Respond alone. Keep your radio open.”',bx+34,by+154);
+  const blink=Math.floor(state.prologueTimer*2)%2===0;ctx.textAlign='center';ctx.fillStyle=blink?'#f0dfb4':'#89927e';ctx.font='bold '+Math.max(12,Math.min(16,W*.017))+'px monospace';ctx.fillText('PRESS E / ENTER OR TAP TO ACCEPT CALL',W/2,by+ph-18);
+  drawVignette();
+}
+function drawDriveScene(){
+  const t=state.driveProgress/100;const city=t<.58;const sky=ctx.createLinearGradient(0,0,0,H*.56);sky.addColorStop(0,city?'#080f17':'#030806');sky.addColorStop(.65,city?'#263238':'#15201a');sky.addColorStop(1,'#161e19');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+  const horizon=H*.38+Math.sin(state.driveScroll*.006)*3;
+  for(let i=0;i<30;i++){const layer=(i*83-state.driveScroll*(.38+i%4*.14))%(W+150);const x=layer-80;const bw=24+(i*19)%72;const hh=32+(i*43)%Math.max(55,H*.33);const y=horizon-hh;if(city){px(x,y,bw,hh,i%4===0?'#16252b':'#101b21');for(let wy=y+9;wy<horizon-4;wy+=11)for(let wx=x+5;wx<x+bw-4;wx+=10)if(seeded(i,Math.floor(wy+wx))>.51)px(wx,wy,3,4,((Math.floor(wx+state.driveScroll/50))%4===0)?'#b0a06c':'#42534f');}else{px(x+10,horizon-35,6,35,'#151d14');px(x,horizon-65,bw,37,'#101a12');px(x+5,horizon-80,bw-10,24,'#0b150e');px(x+13,horizon-94,bw-26,17,'#111c13');}}
+  const roadCenter=W*.5-state.driveLane*W*.24+Math.sin(state.driveScroll*.004)*W*.025;const topHalf=W*.075,bottomHalf=W*.49;
+  poly([[roadCenter-topHalf,horizon],[roadCenter+topHalf,horizon],[W*.5+bottomHalf,H],[W*.5-bottomHalf,H]],'#090d0c');
+  poly([[roadCenter-topHalf+3,horizon],[roadCenter+topHalf-3,horizon],[W*.5+bottomHalf-14,H],[W*.5-bottomHalf+14,H]],'#282d29');
+  strokePoly([[roadCenter-topHalf,horizon],[W*.5-bottomHalf,H],[W*.5+bottomHalf,H],[roadCenter+topHalf,horizon]],'#4e5147',2);
+  for(let i=0;i<11;i++){const z=((i/11+state.driveScroll*.011)%1);const y=horizon+z*z*(H-horizon);const width=1+z*5;const h=4+z*40;const cx=roadCenter+(W*.5-roadCenter)*z;const len=width+z*4;px(cx-len/2,y,len,h,'#8b856d');}
+  for(const side of [-1,1]){for(let i=0;i<5;i++){const z=((i/5+state.driveScroll*.004)%1);const y=horizon+z*z*(H-horizon);const x=roadCenter+side*(topHalf+z*(bottomHalf+25));if(city){px(x-2,y-35*z-2,4*z+2,38*z+2,'#30362d');px(x-8*z,y-38*z,16*z+4,4*z+2,'#b3a16d');if(z>.45){px(x-13*z,y-36*z,26*z,4*z,'#4f5748');}}else{px(x-2-z*3,y-38*z,4+z*6,42*z,'#0a100c');px(x-12*z,y-45*z,24*z,13*z,'#132117');px(x-15*z,y-36*z,30*z,11*z,'#17261a');}}}
+  ctx.strokeStyle='rgba(160,181,180,.32)';ctx.lineWidth=1;for(let i=0;i<90;i++){const x=(i*137+state.driveScroll*2.6)%W;const y=(i*71+state.driveScroll*4.4)%(H*.72);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-4,y+15);ctx.stroke();}
+  const shake=state.driveShake*4;ctx.save();ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+  poly([[0,H*.79],[W*.18,H*.68],[W*.82,H*.68],[W,H*.79],[W,H],[0,H]],'#090d0b');poly([[0,H*.82],[W*.23,H*.72],[W*.77,H*.72],[W,H*.82],[W,H],[0,H]],'#20251f');
+  px(W*.07,H*.83,W*.25,H*.08,'#0b100c');px(W*.68,H*.83,W*.25,H*.08,'#0b100c');
+  ctx.save();ctx.translate(W*.5,H*.93);ctx.strokeStyle='#050706';ctx.lineWidth=Math.max(10,W*.02);ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.15,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.strokeStyle='#4b5248';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.15,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.restore();
+  drawRadioScreen(W*.055,H*.755,W*.20,H*.085,state.driveProgress<75);
+  px(W*.72,H*.765,W*.20,H*.09,'#070a08');px(W*.735,H*.778,W*.17,H*.055,'#131e17');ctx.textAlign='center';ctx.fillStyle='#b6c9a6';ctx.font='bold '+Math.max(12,Math.min(20,W*.024))+'px monospace';ctx.fillText(Math.round(state.driveSpeed)+' MPH',W*.82,H*.81);ctx.fillStyle='#c6c7ae';ctx.font='10px monospace';ctx.fillText('CRUISE / MILE 9',W*.82,H*.832);
+  ctx.restore();
+  const barW=Math.min(500,W*.54),barX=(W-barW)/2,barY=H*.09;px(barX-8,barY-10,barW+16,69,'rgba(3,7,5,.88)');ctx.fillStyle='#bfc8b3';ctx.font='bold 12px monospace';ctx.textAlign='left';ctx.fillText('DESTINATION: MILE MARKER 9',barX,barY+8);px(barX,barY+20,barW,9,'#263129');px(barX+2,barY+22,(barW-4)*t,5,t>.82?'#b34a43':'#b6b17a');ctx.fillStyle='#e5e2d4';ctx.textAlign='right';ctx.fillText(Math.floor(state.driveProgress)+'%',barX+barW,barY+8);
+  ctx.textAlign='center';ctx.fillStyle='#ddd6c0';ctx.font='bold '+Math.max(12,Math.min(16,W*.017))+'px monospace';ctx.fillText(Math.abs(state.driveLane)>.83?'WARNING: TIRES LEAVING ROAD':state.driveSpeed<10?'HOLD W / UP TO ACCELERATE':'A / D OR ← / → TO STEER',W/2,H*.61);
+  drawVignette();
+}
+function drawArrivalScene(){
+  px(0,0,W,H,'#040706');const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#07100d');grad.addColorStop(.68,'#0d1710');grad.addColorStop(1,'#030504');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  for(let i=0;i<22;i++){const x=(i*79)%W;const ht=H*(.18+((i*17)%47)/100);px(x,H*.53-ht*.4,8+(i%5)*7,ht,'#0a120c');px(x-8,H*.48-ht*.25,24+(i%4)*8,10,'#0b150e');px(x-4,H*.41-ht*.2,18,12,'#0e1a11');}
+  poly([[W*.37,H*.4],[W*.63,H*.4],[W*.95,H],[W*.05,H]],'#090d0a');poly([[W*.46,H*.4],[W*.54,H*.4],[W*.68,H],[W*.32,H]],'#171d17');ctx.setLineDash([18,22]);ctx.strokeStyle='#655f4a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.5,H*.41);ctx.lineTo(W*.5,H);ctx.stroke();ctx.setLineDash([]);
+  const cx=W*.35,cy=H*.66;ctx.save();ctx.translate(cx,cy);ctx.rotate(-.10);px(-W*.12,-H*.06,W*.24,H*.13,'#080a08');px(-W*.105,-H*.055,W*.21,H*.105,'#a6aaa0');px(-W*.082,-H*.047,W*.164,H*.085,'#263a36');px(-W*.07,-H*.04,W*.14,H*.07,'#111e1b');px(-W*.04,-H*.035,W*.08,H*.06,'#07100d');px(-W*.1,-H*.055,W*.05,H*.014,'#c9c8b5');px(W*.05,-H*.055,W*.05,H*.014,'#c9c8b5');px(-W*.025,-H*.048,W*.05,H*.018,'#eee8d0');px(-W*.105,H*.03,W*.036,H*.018,'#c8443b');px(W*.069,H*.03,W*.036,H*.018,'#c8443b');px(-W*.018,-H*.065,W*.036,H*.012,'#d1b05f');ctx.restore();
+  const ox=W*.62,oy=H*.64;px(ox-8,oy-42,16,18,'#101511');px(ox-11,oy-23,22,37,'#1f2c23');px(ox-18,oy-21,7,27,'#151e18');px(ox+11,oy-21,7,27,'#151e18');px(ox-8,oy+10,7,22,'#121813');px(ox+2,oy+10,7,22,'#121813');px(ox-9,oy-45,18,6,'#756b49');
+  ctx.save();ctx.globalAlpha=.7;ctx.strokeStyle='#d9ddbd';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox+8,oy-17);ctx.lineTo(W*.84,H*.4);ctx.lineTo(W*.91,H*.22);ctx.stroke();ctx.restore();
+  ctx.fillStyle='rgba(192,208,195,.24)';ctx.font='12px monospace';ctx.textAlign='left';ctx.fillText('MILE MARKER 9',W*.07,H*.18);ctx.fillStyle='#d8ddcc';ctx.font='bold '+Math.max(18,Math.min(34,W*.04))+'px monospace';ctx.fillText('NO BACKUP ON SCENE',W*.07,H*.24);ctx.fillStyle='#abb7a6';ctx.font=Math.max(11,Math.min(16,W*.017))+'px monospace';ctx.fillText('One patrol car. One officer. No movement in the trees.',W*.07,H*.29);ctx.fillText('The radio is receiving a transmission from your own unit.',W*.07,H*.32);
+  px(W*.07,H*.37,W*.005,H*.09,'#b34b43');ctx.fillStyle='#d4bb7e';ctx.font='bold 13px monospace';ctx.fillText('PRESS E / TAP SEARCH TO STEP OUT',W*.09,H*.415);drawVignette();
+}
+function drawVignette(){const v=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.16,W*.5,H*.48,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.7,'rgba(0,0,0,.18)');v.addColorStop(1,'rgba(0,0,0,.72)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
+function drawPrologue(){
+  screenJitter();
+  if(state.prologueStage==='call')drawPrologueCall();
+  else if(state.prologueStage==='drive')drawDriveScene();
+  else drawArrivalScene();
+}
+function drawPatrolCarWorld(){
+  const x=245-camera.x+shakeX,y=278-camera.y+shakeY;
+  if(x<-100||y<-100||x>W+100||y>H+100)return;
+  ctx.save();ctx.translate(x,y);ctx.rotate(.78);
+  px(-25,-44,50,88,'#070b08');px(-22,-40,44,80,'#a6aaa0');px(-18,-35,36,70,'#343b36');px(-17,-29,34,23,'#15221e');px(-17,7,34,20,'#15221e');px(-14,-4,28,12,'#202925');px(-21,-23,42,4,'#b4b5a4');px(-21,20,42,4,'#c2c0af');px(-19,-13,8,15,'#090d0b');px(11,-13,8,15,'#090d0b');px(-20,-38,10,5,'#d8c79c');px(10,-38,10,5,'#d8c79c');px(-19,34,9,5,'#ce433b');px(10,34,9,5,'#ce433b');px(-7,-6,14,12,'#111a16');px(-4,-2,8,4,'#c3b77d');px(-15,-2,11,5,Math.sin(state.elapsed*9)>0?'#d44a42':'#284b85');px(4,-2,11,5,Math.sin(state.elapsed*9)>0?'#284b85':'#d44a42');ctx.restore();
+}
+
 function worldCoordinates(screenX,screenY){
   return {x:screenX+camera.x,y:screenY+camera.y};
 }
@@ -1257,6 +1483,9 @@ function nearestInteriorObject(){
   return nearest;
 }
 function interact(){
+  if(state.prologueStage==='call'){acceptDispatch();return;}
+  if(state.prologueStage==='arrival'){exitPatrolCar();return;}
+  if(state.prologueStage==='drive'){toast('KEEP MOVING. MILE MARKER 9 IS AHEAD.',1.2);return;}
   if(!state.running||state.paused||state.gameOver||interactCooldown>0)return;
   interactCooldown=.22;
   audioStart();
@@ -1587,6 +1816,7 @@ function movePlayer(dt){
   player.y=clamp(player.y,22,WORLD.h-22);
 }
 function blockedAt(x,y,r){
+  if(state.prologueStage==='swamp'&&dist(x,y,245,278)<43+r)return true;
   for(const t of trees){
     if(Math.abs(t.x-x)>r+12||Math.abs(t.y-y)>r+15)continue;
     if(dist(x,y,t.x,t.y)<r+9*t.s)return true;
@@ -1680,6 +1910,7 @@ function updateMonster(dt){
   const d=dist(player.x,player.y,monster.x,monster.y);
   if(d<390)monster.spotted=true;
   if(state.floor==='inside'){
+    monster.frozenByLight=false;
     if(d<200&&monster.warpCooldown<=0){
       monster.warpCooldown=9;
       monster.x=clamp(player.x+choose([-1,1])*430,70,WORLD.w-70);
@@ -1687,6 +1918,13 @@ function updateMonster(dt){
       showRadioText('UNKNOWN TRANSMISSION','You can hear footsteps outside the building.');
       toast('SOMETHING MOVES OUTSIDE THE WALLS.',2.3);
     }
+    return;
+  }
+  const towardMonster=angleTo(player.x,player.y,monster.x,monster.y);
+  const beamDelta=Math.atan2(Math.sin(towardMonster-flashlightAngle()),Math.cos(towardMonster-flashlightAngle()));
+  monster.frozenByLight=flashlight&&flashlightBattery>0&&d<505&&Math.abs(beamDelta)<.235;
+  if(monster.frozenByLight&&d>58&&monster.stun<=0){
+    monster.lastMove=0;
     return;
   }
   if(monster.stun>0)return;
@@ -1710,10 +1948,11 @@ function updateMonster(dt){
     monster.x=clamp(monster.x-Math.cos(a)*44,30,WORLD.w-30);
     monster.y=clamp(monster.y-Math.sin(a)*44,30,WORLD.h-30);
   }
-  if(d<160&&growlTimer<=0){
+  if(d<250&&growlTimer<=0){
     sound('roar');
-    growlTimer=7+Math.random()*7;
-    if(Math.random()<.55)toast('YOU HEAR WET BREATHING OVER YOUR SHOULDER.',1.8);
+    growlTimer=5+Math.random()*6;
+    if(Math.random()<.72)toast(choose(['YOU HEAR WET BREATHING OVER YOUR SHOULDER.','RADIO: DO NOT TURN AROUND.','SOMETHING SCRAPES ALONG THE TREES.','YOUR FLASHLIGHT JUST CAUGHT A SHAPE MOVING.']),1.8);
+    state.intensity=Math.min(1,state.intensity+.18);
   }
 }
 function updateBullets(dt){
@@ -1784,8 +2023,11 @@ function updateWeather(dt){
   for(const f of fireflies)f.phase+=dt*f.speed;
 }
 function update(dt){
+  if(state.prologueStage!=='swamp'){updatePrologue(dt);return;}
   state.elapsed+=dt;
   state.missionClock+=dt;
+  if(state.horrorBeat===0&&state.elapsed>4.8){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you beside the car.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.7;state.screenShake=.15;}
+  if(state.horrorBeat===1&&state.elapsed>10.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED.',3.1);}
   growlTimer-=dt;
   shootTimer=Math.max(0,shootTimer-dt);
   reloadTimer=Math.max(0,reloadTimer-dt);
@@ -2080,32 +2322,60 @@ function drawMonster(){
   if(!monster.active)return;
   const x=monster.x-camera.x+shakeX;
   const y=monster.y-camera.y+shakeY;
-  if(x<-110||y<-110||x>W+110||y>H+110)return;
-  const bob=Math.sin(monster.phase*4.5)*3;
-  const stretched=monster.stun>0?0:Math.sin(monster.phase*7)*1.5;
-  px(x-13,y-23+bob,26,44,'#060807');
-  px(x-10,y-41+bob,20,23,'#050706');
-  px(x-7,y-46+bob,14,9,'#080a08');
-  px(x-16,y-17+bob,6,29,'#070907');
-  px(x+10,y-18+bob,6,30,'#070907');
-  px(x-15,y+11,7,23,'#050706');
-  px(x+7,y+11,7,23,'#050706');
-  px(x-9,y-37+bob,18,5,'#0c0e0b');
-  px(x-6,y-34+bob,3,2,'#d33a35');
-  px(x+3,y-34+bob,3,2,'#d33a35');
-  px(x-7,y-18+bob,14,2,'#1b1a16');
-  px(x-19,y-10+bob,5,18,'#0a0b09');
-  px(x+14,y-10+bob,5,18,'#0a0b09');
-  if(monster.stun>0){
-    px(x-19,y-52,38,2,'#dfc789');
-    px(x-11,y-50,22,2,'#9e8a56');
+  if(x<-140||y<-150||x>W+140||y>H+150)return;
+  const bob=monster.frozenByLight?0:Math.sin(monster.phase*3.7)*3;
+  const twitch=monster.frozenByLight?0:Math.sin(monster.phase*15)*1.8;
+  const lurch=monster.stun>0||monster.frozenByLight?0:Math.sin(monster.phase*8)*2;
+  ctx.save();
+  ctx.globalAlpha=monster.stun>0?.72:1;
+  ctx.fillStyle='rgba(0,0,0,.6)';
+  ctx.beginPath();
+  ctx.ellipse(x,y+28,29,8,0,0,Math.PI*2);
+  ctx.fill();
+  px(x-17,y-28+bob,34,50,'#040504');
+  px(x-14,y-47+bob,28,25,'#070807');
+  px(x-10,y-61+bob,20,18,'#050605');
+  px(x-7,y-65+bob,14,7,'#080908');
+  px(x-20,y-24+bob,7,37,'#050605');
+  px(x+13,y-25+bob,7,38,'#050605');
+  px(x-24-twitch,y-3+bob,6,25,'#060706');
+  px(x+18+twitch,y-1+bob,6,27,'#060706');
+  px(x-15,y+17,10,28,'#050605');
+  px(x+5,y+17,10,28,'#050605');
+  px(x-12,y+40,10,5,'#090a08');
+  px(x+4,y+40,10,5,'#090a08');
+  px(x-12,y-43+bob,24,7,'#10120f');
+  px(x-9,y-38+bob,18,4,'#1c1c17');
+  px(x-8,y-38+bob,5,3,monster.frozenByLight?'#fff4cf':'#f4d5a3');
+  px(x+3,y-38+bob,5,3,monster.frozenByLight?'#fff4cf':'#f4d5a3');
+  px(x-7,y-37+bob,3,2,monster.frozenByLight?'#ff4b43':'#b8322b');
+  px(x+4,y-37+bob,3,2,monster.frozenByLight?'#ff4b43':'#b8322b');
+  px(x-5,y-29+bob,10,3,'#4b2220');
+  px(x-7,y-27+bob,14,3,'#ddd1b7');
+  px(x-4,y-27+bob,2,3,'#161512');
+  px(x+1,y-27+bob,2,3,'#161512');
+  px(x-9,y-19+bob,18,2,'#28231e');
+  px(x-6,y-14+bob,12,2,'#191a15');
+  px(x-16,y-4+bob,4,11,'#28221b');
+  px(x+12,y-3+bob,4,11,'#28221b');
+  for(let i=0;i<4;i++){
+    px(x-25+i*2+twitch,y+18+i%2*3,2,7,'#0a0b09');
+    px(x+20+i*2-twitch,y+18+i%2*3,2,7,'#0a0b09');
   }
-  if(dist(player.x,player.y,monster.x,monster.y)<240){
-    ctx.strokeStyle='rgba(174,38,35,.12)';
+  ctx.globalAlpha=1;
+  if(monster.stun>0){
+    px(x-22,y-72,44,2,'#dfc789');
+    px(x-11,y-69,22,2,'#9e8a56');
+  }
+  const d=dist(player.x,player.y,monster.x,monster.y);
+  if(d<300){
+    ctx.strokeStyle='rgba(174,38,35,'+(.08+.06*(.5+.5*Math.sin(monster.phase*9)))+')';
+    ctx.lineWidth=2;
     ctx.beginPath();
-    ctx.arc(x,y,26+stretched,0,Math.PI*2);
+    ctx.ellipse(x,y+2,23+lurch,39,0,0,Math.PI*2);
     ctx.stroke();
   }
+  ctx.restore();
 }
 function drawPlayer(){
   const x=player.x-camera.x+shakeX;
@@ -2128,11 +2398,17 @@ function drawPlayer(){
   px(2,-3,17,4,'#0b0e0b');
   px(15,-4,5,3,'#c9c5ac');
   px(-3,-2,4,3,'#e4d0a0');
-  if(state.selectedCharacter==='morgan'){
-    px(-2,-9,5,5,'#6c7162');
+  if(state.selectedCharacter==='hugo'){
+    px(-6,-17,12,3,'#28241c');
+    px(-5,-14,10,2,'#b5a16e');
+    px(-2,-3,3,3,'#d4c7a5');
   }
-  if(state.selectedCharacter==='blake'){
-    px(-4,-13,8,2,'#d2b56e');
+  if(state.selectedCharacter==='yumi'){
+    px(-8,-17,16,5,'#201816');
+    px(-9,-13,3,12,'#201816');
+    px(6,-13,3,12,'#201816');
+    px(-4,-14,8,3,'#b8a5a0');
+    px(-2,-3,3,3,'#d4c7a5');
   }
   ctx.restore();
 }
@@ -2177,49 +2453,106 @@ function drawRain(){
   ctx.fillStyle='rgba(141,164,156,.035)';
   ctx.fillRect(0,0,W,H);
 }
+function flashlightAngle(){
+  if(!player)return 0;
+  if(state.controlMode==='mobile')return player.angle||0;
+  const target=worldCoordinates(pointer.x,pointer.y);
+  const dx=target.x-player.x;
+  const dy=target.y-player.y;
+  if(Math.hypot(dx,dy)<24)return player.angle||0;
+  return angleTo(player.x,player.y,target.x,target.y);
+}
+function drawMaskCone(x,y,angle,reach,halfAngle,ambientAlpha,haloRadius){
+  const l=lightCtx;
+  l.save();
+  l.setTransform(dpr,0,0,dpr,0,0);
+  l.clearRect(0,0,W,H);
+  l.globalCompositeOperation='source-over';
+  l.fillStyle='rgba(0,0,0,'+ambientAlpha+')';
+  l.fillRect(0,0,W,H);
+  l.globalCompositeOperation='destination-out';
+  const halo=l.createRadialGradient(x,y,0,x,y,haloRadius);
+  halo.addColorStop(0,'rgba(0,0,0,.96)');
+  halo.addColorStop(.50,'rgba(0,0,0,.83)');
+  halo.addColorStop(1,'rgba(0,0,0,0)');
+  l.fillStyle=halo;
+  l.beginPath();
+  l.arc(x,y,haloRadius,0,Math.PI*2);
+  l.fill();
+  if(flashlight&&flashlightBattery>0){
+    l.save();
+    l.beginPath();
+    l.moveTo(x,y);
+    l.arc(x,y,reach,angle-halfAngle,angle+halfAngle);
+    l.closePath();
+    l.clip();
+    const beam=l.createRadialGradient(x,y,5,x,y,reach);
+    beam.addColorStop(0,'rgba(0,0,0,1)');
+    beam.addColorStop(.61,'rgba(0,0,0,1)');
+    beam.addColorStop(.79,'rgba(0,0,0,.995)');
+    beam.addColorStop(.92,'rgba(0,0,0,.83)');
+    beam.addColorStop(1,'rgba(0,0,0,0)');
+    l.fillStyle=beam;
+    l.fillRect(x-reach,y-reach,reach*2,reach*2);
+    l.restore();
+    l.save();
+    l.globalCompositeOperation='source-over';
+    l.beginPath();
+    l.moveTo(x,y);
+    l.arc(x,y,reach,angle-halfAngle,angle+halfAngle);
+    l.closePath();
+    l.clip();
+    const glow=l.createRadialGradient(x,y,9,x,y,reach);
+    glow.addColorStop(0,'rgba(216,230,191,.12)');
+    glow.addColorStop(.17,'rgba(197,218,180,.075)');
+    glow.addColorStop(.55,'rgba(177,202,158,.04)');
+    glow.addColorStop(.86,'rgba(159,186,146,.018)');
+    glow.addColorStop(1,'rgba(159,186,146,0)');
+    l.fillStyle=glow;
+    l.fillRect(x-reach,y-reach,reach*2,reach*2);
+    l.restore();
+  }
+  l.restore();
+  ctx.save();
+  ctx.globalCompositeOperation='source-over';
+  ctx.drawImage(lightCanvas,0,0,W,H);
+  ctx.restore();
+}
 function drawLighting(){
   const x=player.x-camera.x+shakeX;
   const y=player.y-camera.y+shakeY;
-  ctx.save();
-  ctx.fillStyle=flashlight&&flashlightBattery>0?'rgba(0,4,4,.79)':'rgba(0,0,0,.66)';
-  ctx.fillRect(0,0,W,H);
-  ctx.globalCompositeOperation='destination-out';
-  const haloRadius=flashlight&&flashlightBattery>0?102:38;
-  const halo=ctx.createRadialGradient(x,y,5,x,y,haloRadius);
-  halo.addColorStop(0,'rgba(0,0,0,1)');
-  halo.addColorStop(.65,'rgba(0,0,0,.75)');
-  halo.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=halo;
-  ctx.beginPath();
-  ctx.arc(x,y,haloRadius,0,Math.PI*2);
-  ctx.fill();
-  if(flashlight&&flashlightBattery>0){
-    const target=worldCoordinates(pointer.x,pointer.y);
-    const a=angleTo(player.x,player.y,target.x,target.y);
-    const beam=ctx.createRadialGradient(x,y,13,x,y,365);
-    beam.addColorStop(0,'rgba(0,0,0,.98)');
-    beam.addColorStop(.62,'rgba(0,0,0,.76)');
-    beam.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=beam;
-    ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.arc(x,y,365,a-.34,a+.34);
-    ctx.closePath();
-    ctx.fill();
-  }
-  ctx.restore();
+  const working=flashlight&&flashlightBattery>0;
+  const angle=flashlightAngle();
+  const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
+  drawMaskCone(x,y,angle,flicker?92:510,.245,state.lightning>0?.16:.997,working?23:5);
   if(state.lightning>0){
-    ctx.fillStyle='rgba(191,211,204,'+state.lightning*.36+')';
+    ctx.fillStyle='rgba(191,211,204,'+Math.min(.84,state.lightning*1.15)+')';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(0,0,0,.22)';
     ctx.fillRect(0,0,W,H);
   }
-  const vignette=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.13,W/2,H/2,Math.max(W,H)*.76);
+  const vignette=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.78);
   vignette.addColorStop(0,'rgba(0,0,0,0)');
-  vignette.addColorStop(.65,'rgba(0,0,0,.17)');
-  vignette.addColorStop(1,'rgba(0,0,0,.81)');
+  vignette.addColorStop(.63,'rgba(0,0,0,.09)');
+  vignette.addColorStop(1,'rgba(0,0,0,.58)');
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
+  if(monster&&monster.active){
+    const d=dist(player.x,player.y,monster.x,monster.y);
+    if(d<285){
+      const panic=.035+.045*(.5+.5*Math.sin(state.elapsed*10));
+      ctx.fillStyle='rgba(112,4,7,'+panic+')';
+      ctx.fillRect(0,0,W,H);
+      if(d<145&&Math.sin(state.elapsed*18)>.92){
+        ctx.fillStyle='rgba(210,220,196,.035)';
+        ctx.fillRect(0,0,W,H);
+      }
+    }
+  }
 }
+
 function drawWorld(){
+  if(state.prologueStage!=='swamp'){drawPrologue();return;}
   screenJitter();
   if(state.floor==='inside'){
     drawInterior();
@@ -2235,6 +2568,7 @@ function drawWorld(){
   drawRoad();
   drawReeds();
   for(const t of trees)drawTree(t);
+  drawPatrolCarWorld();
   for(const o of objects){
     if(o.type==='building')drawBuilding(o);
     if(o.type==='evidence')drawEvidence(o);
@@ -2247,8 +2581,8 @@ function drawWorld(){
   drawPlayer();
   drawBulletEffects();
   drawFireflies();
-  drawLighting();
   drawRain();
+  drawLighting();
   drawMini();
 }
 function drawInterior(){
@@ -2365,23 +2699,25 @@ function drawRainAtWindows(sx,sy,room){
 function drawLightingInterior(){
   const x=player.x-camera.x+shakeX;
   const y=player.y-camera.y+shakeY;
-  ctx.save();
-  ctx.fillStyle=flashlight&&flashlightBattery>0?'rgba(0,4,4,.72)':'rgba(0,0,0,.74)';
-  ctx.fillRect(0,0,W,H);
-  ctx.globalCompositeOperation='destination-out';
-  const rad=flashlight&&flashlightBattery>0?150:42;
-  const g=ctx.createRadialGradient(x,y,4,x,y,rad);
-  g.addColorStop(0,'rgba(0,0,0,.99)');
-  g.addColorStop(.62,'rgba(0,0,0,.73)');
-  g.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=g;
-  ctx.beginPath();
-  ctx.arc(x,y,rad,0,Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-  const vignette=ctx.createRadialGradient(W/2,H/2,50,W/2,H/2,Math.max(W,H)*.75);
+  const working=flashlight&&flashlightBattery>0;
+  const angle=flashlightAngle();
+  drawMaskCone(x,y,angle,working?355:1,.26,.998,working?18:4);
+  const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
+  if(flicker){
+    ctx.fillStyle='rgba(0,0,0,.62)';
+    ctx.fillRect(0,0,W,H);
+  }
+  if(monster&&monster.active){
+    const d=dist(player.x,player.y,monster.x,monster.y);
+    if(d<260){
+      ctx.fillStyle='rgba(100,0,5,'+(0.025+.035*(.5+.5*Math.sin(state.elapsed*11)))+')';
+      ctx.fillRect(0,0,W,H);
+    }
+  }
+  const vignette=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.8);
   vignette.addColorStop(0,'rgba(0,0,0,0)');
-  vignette.addColorStop(1,'rgba(0,0,0,.72)');
+  vignette.addColorStop(.62,'rgba(0,0,0,.08)');
+  vignette.addColorStop(1,'rgba(0,0,0,.56)');
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
 }
@@ -2505,8 +2841,8 @@ function drawMenuArt(){
   g.fillRect(0,210,cw,ch-210);
 }
 function drawPortraits(){
-  const ids=['charArt0','charArt1','charArt2'];
-  const keys=['reyes','morgan','blake'];
+  const ids=['charArt0','charArt1'];
+  const keys=['hugo','yumi'];
   ids.forEach((id,index)=>{
     const c=$(id);
     const g=c.getContext('2d');
@@ -2529,19 +2865,43 @@ function drawPortraits(){
     g.fillRect(26,36,12,3);
     g.fillStyle='#171b15';
     g.fillRect(25,42,14,7);
+    if(spec.gender==='male'){
+      g.fillStyle=spec.hair;
+      g.fillRect(21,10,22,7);
+      g.fillRect(19,14,5,8);
+      g.fillRect(40,14,5,8);
+      g.fillStyle='#b5a16e';
+      g.fillRect(21,18,22,3);
+      g.fillStyle='#d2b975';
+    }else{
+      g.fillStyle=spec.hair;
+      g.fillRect(20,9,24,9);
+      g.fillRect(18,14,6,23);
+      g.fillRect(40,14,6,23);
+      g.fillRect(23,8,18,4);
+      g.fillStyle='#c7b5a1';
+      g.fillRect(22,18,20,3);
+      g.fillStyle='#d2b975';
+    }
     g.fillStyle='#d2b975';
     g.fillRect(12,36,5,10);
     g.fillRect(47,36,5,10);
-    if(index===1){
-      g.fillStyle='#626e58';
-      g.fillRect(22,14,20,6);
-      g.fillRect(20,19,24,4);
-    }
-    if(index===2){
+    if(index===0){
       g.fillStyle='#d4bb76';
       g.fillRect(21,20,22,3);
       g.fillStyle='#6b7858';
       g.fillRect(17,25,30,4);
+      g.fillStyle='#d6c18b';
+      g.fillRect(29,32,6,5);
+    }
+    if(index===1){
+      g.fillStyle='#626e58';
+      g.fillRect(22,14,20,6);
+      g.fillRect(20,19,24,4);
+      g.fillStyle='#c9b6a0';
+      g.fillRect(22,24,20,3);
+      g.fillStyle='#d6c18b';
+      g.fillRect(29,32,6,5);
     }
   });
 }
@@ -2625,6 +2985,9 @@ function bindEvents(){
     pointer.y=e.clientY-rect.top;
   });
   canvas.addEventListener('pointerdown',e=>{
+    if(state.prologueStage==='call'){acceptDispatch();return;}
+    if(state.prologueStage==='arrival'){exitPatrolCar();return;}
+    if(state.prologueStage==='drive')return;
     if(state.controlMode==='desktop'&&e.button===0){
       pointer.down=true;
       shoot();
@@ -2648,11 +3011,10 @@ function updateCharacterSelection(){
   for(const btn of document.querySelectorAll('[data-char]'))btn.classList.toggle('selected',btn.dataset.char===state.pendingCharacter);
   const spec=specs[state.pendingCharacter];
   const messages={
-    reyes:'Experienced patrol officer. Balanced speed, stamina, and health.',
-    morgan:'A seasoned deputy who can take more damage and carries extra rounds.',
-    blake:'A fast-moving trooper who can sprint longer, but has less starting health.'
+    hugo:'Boy character. Officer Hugo is a dependable male state trooper with balanced speed, health, and stamina.',
+    yumi:'Girl character. Officer Yumi is a quick female investigator with faster movement and longer stamina.'
   };
-  $('characterDetails').innerHTML='<b>'+escapeHTML(spec.name.toUpperCase())+'</b><br>'+escapeHTML(messages[state.pendingCharacter])+'<br><br>Speed: '+spec.speed+' · Max health: '+spec.hp+' · Starting ammo: '+spec.ammo+' + '+spec.reserve+' spare';
+  $('characterDetails').innerHTML='<b>'+(state.pendingCharacter==='hugo'?'BOY · ':'GIRL · ')+escapeHTML(spec.name.toUpperCase())+'</b><br>'+escapeHTML(messages[state.pendingCharacter])+'<br><br>Speed: '+spec.speed+' · Max health: '+spec.hp+' · Starting ammo: '+spec.ammo+' + '+spec.reserve+' spare';
 }
 function toggleFlashlight(){
   if(flashlightBattery<=0){toast('FLASHLIGHT BATTERY EMPTY. SEARCH FOR CELLS.');return;}
@@ -2673,6 +3035,8 @@ function onKeyDown(e){
     return;
   }
   if(!state.running)return;
+  if(state.prologueStage==='call'&&(key==='e'||key==='enter')){acceptDispatch();return;}
+  if(state.prologueStage==='arrival'&&(key==='e'||key==='enter')){exitPatrolCar();return;}
   if(key==='e')interact();
   if(key==='f')toggleFlashlight();
   if(key==='r'){
