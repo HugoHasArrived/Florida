@@ -1720,7 +1720,7 @@ function makeObjects(){
     {id:'depot',x:2700,y:1080,type:'building',name:'Road Maintenance Depot',detail:'A maintenance depot with a broken gate and abandoned tools.',room:'depot',w:196,h:150,style:'depot'},
     {id:'church',x:2180,y:1870,type:'building',name:'St. Mercy Chapel',detail:'Candles glow inside although the power is gone.',room:'church',w:174,h:160,style:'chapel'},
     {id:'warehouse',x:1370,y:2110,type:'building',name:'Flood Control Warehouse',detail:'The warehouse doors are chained from the inside.',room:'warehouse',w:210,h:158,style:'warehouse'},
-    {id:'farmhouse',x:2820,y:1570,type:'building',name:'The Abandoned House',detail:'An abandoned two-storey house. The upstairs light moves when you look away. Search its rooms for the missing deputy’s tape.',room:'farmhouse',w:182,h:146,style:'farmhouse'},
+    {id:'farmhouse',x:2820,y:1570,type:'building',name:'Cypress Farmhouse',detail:'A farmhouse with a light moving behind its upstairs window.',room:'farmhouse',w:182,h:146,style:'farmhouse'},
     {id:'medkit1',x:500,y:430,type:'loot',name:'First-aid pouch',loot:'medkit',found:false,icon:'+'},
     {id:'ammo1',x:1010,y:805,type:'loot',name:'Ammunition box',loot:'ammo',found:false,icon:'▪'},
     {id:'battery1',x:1525,y:520,type:'loot',name:'Flashlight batteries',loot:'battery',found:false,icon:'ϟ'},
@@ -2042,12 +2042,12 @@ function updatePrologue(dt){
     const handling=Math.max(.42,1-state.driveDamage*.0044);
     if(forward){
       const acceleration=state.driveSpeed<32?21:state.driveSpeed<68?15.5:state.driveSpeed<96?10:5.5;
-      state.driveSpeed=Math.min(Math.max(35,108-state.driveDamage*.38),state.driveSpeed+acceleration*dt*(1-state.driveDamage*.003));
+      state.driveSpeed=Math.min(Math.max(35,124-state.driveDamage*.48),state.driveSpeed+acceleration*dt*(1-state.driveDamage*.004));
     }else{
       state.driveSpeed=Math.max(0,state.driveSpeed-(state.driveSpeed>70?3.2:5.4)*dt);
     }
     if(brake)state.driveSpeed=Math.max(0,state.driveSpeed-(state.driveSpeed>45?58:42)*dt);
-    state.driveLane=clamp(state.driveLane+state.driveWheel*dt*(.075+state.driveSpeed*.00165)*handling,-1.3,1.0);
+    state.driveLane=clamp(state.driveLane+state.driveWheel*dt*(.11+state.driveSpeed*.0032)*handling,-1.3,1.0);
     const playerLane=currentDriveLane();
     const curve=Math.sin(state.driveScroll*.0012+.9)*.20+Math.sin(state.driveScroll*.00047+2.2)*.10;
     if(state.driveSpeed>58&&Math.abs(curve)>.17&&Math.abs(state.driveWheel)<.15){
@@ -2102,9 +2102,9 @@ function updatePrologue(dt){
       tone(72,.23,'square',.12,-32);
       toast('ROAD EDGE IMPACT! Correct your steering.',2.6);
     }
-    if(state.driveSpeed>76&&Math.abs(state.driveWheel)>.88){
+    if(state.driveSpeed>90&&Math.abs(state.driveWheel)>.78){
       state.driveHydroplane=Math.min(1,state.driveHydroplane+dt*.9);
-      state.driveLane=clamp(state.driveLane+state.driveWheel*dt*.095,-1.3,1.0);
+      state.driveLane=clamp(state.driveLane+state.driveWheel*dt*.16,-1.3,1.0);
     }
     if(state.driveHydroplane>.6){
       state.driveShake=Math.max(state.driveShake,.12);
@@ -2140,7 +2140,6 @@ function updatePrologue(dt){
   for(const r of raindrops){r.y+=r.speed*dt*.65;r.x-=r.speed*.16*dt;if(r.y>H+15){r.y=-15;r.x=Math.random()*W;}if(r.x<-15)r.x=W+10;}
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
   updatePartnerChat();
-  playAbandonedHouseAtmosphere();
   if(state.prologueStage==='drive')updateDriveLaneHUD();
 }
 function poly(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();}
@@ -2423,18 +2422,14 @@ function drawDriveDashboardDetails(){
   ctx.fillStyle='#7f8a79';ctx.font='7px monospace';ctx.textAlign='left';ctx.fillText('BELT  ABS  ENG  BRAKE  WARN',W*.40,H*.899);
 }
 function drawDriveScene(){
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-  ctx.filter='none';
-  ctx.shadowBlur=0;
   const progress=state.driveProgress/100;
   const city=progress<.39;
   const suburb=progress>=.39&&progress<.68;
   const playerLane=currentDriveLane();
   const sky=ctx.createLinearGradient(0,0,0,H*.66);
-  sky.addColorStop(0,city?'#101e2b':suburb?'#111d20':'#0b1410');
-  sky.addColorStop(.42,city?'#2a414a':suburb?'#2c403b':'#26372b');
-  sky.addColorStop(1,city?'#657269':suburb?'#52634d':'#394d39');
+  sky.addColorStop(0,city?'#07121e':suburb?'#091317':'#020604');
+  sky.addColorStop(.42,city?'#1b303a':suburb?'#1c2c2b':'#101a13');
+  sky.addColorStop(1,city?'#48534b':suburb?'#343f32':'#1b291b');
   ctx.fillStyle='#080d0b';ctx.fillRect(0,0,W,H);ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.70);
   const horizon=H*.355+Math.sin(state.driveScroll*.0021)*2.5;
   const flash=Math.max(0,Math.sin(state.driveSirenPhase*1.7)-.86);
@@ -2482,32 +2477,31 @@ function drawDriveScene(){
   const leftShoulder=[],rightShoulder=[];
   for(let i=0;i<=segments;i++){const z=i/segments;const c=centerAt(z),h=halfAt(z);leftShoulder.push([c-h-W*.035*z,yAt(z)]);}
   for(let i=segments;i>=0;i--){const z=i/segments;const c=centerAt(z),h=halfAt(z);rightShoulder.push([c+h+W*.035*z,yAt(z)]);}
-  poly(leftShoulder.concat(rightShoulder),city?'#3c4a41':suburb?'#3c4d39':'#3d5339');
+  poly(leftShoulder.concat(rightShoulder),'#131a15');
   const roadPoly=[];
   for(let i=0;i<=segments;i++){const z=i/segments;roadPoly.push([centerAt(z)-halfAt(z),yAt(z)]);}
   for(let i=segments;i>=0;i--){const z=i/segments;roadPoly.push([centerAt(z)+halfAt(z),yAt(z)]);}
-  poly(roadPoly,city?'#626b6b':suburb?'#646f68':'#606c5c');
-  const wet=ctx.createLinearGradient(0,horizon,0,H);wet.addColorStop(0,'rgba(153,174,171,.10)');wet.addColorStop(.45,'rgba(177,196,190,.19)');wet.addColorStop(1,'rgba(194,204,184,.28)');
+  poly(roadPoly,'#252c2b');
+  const wet=ctx.createLinearGradient(0,horizon,0,H);wet.addColorStop(0,'rgba(99,122,120,.02)');wet.addColorStop(.45,'rgba(118,145,141,.12)');wet.addColorStop(1,'rgba(156,171,158,.19)');
   ctx.save();ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.fillStyle=wet;ctx.fill();ctx.restore();
-  ctx.save();ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.clip();ctx.globalCompositeOperation='screen';const headlightWash=ctx.createRadialGradient(W*.5,H*.76,Math.max(8,W*.018),W*.5,H*.76,Math.max(W*.48,H*.72));headlightWash.addColorStop(0,'rgba(255,242,194,.30)');headlightWash.addColorStop(.36,'rgba(227,236,206,.22)');headlightWash.addColorStop(.72,'rgba(196,216,203,.10)');headlightWash.addColorStop(1,'rgba(196,216,203,0)');ctx.fillStyle=headlightWash;ctx.fillRect(0,horizon,W,H-horizon);ctx.restore();
   ctx.strokeStyle='#596057';ctx.lineWidth=2;ctx.beginPath();for(let i=0;i<=segments;i++){const z=i/segments;const x=centerAt(z)-halfAt(z);if(i===0)ctx.moveTo(x,yAt(z));else ctx.lineTo(x,yAt(z));}for(let i=segments;i>=0;i--){const z=i/segments;ctx.lineTo(centerAt(z)+halfAt(z),yAt(z));}ctx.stroke();
   for(let i=0;i<26;i++){
     const z=((i/26+state.driveScroll*.009)%1);const y=yAt(z);const half=halfAt(z);const c=centerAt(z);const dashH=2+z*24;const dashW=1+z*2;
     if(i%2===0){
       const lineGap=3+z*8;
-      const lineWidth=2.2+z*4.8;
-      const lineHeight=3+z*31;
-      px(c-lineGap-lineWidth-2,y-lineHeight*.5,lineWidth+4,lineHeight,'#282a20');
-      px(c+lineGap-2,y-lineHeight*.5,lineWidth+4,lineHeight,'#282a20');
-      px(c-lineGap-lineWidth*.20,y-lineHeight*.5,lineWidth*.92,lineHeight,'#ffdf68');
-      px(c+lineGap+lineWidth*.12,y-lineHeight*.5,lineWidth*.92,lineHeight,'#ffdf68');
+      const lineWidth=1.4+z*3.0;
+      const lineHeight=2+z*28;
+      px(c-lineGap-lineWidth-1,y-lineHeight*.5,lineWidth+2,lineHeight,'#211f17');
+      px(c+lineGap-1,y-lineHeight*.5,lineWidth+2,lineHeight,'#211f17');
+      px(c-lineGap-lineWidth*.20,y-lineHeight*.5,lineWidth*.76,lineHeight,'#ffe88b');
+      px(c+lineGap+lineWidth*.24,y-lineHeight*.5,lineWidth*.76,lineHeight,'#ffe88b');
       if((city||suburb)&&z>.28){
         px(c-half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
         px(c+half*.49,y-lineHeight*.44,Math.max(1,z*2),lineHeight*.88,'rgba(219,226,206,.45)');
       }
     }
     const edgeWidth=1+z*3;
-    if(i%2===0){px(c-half*.985,y-dashH*.5,edgeWidth+1,dashH,'#e0e6d4');px(c+half*.985-edgeWidth,y-dashH*.5,edgeWidth+1,dashH,'#e0e6d4');px(c-half*1.015,y-dashH*.5,edgeWidth+1,dashH,'#adbcaa');px(c+half*1.015-edgeWidth,y-dashH*.5,edgeWidth+1,dashH,'#adbcaa');}
+    if(i%2===0){px(c-half*.98,y-dashH*.5,edgeWidth,dashH,'#b7c3b5');px(c+half*.98-edgeWidth,y-dashH*.5,edgeWidth,dashH,'#b7c3b5');}
     if(city&&i%3===0){px(c-half*.50,y-dashH*.36,Math.max(1,dashW*.6),dashH*.7,'#888e7c');px(c+half*.50,y-dashH*.36,Math.max(1,dashW*.6),dashH*.7,'#888e7c');}
   }
   for(const side of [-1,1]){
@@ -2530,17 +2524,6 @@ function drawDriveScene(){
     const signZ=.28;const signX=centerAt(signZ)-halfAt(signZ)-W*.045;const signY=yAt(signZ)-H*.04;
     if(signX>-W*.1&&signX<W*1.1){px(signX,signY,Math.max(3,W*.004),H*.045,'#242a25');px(signX-W*.055,signY-H*.012,W*.105,H*.032,'#22382d');ctx.strokeStyle='#b3bb9d';ctx.lineWidth=1;ctx.strokeRect(signX-W*.055,signY-H*.012,W*.105,H*.032);ctx.fillStyle='#d2d6be';ctx.font='bold '+Math.max(8,W*.010)+'px monospace';ctx.textAlign='center';ctx.fillText('MILE 9',signX,signY+H*.009);}
   }
-  ctx.save();
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-  ctx.beginPath();ctx.moveTo(centerAt(0)-halfAt(0),yAt(0));for(let i=1;i<=segments;i++)ctx.lineTo(centerAt(i/segments)-halfAt(i/segments),yAt(i/segments));for(let i=segments;i>=0;i--)ctx.lineTo(centerAt(i/segments)+halfAt(i/segments),yAt(i/segments));ctx.closePath();ctx.clip();
-  const roadVisibility=ctx.createLinearGradient(0,horizon,0,H*.76);
-  roadVisibility.addColorStop(0,'rgba(205,215,189,.22)');
-  roadVisibility.addColorStop(.38,'rgba(221,226,202,.38)');
-  roadVisibility.addColorStop(1,'rgba(236,230,196,.52)');
-  ctx.fillStyle=roadVisibility;ctx.fillRect(0,horizon,W,H*.76-horizon);
-  ctx.restore();
-  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   drawTrafficCars(horizon,centerAt(1),topHalf,bottomHalf,city||suburb);
   drawDrivePixelDetails(horizon,centerAt,halfAt,yAt,city,suburb);
   const beam=ctx.createRadialGradient(W*.5,H*.65,5,W*.5,H*.75,H*.72);beam.addColorStop(0,'rgba(231,228,190,.20)');beam.addColorStop(.28,'rgba(209,215,189,.105)');beam.addColorStop(1,'rgba(218,226,210,0)');ctx.fillStyle=beam;ctx.fillRect(0,H*.28,W,H*.72);
@@ -2591,9 +2574,7 @@ function drawDriveScene(){
     px(cx-2,cy-2,4,4,'#e8eee1');
     ctx.restore();
   }
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-  drawVignette(.035);
+  drawVignette();
 }
 function drawArrivalScene(){
   px(0,0,W,H,'#040706');const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#07100d');grad.addColorStop(.68,'#0d1710');grad.addColorStop(1,'#030504');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
@@ -2608,12 +2589,8 @@ function drawArrivalScene(){
   ctx.fillStyle='rgba(192,208,195,.24)';ctx.font='12px monospace';ctx.textAlign='left';ctx.fillText('MILE MARKER 9',W*.07,H*.18);ctx.fillStyle='#d8ddcc';ctx.font='bold '+Math.max(18,Math.min(34,W*.04))+'px monospace';ctx.fillText('NO BACKUP ON SCENE',W*.07,H*.24);ctx.fillStyle='#abb7a6';ctx.font=Math.max(11,Math.min(16,W*.017))+'px monospace';ctx.fillText('One patrol car. One officer. No movement in the trees.',W*.07,H*.29);ctx.fillText('The radio is receiving a transmission from your own unit.',W*.07,H*.32);
   px(W*.07,H*.37,W*.005,H*.09,'#b34b43');ctx.fillStyle='#d4bb7e';ctx.font='bold 13px monospace';ctx.fillText('PRESS E / TAP SEARCH TO STEP OUT',W*.09,H*.415);drawVignette();
 }
-function drawVignette(strength=.72){const v=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.16,W*.5,H*.48,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.7,'rgba(0,0,0,'+(strength*.25)+')');v.addColorStop(1,'rgba(0,0,0,'+strength+')');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
+function drawVignette(){const v=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.16,W*.5,H*.48,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.7,'rgba(0,0,0,.18)');v.addColorStop(1,'rgba(0,0,0,.72)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
 function drawPrologue(){
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-  ctx.filter='none';
-  ctx.shadowBlur=0;
   screenJitter();
   if(state.prologueStage==='call')drawPrologueCall();
   else if(state.prologueStage==='drive')drawDriveScene();
@@ -3942,10 +3919,6 @@ function drawLighting(){
 }
 
 function drawWorld(){
-  ctx.globalAlpha=1;
-  ctx.globalCompositeOperation='source-over';
-  ctx.filter='none';
-  ctx.shadowBlur=0;
   if(state.prologueStage!=='swamp'){drawPrologue();return;}
   screenJitter();
   if(state.floor==='inside'){
@@ -4575,521 +4548,6 @@ function boot(){
 }
 boot();
 })();
-
-const abandonedHouseAtmosphere = [
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'This house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'This house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'This house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'An child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'An second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'An voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'An distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'An shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'An floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'An wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'An low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'An door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'An broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'An shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'An voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'This house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'This house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'This house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'An child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'An second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'An voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'An distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'An shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'An floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'An wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'An low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'An door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'An broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'An shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'An voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'The house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'The house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'The house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-  'The upstairs floorboard creaks, although nobody is walking.',
-  'The hallway smells like wet soil and old pennies.',
-  'A child-sized handprint appears on the inside of the locked door.',
-  'The radio whispers your badge number in a voice you do not know.',
-  'Something knocks three times from inside the wall.',
-  'The portrait eyes have turned toward the staircase.',
-  'Your flashlight catches a figure at the landing. The landing is empty now.',
-  'This house settles around you like it is breathing.',
-  'A second set of footsteps stops when you stop.',
-  'You hear your partner call from the room you just left.',
-  'The front door is farther away than it was a moment ago.',
-  'An upstairs window glows, then goes dark when you look directly at it.',
-  'The tape recorder is warm. It has been playing recently.',
-  'The wallpaper bulges as if someone is pressing a face against it.',
-  'A voice behind you says, “You missed one.”',
-  'The floor is wet, but the ceiling above it is dry.',
-  'The stair railing is sticky with rainwater that smells of rust.',
-  'A distant siren repeats the same three notes over and over.',
-  'The family photograph shows one extra person in the doorway.',
-  'Your own footsteps arrive half a second after you make them.',
-  'The closet door slowly opens against the slope of the floor.',
-  'You hear a chair scrape across the room above you.',
-  'This house has no power, but the telephone rings anyway.',
-  'The receiver whispers, “Do not go into the basement.”',
-  'From below the floor comes a soft, patient scratching.',
-  'A shadow crosses the frosted glass without blocking the light.',
-  'The mirror reflects a hallway with one extra door.',
-  'You blink. The extra door remains.',
-  'A floorboard bends under an invisible weight.',
-  'The upstairs light clicks on by itself.',
-  'The smell of smoke grows stronger near the nursery.',
-  'Your radio reports movement behind you. The signal is from inside the house.',
-  'A wet footprint appears beside your boot.',
-  'The next footprint forms while you watch.',
-  'The staircase groans under a weight that never reaches the next step.',
-  'A low voice counts down from ten, then starts again at ten.',
-  'The room seems smaller when you turn back toward the exit.',
-  'Something taps from the other side of the boarded window.',
-  'A door handle turns slowly, then stops just before opening.',
-  'The air grows colder near the family room.',
-  'A broken music box plays one note from upstairs.',
-  'The note continues after the music box stops.',
-  'A shape stands beyond the curtains, taller than the window.',
-  'You hear breathing from inside the empty bathtub.',
-  'The water in the sink runs black for one second.',
-  'The basement door is marked from the inside with deep scratches.',
-  'A voice repeats your last radio transmission with a long delay.',
-  'This house makes a sound like someone swallowing.',
-  'The hallway light flickers in a pattern: two short, one long.',
-  'The final stair is colder than the rest.',
-];
-function playAbandonedHouseAtmosphere(){
-  if(state.floor!=='inside'||!state.room||!['farmhouse','attic','basement'].includes(state.room.id))return;
-  if(!state.abandonedHouseNext)state.abandonedHouseNext=state.elapsed+9;
-  if(state.elapsed<state.abandonedHouseNext)return;
-  state.abandonedHouseNext=state.elapsed+13+Math.random()*19;
-  if(Math.random()<.68){
-    const message=abandonedHouseAtmosphere[Math.floor(Math.random()*abandonedHouseAtmosphere.length)];
-    toast(message,3.1);
-    if(Math.random()<.55){voiceNoise(Math.random()<.5?'left':'right',.12);}
-    if(Math.random()<.22){state.screenShake=Math.max(state.screenShake,.22);tone(52,.36,'sawtooth',.06,-31);}
-  }
-}
 </script>
 </body>
 </html>'''
