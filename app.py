@@ -1055,9 +1055,9 @@ body.game-active.mobile-mode #minimap {
       <div class="rule"><b>03 / STAY ALIVE</b>The Smiler stalks noisy officers. Sprinting and gunshots draw its attention.</div>
       <div class="rule"><b>04 / FIGHT SMART</b>Shots can interrupt the creature but will not kill it. Smaller marsh crawlers can be killed.</div>
       <div class="rule"><b>05 / SEARCH BUILDINGS</b>Press E at doors to enter rooms. Investigate interiors for supplies and clues.</div>
-      <div class="rule"><b>06 / ESCAPE</b>Find the truck keys, collect enough evidence, rescue both survivors, and reach extraction.</div>
+      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors and follow the gold extraction beacon. Evidence, keys, and extra building searches are optional bonuses.</div>
     </div>
-    <p class="intro">Search sheds for ammunition, bandages, batteries, and notes. The flashlight helps you spot details, but it also reveals your position. Watch the minimap: red marks danger, gold marks evidence, and green marks survivors.</p>
+    <p class="intro">Search sheds for ammunition, bandages, batteries, and notes. The flashlight helps you spot details, but it also reveals your position. Watch the minimap: red marks danger, gold marks optional evidence and extraction, and green marks survivors. Your only required escape objective is to rescue both survivors and enter the gold extraction zone.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1194,6 +1194,12 @@ const state={
   damageFlash:0,
   noise:0,
   intensity:0,
+  exitHintCooldown:0,
+  apparitionTimer:0,
+  apparitionCooldown:11,
+  apparitionX:0,
+  apparitionY:0,
+  horrorEventFlags:{},
   deathFade:0,
   victoryFade:0,
   discovered:0,
@@ -1741,6 +1747,12 @@ function resetGame(){
   state.damageFlash=0;
   state.noise=0;
   state.intensity=0;
+  state.exitHintCooldown=0;
+  state.apparitionTimer=0;
+  state.apparitionCooldown=9+Math.random()*8;
+  state.apparitionX=0;
+  state.apparitionY=0;
+  state.horrorEventFlags={};
   state.deathFade=0;
   state.victoryFade=0;
   state.discovered=0;
@@ -2535,9 +2547,13 @@ function worldCoordinates(screenX,screenY){
 }
 function nearestInteractable(){
   if(state.floor!=='outside')return nearestInteriorObject();
+  const extraction=objects.find(o=>o.type==='exit');
+  const rescuedCount=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  if(extraction&&rescuedCount>=2&&dist(player.x,player.y,extraction.x,extraction.y)<178)return extraction;
   let found=null;
   let best=Infinity;
   for(const o of objects){
+    if(o.type==='exit')continue;
     if(o.type==='evidence'&&o.found)continue;
     if(o.type==='loot'&&o.found)continue;
     const d=dist(player.x,player.y,o.x,o.y);
@@ -2545,10 +2561,11 @@ function nearestInteractable(){
     if(d<reach&&d<best){best=d;found=o;}
   }
   for(const s of survivors){
-    if(s.delivered)continue;
+    if(s.delivered||s.found||s.following)continue;
     const d=dist(player.x,player.y,s.x,s.y);
     if(d<112&&d<best){best=d;found=s;}
   }
+  if(extraction&&dist(player.x,player.y,extraction.x,extraction.y)<118)return extraction;
   return found;
 }
 function nearestInteriorObject(){
@@ -2708,12 +2725,13 @@ function activateMonster(){
   state.screenShake=.4;
 }
 function currentTasks(){
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
   return [
-    {done:evidence>=5,text:'Recover five evidence items ('+evidence+'/5).'},
-    {done:survivors.filter(s=>s.delivered).length>=2,text:'Find and escort two missing people ('+survivors.filter(s=>s.delivered).length+'/2).'},
-    {done:state.keysFound,text:'Locate the patrol truck keys.'},
-    {done:state.exploredRooms>=2,text:'Search at least two buildings ('+state.exploredRooms+'/2).'},
-    {done:state.won,text:'Reach the extraction point alive.'}
+    {done:rescued>=2,text:'MAIN OBJECTIVE: Rescue both missing people ('+rescued+'/2).'},
+    {done:state.won,text:'MAIN OBJECTIVE: Reach the extraction beacon alive.'},
+    {done:evidence>=5,text:'OPTIONAL CASE BONUS: Recover evidence ('+evidence+'/5).'},
+    {done:state.keysFound,text:'OPTIONAL SUPPLY: Locate the patrol truck keys.'},
+    {done:state.exploredRooms>=2,text:'OPTIONAL EXPLORATION: Search buildings ('+state.exploredRooms+'/2).'}
   ];
 }
 function updateObjectives(){
@@ -2729,28 +2747,35 @@ function updateSurvivorLocator(){
   box.classList.add('visible');
   if(state.floor==='inside'){
     main.textContent='SURVIVOR SIGNAL: OUTSIDE';
-    sub.textContent='Exit this building, then follow the green signal arrow to the nearest missing person.';
+    sub.textContent='Exit this building, then follow the green signal arrow.';
     return;
   }
   const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
   const followers=survivors.filter(s=>s.following&&!s.delivered);
-  const delivered=survivors.filter(s=>s.delivered).length;
   if(missing.length){
     const target=missing[0];
     const d=dist(player.x,player.y,target.x,target.y);
     const a=angleTo(player.x,player.y,target.x,target.y);
     const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
     const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
-    main.innerHTML=''+escapeHTML(target.name.toUpperCase())+' <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
-    const phrase=d<112?'YOU ARE CLOSE — PRESS E / SEARCH TO RESCUE.':d<360?'SIGNAL STRONG — FOLLOW THE GREEN BEACON.':'SIGNAL WEAK — FOLLOW THE EDGE ARROW AND GREEN MINIMAP MARKER.';
-    sub.textContent='RESCUED: '+delivered+'/'+survivors.length+' SAFE · '+phrase;
-  }else if(followers.length){
-    main.textContent='SURVIVORS LOCATED: '+followers.map(s=>s.name.toUpperCase()).join(' + ');
-    sub.textContent='They are following you. Reach the extraction vehicle together; do not leave them behind.';
-  }else{
-    main.textContent='ALL SURVIVORS ACCOUNTED FOR';
-    sub.textContent=''+delivered+'/'+survivors.length+' safe. Continue with evidence and truck keys.';
+    main.innerHTML=escapeHTML(target.name.toUpperCase())+' <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    const phrase=d<150?'YOU ARE CLOSE — PRESS E / SEARCH TO RESCUE.':d<420?'SIGNAL STRONG — FOLLOW THE GREEN BEACON.':'SIGNAL WEAK — FOLLOW THE EDGE ARROW AND GREEN MINIMAP MARKER.';
+    sub.textContent='RESCUED: '+rescued+'/2 · '+phrase;
+    return;
   }
+  if(rescued>=2){
+    const exit=objects.find(o=>o.type==='exit');
+    const d=exit?dist(player.x,player.y,exit.x,exit.y):0;
+    const a=exit?angleTo(player.x,player.y,exit.x,exit.y):0;
+    const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
+    const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
+    main.innerHTML='BOTH SURVIVORS FOUND <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    sub.textContent='EXTRACTION IS UNLOCKED. Follow the GOLD beacon and step into its zone. Evidence and truck keys are optional bonuses.';
+    return;
+  }
+  main.textContent='SEARCH FOR SURVIVORS';
+  sub.textContent='Follow the pulsing green markers and use E when close.';
 }
 function updateHUD(){
   if(!player)return;
@@ -2760,18 +2785,17 @@ function updateHUD(){
   $('ammo').textContent=ammo;
   $('reserve').textContent=reserve;
   $('evidence').textContent=evidence+'/5';
-  $('survivors').textContent=survivors.filter(s=>s.delivered).length+'/2';
+  const rescuedCount=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  $('survivors').textContent=rescuedCount+'/2';
   $('battery').textContent=Math.floor(flashlightBattery)+'%';
   $('officerName').textContent=specs[state.selectedCharacter].name.toUpperCase();
   const minutes=Math.floor(state.missionClock/60);
   const seconds=Math.floor(state.missionClock%60);
   $('timeReadout').textContent=String(2+Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0')+' AM';
   $('status').textContent=monster&&monster.active?'RADIO: SIGNAL LOST':'RADIO: DISPATCH STANDBY';
-  const completeSurvivors=survivors?survivors.filter(s=>s.delivered).length:0;
-  if(evidence<5){$('objective').textContent='Collect evidence '+evidence+'/5. Search the buildings.';}
-  else if(completeSurvivors<2){$('objective').textContent='Find the missing people '+completeSurvivors+'/2.';}
-  else if(!state.keysFound){$('objective').textContent='Find the patrol truck keys.';}
-  else{$('objective').textContent='Reach the roadside extraction point.';}
+  const completeSurvivors=survivors?survivors.filter(s=>s.found||s.following||s.delivered).length:0;
+  if(completeSurvivors<2){$('objective').textContent='MAIN OBJECTIVE: Rescue the missing people '+completeSurvivors+'/2. Follow green markers.';}
+  else{$('objective').textContent='EXTRACTION UNLOCKED: Follow the gold beacon and enter its zone. Evidence is optional.';}
   updateSurvivorLocator();
   const near=player&&state.running?nearestInteractable():null;
   if(near){
@@ -2802,11 +2826,25 @@ function useMedkit(){
   updateInventory();
 }
 function tryExtraction(){
-  const delivered=survivors.filter(s=>s.delivered).length;
-  if(evidence<5){toast('DISPATCH REFUSES TO CLEAR EXTRACTION. EVIDENCE '+evidence+'/5.',2.7);return;}
-  if(delivered<2){toast('YOU CANNOT LEAVE THEM BEHIND. SURVIVORS '+delivered+'/2.',2.7);return;}
-  if(!state.keysFound){toast('THE TRUCK IS LOCKED. FIND THE KEYS.',2.7);return;}
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  if(rescued<2){
+    toast('EXTRACTION IS NOT READY. FIND THE SECOND SURVIVOR: '+rescued+'/2.',3.2);
+    state.exitHintCooldown=4;
+    return;
+  }
+  for(const survivor of survivors){
+    if(survivor.found||survivor.following||survivor.delivered){
+      survivor.found=true;
+      survivor.following=false;
+      survivor.delivered=true;
+      survivor.x=2920+(survivor.id==='ana'?-22:22);
+      survivor.y=2300+18;
+    }
+  }
+  state.rescued=survivors.filter(s=>s.delivered).length;
   state.won=true;
+  updateObjectives();
+  updateHUD();
   finishGame(true);
 }
 function finishGame(success){
@@ -2977,18 +3015,24 @@ function insideBlocked(x,y){
   return false;
 }
 function updateSurvivors(dt){
+  const extraction=objects.find(o=>o.type==='exit');
   for(const s of survivors){
     if(!s.following||s.delivered)continue;
-    const d=dist(player.x,player.y,s.x,s.y);
+    let d=dist(player.x,player.y,s.x,s.y);
+    if(state.floor==='outside'&&d>440){
+      s.x=clamp(player.x-Math.cos(player.angle)*72+(s.id==='ana'?-18:18),48,WORLD.w-48);
+      s.y=clamp(player.y-Math.sin(player.angle)*72+18,48,WORLD.h-48);
+      d=dist(player.x,player.y,s.x,s.y);
+    }
     if(state.floor==='outside'&&d>58){
       const a=angleTo(s.x,s.y,player.x,player.y);
-      const speed=d>220?105:70;
+      const speed=d>220?125:82;
       const nx=s.x+Math.cos(a)*speed*dt;
       const ny=s.y+Math.sin(a)*speed*dt;
       if(!blockedAt(nx,s.y,7))s.x=nx;
       if(!blockedAt(s.x,ny,7))s.y=ny;
     }
-    if(state.floor==='outside'&&dist(s.x,s.y,2920,2300)<115){
+    if(extraction&&state.floor==='outside'&&dist(s.x,s.y,extraction.x,extraction.y)<115){
       s.delivered=true;
       s.following=false;
       state.rescued++;
@@ -3052,7 +3096,8 @@ function updateMonster(dt){
     return;
   }
   if(monster.stun>0)return;
-  let speed=d<280?111:state.noise>.3?88:62;
+  const rescuedPressure=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  let speed=(d<280?111:state.noise>.3?88:62)+Math.min(28,evidence*2.4+rescuedPressure*6+state.elapsed/100);
   if(d>780&&state.noise<.2){
     monster.lastMove+=dt;
     if(monster.lastMove>7&&monster.warpCooldown<=0){
@@ -3146,12 +3191,78 @@ function updateWeather(dt){
   }
   for(const f of fireflies)f.phase+=dt*f.speed;
 }
+function updateFearDirector(dt){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp')return;
+  state.apparitionTimer=Math.max(0,state.apparitionTimer-dt);
+  state.apparitionCooldown=Math.max(0,state.apparitionCooldown-dt);
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  if(rescued>=1&&!state.horrorEventFlags.firstRescue){
+    state.horrorEventFlags.firstRescue=true;
+    state.intensity=Math.max(state.intensity,.68);
+    state.screenShake=Math.max(state.screenShake,.18);
+    voiceNoise(choose(['left','right']),.11);
+    triggerWhisper('That one was already dead when you found them.','right','UNKNOWN OFFICER');
+    toast('RADIO: YOUR PARTNER CLAIMS THE BODYCAM SHOWS AN EMPTY ROOM.',4.0);
+  }
+  if(rescued>=2&&!state.horrorEventFlags.bothRescued){
+    state.horrorEventFlags.bothRescued=true;
+    state.intensity=1;
+    state.screenShake=Math.max(state.screenShake,.42);
+    sound('scare');
+    triggerWhisper('You brought them back to the wrong place.','left','VOICE FROM THE PATROL CAR');
+    toast('TWO RESCUE SIGNALS CONFIRMED. A THIRD SIGNAL IS INSIDE YOUR RADIO.',4.5);
+    state.apparitionCooldown=3.5;
+  }
+  if(state.elapsed>30&&state.apparitionCooldown<=0&&monster&&monster.active&&state.floor==='outside'){
+    const a=player.angle+Math.PI+choose([-1,1])*(.42+Math.random()*.72);
+    const d=260+Math.random()*210;
+    state.apparitionX=clamp(player.x+Math.cos(a)*d,36,WORLD.w-36);
+    state.apparitionY=clamp(player.y+Math.sin(a)*d,36,WORLD.h-36);
+    state.apparitionTimer=.58+Math.random()*.58;
+    state.apparitionCooldown=13+Math.random()*13;
+    state.intensity=Math.max(state.intensity,.42);
+    if(state.voiceCooldown<=0)triggerWhisper(choose(['Don’t look at the edge of the light.','It’s been standing behind you for a while.','You saw that. Do not tell dispatch.','It borrowed your partner’s voice.']),choose(['left','right']),'SHADOW AT THE EDGE OF THE BEAM');
+    if(Math.random()<.45)sound('radio');
+  }
+  if(monster&&monster.active){
+    const d=dist(player.x,player.y,monster.x,monster.y);
+    if(d<175){state.intensity=Math.max(state.intensity,.6);}
+    if(d<105&&state.voiceCooldown<=0)triggerWhisper(choose(['Don’t blink.','I’m close enough to hear your heartbeat.','Your light is getting tired.']),choose(['left','right']),'THE SMILER');
+  }
+}
+function drawFalseFigure(){
+  if(state.apparitionTimer<=0||state.floor!=='outside'||state.prologueStage!=='swamp')return;
+  const angle=angleTo(player.x,player.y,state.apparitionX,state.apparitionY);
+  const edgeX=W*.5+Math.cos(angle)*W*.34;
+  const edgeY=H*.5+Math.sin(angle)*H*.30;
+  const x=clamp(edgeX,24,W-24);
+  const y=clamp(edgeY,74,H-35);
+  const fade=Math.min(1,state.apparitionTimer*2.6);
+  ctx.save();ctx.globalAlpha=fade*.92;
+  const flick=Math.sin(state.elapsed*37)*2;
+  ctx.fillStyle='#020403';
+  ctx.fillRect(x-11,y-38+flick,22,43);
+  ctx.fillRect(x-8,y-51+flick,16,18);
+  ctx.fillRect(x-17,y-28,6,27);
+  ctx.fillRect(x+11,y-28,6,27);
+  ctx.fillRect(x-8,y+4,6,17);
+  ctx.fillRect(x+2,y+4,6,17);
+  if(Math.sin(state.elapsed*59)>.2){
+    ctx.fillStyle='#c4423d';
+    ctx.fillRect(x-5,y-44,3,2);
+    ctx.fillRect(x+3,y-44,3,2);
+  }
+  ctx.fillStyle='rgba(0,0,0,.88)';ctx.fillRect(x-60,y+23,120,14);
+  ctx.fillStyle='#d3c2a1';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('SIGNAL LOST',x,y+33);
+  ctx.restore();
+}
 function update(dt){
   if(state.prologueStage!=='swamp'){updatePrologue(dt);return;}
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
   updatePersonalScare(dt);
   state.elapsed+=dt;
   updateWhispers(dt);
+  updateFearDirector(dt);
   state.missionClock+=dt;
   updatePartnerChat();
   if(state.options.personalScares&&state.elapsed>19&&state.personalScareCount===2&&state.personalScareCooldown<=0)triggerPersonalScare('duplicate');
@@ -3183,6 +3294,18 @@ function update(dt){
   }else player.hidden=false;
   movePlayer(dt);
   updateSurvivors(dt);
+  state.exitHintCooldown=Math.max(0,(state.exitHintCooldown||0)-dt);
+  if(state.floor==='outside'){
+    const extraction=objects.find(o=>o.type==='exit');
+    const rescuedAtExit=survivors.filter(s=>s.found||s.following||s.delivered).length;
+    if(extraction&&dist(player.x,player.y,extraction.x,extraction.y)<142){
+      if(rescuedAtExit>=2){tryExtraction();return;}
+      if(state.exitHintCooldown<=0){
+        toast('EXTRACTION IS HERE — RESCUE THE SECOND PERSON FIRST ('+rescuedAtExit+'/2).',3.2);
+        state.exitHintCooldown=5;
+      }
+    }
+  }
   updateCrawlers(dt);
   updateMonster(dt);
   updateBullets(dt);
@@ -3408,19 +3531,35 @@ function drawLoot(o){
 function drawExit(o){
   const x=o.x-camera.x;
   const y=o.y-camera.y;
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  const unlocked=rescued>=2;
+  const pulse=.5+.5*Math.sin(state.elapsed*4.5);
+  ctx.save();
+  if(unlocked){
+    ctx.globalCompositeOperation='lighter';
+    const glow=ctx.createRadialGradient(x,y,4,x,y,72+12*pulse);
+    glow.addColorStop(0,'rgba(236,207,119,.38)');
+    glow.addColorStop(1,'rgba(236,207,119,0)');
+    ctx.fillStyle=glow;ctx.fillRect(x-90,y-90,180,180);
+  }
+  ctx.restore();
   px(x-32,y-18,64,36,'#858776');
   px(x-25,y-11,50,16,'#28362d');
   px(x-24,y+9,12,5,'#a72d30');
   px(x+12,y+9,12,5,'#a72d30');
   px(x-19,y-8,13,8,'#6e8172');
   px(x+6,y-8,13,8,'#6e8172');
-  px(x-7,y-24,14,7,'#cfc7a5');
-  ctx.fillStyle='#efdda8';
-  ctx.font='10px monospace';
+  px(x-7,y-24,14,7,unlocked?'#e3c875':'#cfc7a5');
+  ctx.fillStyle=unlocked?'#ffe8a1':'#d5d0ad';
+  ctx.font='bold 11px monospace';
   ctx.textAlign='center';
-  ctx.fillText('EXTRACTION',x,y-33);
-  if(!state.keysFound||evidence<5||survivors.filter(s=>s.delivered).length<2){
-    px(x-18,y+20,36,3,'#a34740');
+  ctx.fillText(unlocked?'ESCAPE · ENTER BEACON':'EXTRACTION',x,y-34);
+  if(unlocked){
+    ctx.strokeStyle='rgba(255,225,140,'+(.4+.45*pulse)+')';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(x,y+2,46+8*pulse,32+6*pulse,0,0,Math.PI*2);ctx.stroke();
+  }else{
+    ctx.fillStyle='#e7dfba';ctx.font='9px monospace';ctx.fillText('RESCUE 2 PEOPLE',x,y+32);
   }
 }
 function drawSurvivors(){
@@ -3752,6 +3891,7 @@ function drawWorld(){
   drawRain();
   drawLighting();
   drawPatrolSirenWorldGlow();
+  drawFalseFigure();
   drawSurvivorGuidance();
   drawMini();
   if(state.sceneFade>0){ctx.fillStyle='rgba(0,0,0,'+state.sceneFade+')';ctx.fillRect(0,0,W,H);}
@@ -3895,32 +4035,38 @@ function drawLightingInterior(){
 function drawSurvivorGuidance(){
   if(state.prologueStage!=='swamp'||state.floor!=='outside'||!state.running)return;
   const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
-  if(!missing.length)return;
-  const target=missing[0];
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  const isExit=missing.length===0&&rescued>=2;
+  if(!missing.length&&!isExit)return;
+  const target=isExit?objects.find(o=>o.type==='exit'):missing[0];
+  if(!target)return;
   const d=dist(player.x,player.y,target.x,target.y);
   const sx=target.x-camera.x;
   const sy=target.y-camera.y;
   const onScreen=sx>22&&sy>22&&sx<W-22&&sy<H-22;
+  const hue=isExit?'rgba(255,221,139,':'rgba(179,255,143,';
+  const solid=isExit?'#ffe7a3':'#d8ffc0';
+  const label=isExit?'EXTRACTION':'SOS · '+target.name.toUpperCase();
   if(onScreen){
-    const pulse=.5+.5*Math.sin(state.elapsed*4.2);
+    const pulse=.5+.5*Math.sin(state.elapsed*(isExit?5:4.2));
     const bx=sx,by=sy-25;
     ctx.save();
     ctx.globalCompositeOperation='lighter';
-    const glow=ctx.createRadialGradient(bx,by,2,bx,by,28+12*pulse);
-    glow.addColorStop(0,'rgba(179,255,143,.55)');
-    glow.addColorStop(.35,'rgba(122,220,115,.20)');
-    glow.addColorStop(1,'rgba(122,220,115,0)');
-    ctx.fillStyle=glow;ctx.fillRect(bx-44,by-44,88,88);
+    const glow=ctx.createRadialGradient(bx,by,2,bx,by,30+15*pulse);
+    glow.addColorStop(0,hue+'.55)');
+    glow.addColorStop(.35,hue+'.20)');
+    glow.addColorStop(1,hue+'0)');
+    ctx.fillStyle=glow;ctx.fillRect(bx-48,by-48,96,96);
     ctx.restore();
-    ctx.strokeStyle='rgba(188,255,157,'+(.65+.3*pulse)+')';
-    ctx.lineWidth=2;
+    ctx.strokeStyle=hue+(.65+.3*pulse)+')';ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(bx,by,8+4*pulse,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle='#d8ffc0';ctx.beginPath();ctx.moveTo(bx,by-5);ctx.lineTo(bx+5,by);ctx.lineTo(bx,by+5);ctx.lineTo(bx-5,by);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(168,235,143,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,by+10);ctx.lineTo(sx,sy-13);ctx.stroke();
-    ctx.fillStyle='rgba(3,10,5,.88)';ctx.fillRect(sx-58,sy-51,116,15);
-    ctx.strokeStyle='#87ba72';ctx.strokeRect(sx-58,sy-51,116,15);
-    ctx.fillStyle='#d5f2b7';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('SOS · '+target.name.toUpperCase(),sx,sy-40);
-    if(d<135){ctx.fillStyle='#f1e4ae';ctx.font='bold 10px monospace';ctx.fillText('E / SEARCH TO HELP',sx,sy-62);}
+    ctx.fillStyle=solid;ctx.beginPath();ctx.moveTo(bx,by-5);ctx.lineTo(bx+5,by);ctx.lineTo(bx,by+5);ctx.lineTo(bx-5,by);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=hue+'.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,by+10);ctx.lineTo(sx,sy-13);ctx.stroke();
+    ctx.fillStyle='rgba(3,10,5,.92)';ctx.fillRect(sx-66,sy-51,132,15);
+    ctx.strokeStyle=isExit?'#d3b45e':'#87ba72';ctx.strokeRect(sx-66,sy-51,132,15);
+    ctx.fillStyle=solid;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(label,sx,sy-40);
+    const caption=isExit?'STEP INTO BEACON TO ESCAPE':d<150?'E / SEARCH TO RESCUE':Math.round(d)+'m TO SURVIVOR';
+    ctx.fillStyle=isExit?'#ffe9b0':'#d5f2b7';ctx.font='bold 10px monospace';ctx.fillText(caption,sx,sy-62);
   }else{
     const pxp=clamp(player.x-camera.x,0,W);
     const pyp=clamp(player.y-camera.y,0,H);
@@ -3932,14 +4078,14 @@ function drawSurvivorGuidance(){
     const scaleY=vy>0?(marginBottom-pyp)/vy:vy<0?(marginTop-pyp)/vy:Infinity;
     let scale=Math.min(scaleX>0?scaleX:Infinity,scaleY>0?scaleY:Infinity);
     if(!Number.isFinite(scale))scale=1;
-    let ax=pxp+vx*scale,ay=pyp+vy*scale;
-    ax=clamp(ax,marginX,W-marginX);ay=clamp(ay,marginTop,marginBottom);
+    const ax=clamp(pxp+vx*scale,marginX,W-marginX);
+    const ay=clamp(pyp+vy*scale,marginTop,marginBottom);
     ctx.save();ctx.translate(ax,ay);ctx.rotate(angle+Math.PI/2);
-    ctx.fillStyle='#b9f49b';ctx.strokeStyle='#122211';ctx.lineWidth=3;
+    ctx.fillStyle=solid;ctx.strokeStyle='#122211';ctx.lineWidth=3;
     ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(10,10);ctx.lineTo(0,5);ctx.lineTo(-10,10);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();
-    ctx.fillStyle='rgba(3,10,5,.88)';ctx.fillRect(ax-48,ay+14,96,16);
-    ctx.strokeStyle='#87ba72';ctx.strokeRect(ax-48,ay+14,96,16);
-    ctx.fillStyle='#d5f2b7';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(target.name.toUpperCase()+' · '+Math.round(d)+'m',ax,ay+25);
+    ctx.fillStyle='rgba(3,10,5,.92)';ctx.fillRect(ax-55,ay+14,110,16);
+    ctx.strokeStyle=isExit?'#d3b45e':'#87ba72';ctx.strokeRect(ax-55,ay+14,110,16);
+    ctx.fillStyle=solid;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText((isExit?'EXIT':'FIND '+target.name.toUpperCase())+' · '+Math.round(d)+'m',ax,ay+25);
   }
 }
 function drawMini(){
