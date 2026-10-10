@@ -899,6 +899,11 @@ const state={
   driveSirenPhase:0,
   driveNearMissTimer:0,
   drivePassedCars:0,
+  driveCollisionCooldown:0,
+  driveCrashTimer:0,
+  driveDamage:0,
+  driveCollisionCount:0,
+  lastBuildingExit:null,
   sceneFade:0,
   horrorBeat:0,
   gameOver:false,
@@ -1171,6 +1176,20 @@ function roadPoints(){
     {x:3080,y:2440}
   ];
 }
+function roadNetworks(){
+  return [
+    roadPoints(),
+    [{x:320,y:280},{x:170,y:430},{x:125,y:690},{x:205,y:970},{x:410,y:1130}],
+    [{x:560,y:520},{x:370,y:665},{x:360,y:850},{x:505,y:1035},{x:690,y:1130}],
+    [{x:850,y:790},{x:1050,y:660},{x:1340,y:650},{x:1570,y:790},{x:1710,y:980}],
+    [{x:1150,y:945},{x:1060,y:1180},{x:1110,y:1430},{x:1330,y:1610},{x:1650,y:1720}],
+    [{x:1520,y:1120},{x:1740,y:970},{x:2020,y:1000},{x:2270,y:1180},{x:2510,y:1190}],
+    [{x:1900,y:1390},{x:2030,y:1600},{x:2260,y:1760},{x:2520,y:1800},{x:2760,y:2020}],
+    [{x:410,y:1130},{x:450,y:1500},{x:740,y:1670},{x:980,y:1840},{x:1290,y:1920}],
+    [{x:1710,y:980},{x:1850,y:760},{x:2130,y:710},{x:2410,y:780},{x:2630,y:920}],
+    [{x:2520,y:1800},{x:2790,y:1740},{x:3050,y:1840}]
+  ];
+}
 function pointSegmentDistance(px,py,a,b){
   const dx=b.x-a.x;
   const dy=b.y-a.y;
@@ -1179,16 +1198,18 @@ function pointSegmentDistance(px,py,a,b){
   return dist(px,py,a.x+dx*t,a.y+dy*t);
 }
 function nearRoad(x,y){
-  const points=roadPoints();
-  for(let i=0;i<points.length-1;i++){
-    if(pointSegmentDistance(x,y,points[i],points[i+1])<84)return true;
+  for(const points of roadNetworks()){
+    for(let i=0;i<points.length-1;i++){
+      if(pointSegmentDistance(x,y,points[i],points[i+1])<84)return true;
+    }
   }
   return false;
 }
 function roadDistance(x,y){
-  const points=roadPoints();
   let result=Infinity;
-  for(let i=0;i<points.length-1;i++)result=Math.min(result,pointSegmentDistance(x,y,points[i],points[i+1]));
+  for(const points of roadNetworks()){
+    for(let i=0;i<points.length-1;i++)result=Math.min(result,pointSegmentDistance(x,y,points[i],points[i+1]));
+  }
   return result;
 }
 function buildingAt(x,y,padding=0){
@@ -1199,6 +1220,9 @@ function buildingAt(x,y,padding=0){
     {x:1690,y:1300,w:170,h:132},
     {x:2390,y:1740,w:178,h:136}
   ];
+  for(const o of objects){
+    if(o.type==='building')list.push({x:o.x,y:o.y,w:o.w,h:o.h});
+  }
   return list.some(b=>x>b.x-b.w/2-padding&&x<b.x+b.w/2+padding&&y>b.y-b.h/2-padding&&y<b.y+b.h/2+padding);
 }
 function makeObjects(){
@@ -1212,7 +1236,14 @@ function makeObjects(){
     {id:'station',x:930,y:735,type:'building',name:'Ranger station',detail:'A ranger station with a working generator.',room:'station',w:170,h:132},
     {id:'gas',x:1480,y:470,type:'building',name:'Swamp gas stop',detail:'A shut-down gas stop with an office in back.',room:'gas',w:164,h:120},
     {id:'cabin',x:1690,y:1300,type:'building',name:'Leaning cabin',detail:'A cabin with fresh light underneath the door.',room:'cabin',w:170,h:132},
-    {id:'tower',x:2390,y:1740,type:'building',name:'Radio relay hut',detail:'The emergency relay is still receiving something.',room:'tower',w:178,h:136},
+    {id:'tower',x:2390,y:1740,type:'building',name:'Radio relay hut',detail:'The emergency relay is still receiving something.',room:'tower',w:178,h:136,style:'relay'},
+    {id:'motel',x:110,y:1100,type:'building',name:'Pine Rest Motel',detail:'A roadside motel with a vacancy sign that keeps switching off.',room:'motel',w:188,h:144,style:'motel'},
+    {id:'diner',x:720,y:900,type:'building',name:'Last Stop Diner',detail:'The counter is empty, but one coffee is still steaming.',room:'diner',w:196,h:138,style:'diner'},
+    {id:'clinic',x:1210,y:445,type:'building',name:'County Clinic',detail:'The emergency lights are on. Nobody answers the door.',room:'clinic',w:184,h:142,style:'clinic'},
+    {id:'depot',x:2700,y:1080,type:'building',name:'Road Maintenance Depot',detail:'A maintenance depot with a broken gate and abandoned tools.',room:'depot',w:196,h:150,style:'depot'},
+    {id:'church',x:2180,y:1870,type:'building',name:'St. Mercy Chapel',detail:'Candles glow inside although the power is gone.',room:'church',w:174,h:160,style:'chapel'},
+    {id:'warehouse',x:1370,y:2110,type:'building',name:'Flood Control Warehouse',detail:'The warehouse doors are chained from the inside.',room:'warehouse',w:210,h:158,style:'warehouse'},
+    {id:'farmhouse',x:2820,y:1570,type:'building',name:'Cypress Farmhouse',detail:'A farmhouse with a light moving behind its upstairs window.',room:'farmhouse',w:182,h:146,style:'farmhouse'},
     {id:'medkit1',x:500,y:430,type:'loot',name:'First-aid pouch',loot:'medkit',found:false,icon:'+'},
     {id:'ammo1',x:1010,y:805,type:'loot',name:'Ammunition box',loot:'ammo',found:false,icon:'▪'},
     {id:'battery1',x:1525,y:520,type:'loot',name:'Flashlight batteries',loot:'battery',found:false,icon:'ϟ'},
@@ -1233,6 +1264,41 @@ function makeRoom(name){
     cabin:{title:'LEANING CABIN',w:760,h:520,spawn:{x:380,y:432},exit:{x:380,y:478},color:'#41372d',props:[{x:180,y:140,w:120,h:75,t:'bed'},{x:540,y:145,w:100,h:100,t:'cabinet'},{x:350,y:160,w:100,h:50,t:'desk'},{x:530,y:330,w:130,h:46,t:'table'}],items:[{x:350,y:190,type:'note',name:'Handwritten warning',detail:'It stands perfectly still until you use the flashlight.',found:false},{x:550,y:270,type:'loot',name:'Truck keys',loot:'keys',found:false}]},
     tower:{title:'RADIO RELAY HUT',w:800,h:560,spawn:{x:400,y:472},exit:{x:400,y:520},color:'#30392f',props:[{x:170,y:130,w:110,h:70,t:'desk'},{x:400,y:140,w:200,h:100,t:'console'},{x:650,y:170,w:75,h:120,t:'cabinet'},{x:380,y:340,w:180,h:50,t:'table'}],items:[{x:400,y:190,type:'note',name:'Final dispatch tape',detail:'The voice on the recording says your next line before you speak it.',found:false},{x:650,y:300,type:'loot',name:'Emergency medical pack',loot:'medkit',found:false}]}
   };
+  rooms.motel=structuredClone(rooms.cabin);
+  rooms.motel.title='PINE REST MOTEL';
+  rooms.motel.w=920;rooms.motel.h=620;rooms.motel.spawn={x:460,y:520};rooms.motel.exit={x:460,y:574};
+  rooms.motel.props=[{x:170,y:145,w:118,h:70,t:'bed'},{x:390,y:140,w:120,h:55,t:'desk'},{x:700,y:155,w:90,h:115,t:'cabinet'},{x:230,y:355,w:150,h:48,t:'table'},{x:650,y:390,w:100,h:55,t:'bed'}];
+  rooms.motel.items=[{x:395,y:170,type:'loot',name:'Motel first-aid kit',loot:'medkit',found:false},{x:700,y:300,type:'loot',name:'Motel ammunition tin',loot:'ammo',found:false}];
+  rooms.diner=structuredClone(rooms.gas);
+  rooms.diner.title='LAST STOP DINER';
+  rooms.diner.w=900;rooms.diner.h=600;rooms.diner.spawn={x:450,y:500};rooms.diner.exit={x:450,y:554};
+  rooms.diner.props=[{x:185,y:155,w:180,h:42,t:'table'},{x:420,y:155,w:180,h:42,t:'table'},{x:660,y:155,w:140,h:42,t:'table'},{x:180,y:340,w:220,h:46,t:'desk'},{x:685,y:350,w:85,h:130,t:'shelves'}];
+  rooms.diner.items=[{x:180,y:370,type:'loot',name:'Diner medical bag',loot:'medkit',found:false},{x:685,y:300,type:'loot',name:'Diner spare batteries',loot:'battery',found:false}];
+  rooms.clinic=structuredClone(rooms.station);
+  rooms.clinic.title='COUNTY CLINIC';
+  rooms.clinic.w=900;rooms.clinic.h=620;rooms.clinic.spawn={x:450,y:520};rooms.clinic.exit={x:450,y:574};
+  rooms.clinic.props=[{x:175,y:145,w:125,h:65,t:'desk'},{x:390,y:150,w:90,h:135,t:'cabinet'},{x:660,y:150,w:110,h:65,t:'table'},{x:220,y:365,w:130,h:55,t:'bed'},{x:600,y:365,w:130,h:55,t:'bed'}];
+  rooms.clinic.items=[{x:175,y:185,type:'loot',name:'Clinic medical supplies',loot:'medkit',found:false},{x:660,y:185,type:'loot',name:'Clinic battery crate',loot:'battery',found:false}];
+  rooms.depot=structuredClone(rooms.station);
+  rooms.depot.title='ROAD MAINTENANCE DEPOT';
+  rooms.depot.w=900;rooms.depot.h=620;rooms.depot.spawn={x:450,y:520};rooms.depot.exit={x:450,y:574};
+  rooms.depot.props=[{x:170,y:160,w:180,h:65,t:'desk'},{x:440,y:145,w:145,h:110,t:'cabinet'},{x:700,y:160,w:100,h:145,t:'shelves'},{x:250,y:390,w:155,h:70,t:'table'},{x:650,y:390,w:155,h:70,t:'table'}];
+  rooms.depot.items=[{x:440,y:280,type:'loot',name:'Road crew ammunition',loot:'ammo',found:false},{x:700,y:335,type:'loot',name:'Road crew batteries',loot:'battery',found:false}];
+  rooms.church=structuredClone(rooms.cabin);
+  rooms.church.title='ST. MERCY CHAPEL';
+  rooms.church.w=860;rooms.church.h=620;rooms.church.spawn={x:430,y:520};rooms.church.exit={x:430,y:574};
+  rooms.church.props=[{x:430,y:150,w:190,h:60,t:'table'},{x:200,y:250,w:70,h:120,t:'cabinet'},{x:660,y:250,w:70,h:120,t:'cabinet'},{x:430,y:360,w:220,h:45,t:'table'}];
+  rooms.church.items=[{x:430,y:185,type:'loot',name:'Chapel first-aid kit',loot:'medkit',found:false},{x:660,y:315,type:'loot',name:'Chapel emergency batteries',loot:'battery',found:false}];
+  rooms.warehouse=structuredClone(rooms.gas);
+  rooms.warehouse.title='FLOOD CONTROL WAREHOUSE';
+  rooms.warehouse.w=960;rooms.warehouse.h=640;rooms.warehouse.spawn={x:480,y:540};rooms.warehouse.exit={x:480,y:594};
+  rooms.warehouse.props=[{x:170,y:150,w:130,h:120,t:'shelves'},{x:380,y:150,w:130,h:120,t:'shelves'},{x:610,y:150,w:130,h:120,t:'shelves'},{x:800,y:150,w:90,h:120,t:'cabinet'},{x:480,y:370,w:180,h:65,t:'table'}];
+  rooms.warehouse.items=[{x:800,y:300,type:'loot',name:'Warehouse ammunition',loot:'ammo',found:false},{x:480,y:400,type:'loot',name:'Warehouse medical crate',loot:'medkit',found:false}];
+  rooms.farmhouse=structuredClone(rooms.cabin);
+  rooms.farmhouse.title='CYPRESS FARMHOUSE';
+  rooms.farmhouse.w=900;rooms.farmhouse.h=620;rooms.farmhouse.spawn={x:450,y:520};rooms.farmhouse.exit={x:450,y:574};
+  rooms.farmhouse.props=[{x:190,y:155,w:120,h:75,t:'bed'},{x:420,y:150,w:120,h:55,t:'desk'},{x:690,y:160,w:95,h:115,t:'cabinet'},{x:230,y:370,w:150,h:50,t:'table'},{x:670,y:380,w:120,h:50,t:'bed'}];
+  rooms.farmhouse.items=[{x:420,y:180,type:'loot',name:'Farmhouse emergency kit',loot:'medkit',found:false},{x:690,y:300,type:'loot',name:'Farmhouse spare ammo',loot:'ammo',found:false}];
   return structuredClone(rooms[name]||rooms.checkpoint);
 }
 function resetGame(){
@@ -1286,6 +1352,11 @@ function resetGame(){
   state.driveSirenPhase=0;
   state.driveNearMissTimer=0;
   state.drivePassedCars=0;
+  state.driveCollisionCooldown=0;
+  state.driveCrashTimer=0;
+  state.driveDamage=0;
+  state.driveCollisionCount=0;
+  state.lastBuildingExit=null;
   state.sceneFade=0;
   state.horrorBeat=0;
   state.gameOver=false;
@@ -1333,7 +1404,7 @@ function setPrologueStage(stage){
   document.body.classList.toggle('prologue-drive',stage==='drive');
   document.body.classList.toggle('prologue-arrival',stage==='arrival');
   document.body.classList.toggle('prologue-mode',stage!=='swamp');
-  if(stage==='drive'){state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
+  if(stage==='drive'){state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;state.driveCollisionCooldown=1.2;state.driveCrashTimer=0;state.driveDamage=0;state.driveCollisionCount=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
   if(stage==='arrival'){state.driveSpeed=0;sound('radio');tone(76,.75,'triangle',.08,-34);}
 }
 function acceptDispatch(){
@@ -1368,7 +1439,8 @@ function updatePrologue(dt){
     if(forward)state.driveSpeed=Math.min(100,state.driveSpeed+31*dt);
     else state.driveSpeed=Math.max(0,state.driveSpeed-8*dt);
     if(brake)state.driveSpeed=Math.max(0,state.driveSpeed-72*dt);
-    state.driveLane=clamp(state.driveLane+steer*dt*(.78+state.driveSpeed*.009),-1.15,1.15);
+    const handling=Math.max(.54,1-state.driveDamage*.0035);
+    state.driveLane=clamp(state.driveLane+steer*dt*(.78+state.driveSpeed*.009)*handling,-1.15,1.15);
     state.driveScroll+=dt*(13+state.driveSpeed*2.35);
     state.driveSirenPhase+=dt;
     state.driveNearMissTimer=Math.max(0,state.driveNearMissTimer-dt);
@@ -1378,6 +1450,40 @@ function updatePrologue(dt){
       state.driveShake=Math.min(1,state.driveShake+dt*.8);
       if(Math.random()<dt*.9)tone(90,.08,'square',.025,-20);
     }
+    state.driveCollisionCooldown=Math.max(0,state.driveCollisionCooldown-dt);
+    state.driveCrashTimer=Math.max(0,state.driveCrashTimer-dt);
+    const playerLane=state.driveLane*.49;
+    for(let i=0;i<12;i++){
+      const direction=i%3===0?1:-1;
+      const phase=((i*.137+state.driveScroll*(direction>0?.00052:-.00031))%1+1)%1;
+      const z=.035+phase*.91;
+      const lane=[-.22,.18,-.38,.42,-.08,.31,-.30,.12,.39,-.15,.25,-.43][i];
+      if(z>.77&&z<.99&&Math.abs(lane-playerLane)<.17&&state.driveCollisionCooldown<=0&&state.driveSpeed>16){
+        state.driveCollisionCooldown=3.8;
+        state.driveCrashTimer=1.7;
+        state.driveCollisionCount++;
+        state.driveDamage=Math.min(100,state.driveDamage+Math.max(18,state.driveSpeed*.38));
+        state.driveSpeed=Math.max(0,state.driveSpeed-42);
+        state.driveProgress=Math.max(0,state.driveProgress-1.4);
+        state.driveShake=1;
+        state.driveNearMissTimer=0;
+        sound('hurt');
+        tone(52,.46,'sawtooth',.2,-20);
+        if(Math.random()<.5)tone(990,.07,'square',.05,-650);
+        toast(state.driveCollisionCount===1?'COLLISION! You clipped a car. Steer clear of traffic.':'CRASH! The patrol car is taking serious damage.',3.2);
+      }
+    }
+    if(Math.abs(state.driveLane)>1.03&&state.driveCollisionCooldown<=0&&state.driveSpeed>22){
+      state.driveCollisionCooldown=3.2;
+      state.driveCrashTimer=1.1;
+      state.driveCollisionCount++;
+      state.driveDamage=Math.min(100,state.driveDamage+15);
+      state.driveSpeed=Math.max(12,state.driveSpeed-30);
+      state.driveShake=1;
+      sound('hurt');
+      toast('CURB IMPACT! Steer back onto the road.',2.7);
+    }
+    if(state.driveDamage>65&&Math.random()<dt*.28&&state.driveSpeed>68)state.driveSpeed=Math.max(35,state.driveSpeed-10);
     state.driveProgress+=dt*(.40+state.driveSpeed*.046)*(Math.abs(state.driveLane)>.9?.58:1);
     const trafficCycle=Math.floor(state.driveScroll/245);
     if(trafficCycle>state.drivePassedCars&&state.driveSpeed>35){
@@ -1389,6 +1495,7 @@ function updatePrologue(dt){
       }
     }
     if(state.prologueTimer>7&&state.prologueTimer<7.08)sound('radio');
+    if(state.driveDamage>=85&&state.prologueTimer%7<dt)toast('VEHICLE CRITICAL: AVOID MORE IMPACTS.',2.2);
     if(state.driveProgress>=100){state.driveProgress=100;setPrologueStage('arrival');}
   }
   for(const r of raindrops){r.y+=r.speed*dt*.65;r.x-=r.speed*.16*dt;if(r.y>H+15){r.y=-15;r.x=Math.random()*W;}if(r.x<-15)r.x=W+10;}
@@ -1430,14 +1537,14 @@ function drawPrologueCall(){
   drawVignette();
 }
 function drawTrafficCars(horizon,roadCenter,topHalf,bottomHalf,city){
-  for(let i=0;i<9;i++){
+  for(let i=0;i<12;i++){
     const direction=i%3===0?1:-1;
-    const phase=(i*.137+state.driveScroll*(direction>0?.00052:-.00031)+1)%1;
+    const phase=((i*.137+state.driveScroll*(direction>0?.00052:-.00031))%1+1)%1;
     const z=.035+phase*.91;
     const y=horizon+z*z*(H-horizon);
     const roadMid=roadCenter+(W*.5-roadCenter)*z;
     const half=topHalf+(bottomHalf-topHalf)*z;
-    const lane=(i%2===0?-1:1)*(.24+(i%4)*.055);
+    const lane=[-.22,.18,-.38,.42,-.08,.31,-.30,.12,.39,-.15,.25,-.43][i];
     const x=roadMid+lane*half;
     const scale=.18+z*1.22;
     const cw=(city?13:11)+z*(i%4===0?62:48);
@@ -1491,11 +1598,89 @@ function drawDriveRainAndGlass(){
   ctx.strokeStyle='rgba(192,207,196,.11)';ctx.lineWidth=2;
   for(let i=0;i<5;i++){const x=(i*W*.24+state.driveScroll*.2)%W;ctx.beginPath();ctx.moveTo(x,H*.13);ctx.quadraticCurveTo(x-W*.03,H*.32,x-W*.07,H*.57);ctx.stroke();}
 }
+function drawDriveSideStreets(horizon,roadCenter,topHalf,bottomHalf,city){
+  const ground=city?'#272d2a':'#162119';
+  for(let i=0;i<(city?4:2);i++){
+    let z=((i*.29+state.driveScroll*.00043+.12)%1);
+    if(z<.12)z+=.12;
+    const y=horizon+z*z*(H-horizon);
+    const cx=roadCenter+(W*.5-roadCenter)*z;
+    const half=topHalf+(bottomHalf-topHalf)*z;
+    const thick=5+z*38;
+    const spread=W*(city?.09:.05)+z*W*(city?.29:.16);
+    for(const side of [-1,1]){
+      const edge=cx+side*half;
+      const far=edge+side*spread;
+      poly([[edge,y-thick*.48],[far,y-thick*1.3],[far+side*(7+z*12),y+thick*1.4],[edge,y+thick*.48]],'#0b100e');
+      poly([[edge+side*2,y-thick*.35],[far-side*2,y-thick],[far-side*2,y+thick],[edge+side*2,y+thick*.35]],ground);
+      if(city&&z>.31){
+        for(let k=0;k<5;k++){
+          const sx=edge+side*(spread*(.24+k*.12));
+          const sy=y+Math.sin(k*2+i)*thick*.22;
+          px(sx,sy,Math.max(2,z*5),Math.max(2,z*3),'#a4a18a');
+        }
+        if(i%2===0){
+          const poleX=far-side*(z*3+2);px(poleX,y-thick*2.3,Math.max(2,z*3),thick*2.3,'#161e1b');
+          px(poleX-side*4,y-thick*2.5,Math.max(4,z*9),Math.max(3,z*7),i%4===0?'#a5423d':'#a8b08c');
+          const glow=ctx.createRadialGradient(poleX,y-thick*2.5,1,poleX,y-thick*2.5,15+z*65);glow.addColorStop(0,'rgba(198,176,112,.22)');glow.addColorStop(1,'rgba(198,176,112,0)');ctx.fillStyle=glow;ctx.fillRect(poleX-55,y-thick*2.5-55,110,110);
+        }
+      }
+    }
+    if(city&&z>.45&&z<.98){
+      const crossY=y-thick*.12;
+      for(let k=-3;k<=3;k++){
+        const sx=cx+k*(5+z*10);
+        px(sx,crossY,Math.max(2,z*4),Math.max(2,z*4),'#aaa68e');
+      }
+    }
+  }
+  if(city){
+    for(const side of [-1,1]){
+      for(let i=0;i<5;i++){
+        const z=((i*.23+state.driveScroll*.00031+.07)%1);
+        const y=horizon+z*z*(H-horizon);
+        const cx=roadCenter+(W*.5-roadCenter)*z;
+        const half=topHalf+(bottomHalf-topHalf)*z;
+        const x=cx+side*(half+W*(.08+z*.14));
+        const lampY=y-z*H*.045;
+        if(x>-25&&x<W+25){
+          px(x,y-z*45,Math.max(2,z*3),z*45,'#151d1a');px(x-side*z*8,lampY,Math.max(5,z*15),Math.max(2,z*5),'#9d9b80');
+          const glow=ctx.createRadialGradient(x-side*z*6,lampY,1,x-side*z*6,lampY,8+z*45);glow.addColorStop(0,'rgba(218,193,133,.3)');glow.addColorStop(1,'rgba(218,193,133,0)');ctx.fillStyle=glow;ctx.fillRect(x-z*48,lampY-z*45,z*96,z*90);
+        }
+      }
+    }
+  }
+}
 function drawDriveScene(){
-  const t=state.driveProgress/100;const city=t<.58;const sky=ctx.createLinearGradient(0,0,0,H*.56);sky.addColorStop(0,city?'#080f17':'#030806');sky.addColorStop(.65,city?'#263238':'#15201a');sky.addColorStop(1,'#161e19');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+  const t=state.driveProgress/100;const city=t<.62;
+  const sky=ctx.createLinearGradient(0,0,0,H*.58);sky.addColorStop(0,city?'#070f18':'#020604');sky.addColorStop(.58,city?'#202d31':'#111d14');sky.addColorStop(1,city?'#344039':'#1a281b');
+  ctx.fillStyle='#111713';ctx.fillRect(0,0,W,H);ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.59);
   const horizon=H*.38+Math.sin(state.driveScroll*.006)*3;
-  for(let i=0;i<30;i++){const layer=(i*83-state.driveScroll*(.38+i%4*.14))%(W+150);const x=layer-80;const bw=24+(i*19)%72;const hh=32+(i*43)%Math.max(55,H*.33);const y=horizon-hh;if(city){px(x,y,bw,hh,i%4===0?'#16252b':'#101b21');for(let wy=y+9;wy<horizon-4;wy+=11)for(let wx=x+5;wx<x+bw-4;wx+=10)if(seeded(i,Math.floor(wy+wx))>.51)px(wx,wy,3,4,((Math.floor(wx+state.driveScroll/50))%4===0)?'#b0a06c':'#42534f');}else{px(x+10,horizon-35,6,35,'#151d14');px(x,horizon-65,bw,37,'#101a12');px(x+5,horizon-80,bw-10,24,'#0b150e');px(x+13,horizon-94,bw-26,17,'#111c13');}}
+  ctx.fillStyle=city?'#252c29':'#172219';ctx.fillRect(0,horizon,W,H-horizon);
+  for(let i=0;i<(city?42:34);i++){
+    const speed=.38+(i%6)*.13;
+    let layer=(i*83-state.driveScroll*speed)%(W+180);if(layer<0)layer+=W+180;
+    const x=layer-90;const bw=24+(i*19)%84;const hh=32+(i*43)%Math.max(65,H*.37);const y=horizon-hh;
+    if(city){
+      const base=i%5===0?'#1b282b':i%3===0?'#111f22':'#142124';
+      px(x-3,y-3,bw+6,hh+6,'#0a1113');px(x,y,bw,hh,base);px(x+3,y+4,bw-6,3,'#303c3b');
+      if(i%4===0){px(x+bw*.62,y-9,bw*.25,10,'#293536');px(x+bw*.7,y-17,2,8,'#3c4a47');}
+      for(let wy=y+10;wy<horizon-5;wy+=11){
+        px(x+4,wy,bw-8,1,'#1e2b2b');
+        for(let wx=x+6;wx<x+bw-5;wx+=11){
+          const lit=seeded(i,Math.floor(wy+wx))>.48;
+          if(lit){const flick=Math.sin(state.driveScroll*.027+i+wx*.3)>.86;px(wx,wy,4,5,flick?'#d1b67a':((i+Math.floor(wx/11))%4===0?'#7b9b98':'#8e9675'));}
+        }
+      }
+      if(i%7===0){px(x+bw*.17,y+hh*.66,bw*.66,hh*.19,'#07100e');px(x+bw*.21,y+hh*.69,bw*.58,hh*.1,'#4a5545');px(x+bw*.28,y+hh*.71,bw*.42,hh*.035,'#c1a76d');}
+      if(i%9===0){px(x+bw*.25,y-12,bw*.5,8,'#070b09');px(x+bw*.27,y-10,bw*.46,3,'#c2463f');}
+    }else{
+      px(x+10,horizon-35,6,35,'#151d14');px(x,horizon-65,bw,37,'#101a12');px(x+5,horizon-80,bw-10,24,'#0b150e');px(x+13,horizon-94,bw-26,17,'#111c13');
+      px(x+bw*.25,horizon-50,3,7,'#b99d62');
+    }
+  }
   const roadCenter=W*.5-state.driveLane*W*.24+Math.sin(state.driveScroll*.004)*W*.025;const topHalf=W*.075,bottomHalf=W*.49;
+  drawDriveSideStreets(horizon,roadCenter,topHalf,bottomHalf,city);
   poly([[roadCenter-topHalf,horizon],[roadCenter+topHalf,horizon],[W*.5+bottomHalf,H],[W*.5-bottomHalf,H]],'#090d0c');
   poly([[roadCenter-topHalf+3,horizon],[roadCenter+topHalf-3,horizon],[W*.5+bottomHalf-14,H],[W*.5-bottomHalf+14,H]],'#282d29');
   strokePoly([[roadCenter-topHalf,horizon],[W*.5-bottomHalf,H],[W*.5+bottomHalf,H],[roadCenter+topHalf,horizon]],'#4e5147',2);
@@ -1513,6 +1698,14 @@ function drawDriveScene(){
   ctx.restore();
   const barW=Math.min(500,W*.54),barX=(W-barW)/2,barY=H*.09;px(barX-8,barY-10,barW+16,69,'rgba(3,7,5,.88)');ctx.fillStyle='#bfc8b3';ctx.font='bold 12px monospace';ctx.textAlign='left';ctx.fillText('DESTINATION: MILE MARKER 9',barX,barY+8);px(barX,barY+20,barW,9,'#263129');px(barX+2,barY+22,(barW-4)*t,5,t>.82?'#b34a43':'#b6b17a');ctx.fillStyle='#e5e2d4';ctx.textAlign='right';ctx.fillText(Math.floor(state.driveProgress)+'%',barX+barW,barY+8);
   ctx.textAlign='center';ctx.fillStyle='#ddd6c0';ctx.font='bold '+Math.max(12,Math.min(16,W*.017))+'px monospace';ctx.fillText(Math.abs(state.driveLane)>.83?'WARNING: TIRES LEAVING ROAD':state.driveSpeed<10?'HOLD W / UP TO ACCELERATE':'A / D OR ← / → TO STEER',W/2,H*.61);
+  const integrity=Math.max(0,100-state.driveDamage);
+  px(W*.72,H*.86,W*.20,6,'#090e0b');px(W*.72+2,H*.86+2,W*.196*(integrity/100),2,integrity<35?'#d34a42':integrity<65?'#c2a65e':'#829b76');
+  ctx.textAlign='left';ctx.fillStyle=integrity<35?'#ef7268':'#b6c3a8';ctx.font='bold 9px monospace';ctx.fillText('VEHICLE INTEGRITY '+Math.round(integrity)+'%',W*.72,H*.855);
+  if(state.driveCrashTimer>0){
+    const alpha=Math.min(.46,state.driveCrashTimer*.32);ctx.fillStyle='rgba(150,12,16,'+alpha+')';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(229,232,219,'+Math.min(.8,state.driveCrashTimer*.7)+')';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*.82,H*.15);ctx.lineTo(W*.73,H*.29);ctx.lineTo(W*.78,H*.37);ctx.lineTo(W*.67,H*.52);ctx.moveTo(W*.73,H*.29);ctx.lineTo(W*.59,H*.23);ctx.moveTo(W*.78,H*.37);ctx.lineTo(W*.9,H*.44);ctx.moveTo(W*.67,H*.52);ctx.lineTo(W*.61,H*.7);ctx.stroke();
+    px(W*.29,H*.34,W*.42,58,'rgba(3,6,5,.91)');ctx.strokeStyle='#b94742';ctx.strokeRect(W*.29,H*.34,W*.42,58);ctx.textAlign='center';ctx.fillStyle='#f0c4a5';ctx.font='bold '+Math.max(16,Math.min(24,W*.027))+'px monospace';ctx.fillText('COLLISION — REGAIN CONTROL',W*.5,H*.34+24);ctx.fillStyle='#d9d8c7';ctx.font='12px monospace';ctx.fillText('Brake, steer away from traffic, and keep the car on the road.',W*.5,H*.34+44);
+  }
   drawVignette();
 }
 function drawArrivalScene(){
@@ -1548,17 +1741,18 @@ function worldCoordinates(screenX,screenY){
 function nearestInteractable(){
   if(state.floor!=='outside')return nearestInteriorObject();
   let found=null;
-  let best=76;
+  let best=Infinity;
   for(const o of objects){
     if(o.type==='evidence'&&o.found)continue;
     if(o.type==='loot'&&o.found)continue;
     const d=dist(player.x,player.y,o.x,o.y);
-    if(d<best){best=d;found=o;}
+    const reach=o.type==='building'?Math.max(98,Math.max(o.w,o.h)*.5+29):76;
+    if(d<reach&&d<best){best=d;found=o;}
   }
   for(const s of survivors){
     if(s.delivered)continue;
     const d=dist(player.x,player.y,s.x,s.y);
-    if(d<best){best=d;found=s;}
+    if(d<76&&d<best){best=d;found=s;}
   }
   return found;
 }
@@ -1657,6 +1851,7 @@ function collectLoot(target){
 }
 function enterBuilding(target){
   if(state.floor!=='outside')return;
+  state.lastBuildingExit={x:target.x,y:target.y+target.h/2+16};
   state.floor='inside';
   state.room=makeRoom(target.room);
   player.x=state.room.spawn.x;
@@ -1678,11 +1873,17 @@ function leaveBuilding(){
   player.speed=specs[state.selectedCharacter].speed;
   player.x=clamp(player.x+0,50,WORLD.w-50);
   player.y=clamp(player.y+0,50,WORLD.h-50);
-  if(exitName==='CHECKPOINT SHACK'){player.x=375;player.y=470;}
-  if(exitName==='RANGER STATION'){player.x=930;player.y=815;}
-  if(exitName==='SWAMP GAS STOP'){player.x=1480;player.y=545;}
-  if(exitName==='LEANING CABIN'){player.x=1690;player.y=1380;}
-  if(exitName==='RADIO RELAY HUT'){player.x=2390;player.y=1820;}
+  if(state.lastBuildingExit){
+    player.x=state.lastBuildingExit.x;
+    player.y=state.lastBuildingExit.y;
+    state.lastBuildingExit=null;
+  }else{
+    if(exitName==='CHECKPOINT SHACK'){player.x=375;player.y=470;}
+    if(exitName==='RANGER STATION'){player.x=930;player.y=815;}
+    if(exitName==='SWAMP GAS STOP'){player.x=1480;player.y=545;}
+    if(exitName==='LEANING CABIN'){player.x=1690;player.y=1380;}
+    if(exitName==='RADIO RELAY HUT'){player.x=2390;player.y=1820;}
+  }
   camera={x:clamp(player.x-W/2,0,WORLD.w-W),y:clamp(player.y-H/2,0,WORLD.h-H)};
   sound('door');
   toast('BACK OUTSIDE. THE RAIN HAS NOT STOPPED.',1.8);
@@ -2212,37 +2413,29 @@ function drawGround(){
   }
 }
 function drawRoad(){
-  const p=roadPoints();
   ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(p[0].x-camera.x+shakeX,p[0].y-camera.y+shakeY);
-  for(let i=1;i<p.length;i++)ctx.lineTo(p[i].x-camera.x+shakeX,p[i].y-camera.y+shakeY);
-  ctx.lineCap='square';
+  ctx.lineCap='round';
   ctx.lineJoin='round';
-  ctx.lineWidth=98;
-  ctx.strokeStyle='#090e0b';
-  ctx.stroke();
-  ctx.lineWidth=88;
-  ctx.strokeStyle='#35372d';
-  ctx.stroke();
-  ctx.lineWidth=75;
-  ctx.strokeStyle='#414235';
-  ctx.stroke();
-  ctx.lineWidth=2;
-  ctx.strokeStyle='#817a60';
-  ctx.setLineDash([19,24]);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  for(const p of roadNetworks()){
+    ctx.beginPath();
+    ctx.moveTo(p[0].x-camera.x+shakeX,p[0].y-camera.y+shakeY);
+    for(let i=1;i<p.length;i++)ctx.lineTo(p[i].x-camera.x+shakeX,p[i].y-camera.y+shakeY);
+    ctx.lineWidth=106;ctx.strokeStyle='#080d0a';ctx.stroke();
+    ctx.lineWidth=96;ctx.strokeStyle='#272c24';ctx.stroke();
+    ctx.lineWidth=84;ctx.strokeStyle='#353a30';ctx.stroke();
+    ctx.lineWidth=78;ctx.strokeStyle='#414337';ctx.stroke();
+    ctx.lineWidth=2;ctx.strokeStyle='#8f8567';ctx.setLineDash([18,23]);ctx.stroke();ctx.setLineDash([]);
+  }
   ctx.restore();
-  for(let i=0;i<15;i++){
-    const wx=225+i*170;
-    const wy=190+i*142;
-    if(roadDistance(wx,wy)<50){
-      const x=wx-camera.x;
-      const y=wy-camera.y;
-      if(x>-30&&x<W+30&&y>-30&&y<H+30){
-        px(x,y,18,3,'#292f26');
-        px(x+5,y+1,5,1,'#77745e');
+  for(let i=0;i<60;i++){
+    const wx=130+(i*173)%3000;
+    const wy=75+(i*197)%2350;
+    if(roadDistance(wx,wy)<49){
+      const x=wx-camera.x+shakeX;
+      const y=wy-camera.y+shakeY;
+      if(x>-40&&x<W+40&&y>-30&&y<H+30){
+        px(x-10,y,22,3,'#222920');px(x-5,y+1,12,1,'#716c55');
+        if(i%3===0){px(x+7,y-4,2,8,'#343c2f');px(x+4,y-7,8,4,'#a6a085');}
       }
     }
   }
@@ -2319,6 +2512,35 @@ function drawBuilding(o){
   ctx.fillText(o.name.toUpperCase(),x,y-h/2-17);
   if(Math.sin(state.elapsed*1.8+o.x)>-.3){
     px(x-w*.28,y-h/2+24,5,3,'#d4b979');
+  }
+  if(o.style==='motel'){
+    px(x-w*.43,y-h/2+4,w*.86,10,'#673b32');px(x-w*.36,y-h/2+7,w*.72,3,'#b48e63');
+    px(x-w*.12,y-h/2-27,w*.24,13,'#111a14');px(x-w*.105,y-h/2-24,w*.21,7,Math.sin(state.elapsed*7)>0?'#d45f4b':'#7d342d');
+    ctx.fillStyle='#e0b876';ctx.font='bold 8px monospace';ctx.fillText('VACANCY',x,y-h/2-18);
+  }
+  if(o.style==='diner'){
+    px(x-w*.48,y-h/2+5,w*.96,13,'#5d302a');px(x-w*.44,y-h/2+8,w*.88,4,'#c4a66c');
+    for(let i=0;i<5;i++)px(x-w*.36+i*w*.18,y+h*.04,Math.max(6,w*.065),h*.12,'#a46d43');
+    ctx.fillStyle='#e2c17b';ctx.font='bold 8px monospace';ctx.fillText('LAST STOP',x,y-h/2-17);
+  }
+  if(o.style==='clinic'){
+    px(x-5,y-h/2-25,10,32,'#a8b6a3');px(x-16,y-h/2-15,32,10,'#a8b6a3');
+    px(x-w*.34,y+h*.06,w*.19,h*.18,'#172c2c');px(x-w*.31,y+h*.09,w*.13,h*.12,'#688a81');
+  }
+  if(o.style==='depot'||o.style==='warehouse'){
+    px(x-w*.34,y-h/2+18,w*.68,h*.44,'#171e18');px(x-w*.29,y-h/2+23,w*.58,h*.35,'#29362c');
+    for(let i=0;i<5;i++)px(x-w*.26+i*w*.105,y-h/2+23,2,h*.35,'#4e5947');
+    px(x-w*.38,y-h/2+3,w*.76,5,'#8a7652');
+  }
+  if(o.style==='chapel'){
+    poly([[x-w*.28,y-h/2+5],[x,y-h/2-29],[x+w*.28,y-h/2+5]],'#35392d');
+    px(x-4,y-h/2-21,8,19,'#b1aa89');px(x-2,y-h/2-18,4,13,'#343a2c');
+    px(x-4,y-h/2-13,8,3,'#b7aa81');
+  }
+  if(o.style==='farmhouse'){
+    poly([[x-w*.52,y-h/2+7],[x,y-h/2-23],[x+w*.52,y-h/2+7]],'#4f342b');
+    px(x-18,y-h/2+3,36,7,'#6c4937');px(x+16,y-h/2-17,9,24,'#342e25');
+    if(Math.sin(state.elapsed*2.1+o.x)>.75)px(x+w*.18,y-h/2+17,15,13,'#c99c55');
   }
 }
 function drawEvidence(o){
@@ -2853,12 +3075,18 @@ function drawMini(){
   mctx.fillStyle='#152319';
   mctx.fillRect(2,2,mw-4,mh-4);
   mctx.strokeStyle='#5e604d';
-  mctx.lineWidth=4;
-  mctx.beginPath();
-  const points=roadPoints();
-  mctx.moveTo(points[0].x/WORLD.w*mw,points[0].y/WORLD.h*mh);
-  for(let i=1;i<points.length;i++)mctx.lineTo(points[i].x/WORLD.w*mw,points[i].y/WORLD.h*mh);
-  mctx.stroke();
+  mctx.lineWidth=3;
+  for(const points of roadNetworks()){
+    mctx.beginPath();
+    mctx.moveTo(points[0].x/WORLD.w*mw,points[0].y/WORLD.h*mh);
+    for(let i=1;i<points.length;i++)mctx.lineTo(points[i].x/WORLD.w*mw,points[i].y/WORLD.h*mh);
+    mctx.stroke();
+  }
+  for(const o of objects){
+    if(o.type!=='building')continue;
+    const bx=o.x/WORLD.w*mw,by=o.y/WORLD.h*mh;
+    mctx.fillStyle='#a0a18a';mctx.fillRect(bx-2,by-2,4,4);
+  }
   for(const o of objects){
     const x=o.x/WORLD.w*mw;
     const y=o.y/WORLD.h*mh;
