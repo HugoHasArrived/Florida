@@ -638,9 +638,32 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 #inventoryPanel,
 #pausePanel,
 #endingPanel,
-#radioPanel {
+#radioPanel,
+#interviewPanel {
   z-index: 8;
 }
+.evidence-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.evidence-card {
+  padding: 13px;
+  background: linear-gradient(135deg, #101a12, #080d0a);
+  border: 1px solid #43513e;
+  min-width: 0;
+}
+.evidence-card.studied { border-color: #8d9d69; background: linear-gradient(135deg, #172319, #0b120d); }
+.evidence-card.missing { border-color: #76504b; opacity: .82; }
+.evidence-card h3 { margin: 0 0 7px; color: #e0d2ad; font-size: 12px; line-height: 1.5; }
+.evidence-card p { margin: 7px 0; color: #b9c5b8; font-size: 11px; line-height: 1.65; }
+.evidence-card .evidence-meta { color: #8f9a88; font-size: 9px; letter-spacing: 1px; }
+.evidence-card button { margin-top: 8px; width: 100%; }
+.interview-question { padding: 15px; background: #0a110c; border-left: 3px solid #9b8c60; color: #e0d9c5; font-size: 13px; line-height: 1.8; margin: 14px 0; }
+.interview-choices { display: grid; grid-template-columns: 1fr; gap: 9px; }
+.interview-choices button { text-align: left; text-transform: none; letter-spacing: .25px; line-height: 1.55; }
+.interview-feedback { min-height: 44px; margin-top: 12px; padding: 12px; background: #0a100b; border: 1px solid #394638; color: #c1cbb9; font-size: 12px; line-height: 1.7; }
 .task-row {
   display: flex;
   gap: 10px;
@@ -1100,14 +1123,14 @@ body.game-active.mobile-mode #minimap {
       <div class="rule"><b>01 / ANSWER THE CALL</b>Begin inside your patrol car. Press E or tap the screen to accept dispatch.</div>
       <div class="rule"><b>02 / DRIVE TO MILE MARKER 9</b>Hold W / Up to accelerate, A / D or arrows to steer, and S / Down to brake. Mobile players use the direction pad.</div>
       <div class="rule"><b>03 / YOU ARE ALONE</b>Arrive at the roadside and press E or SEARCH to leave the car. Backup is unavailable.</div>
-      <div class="rule"><b>04 / INVESTIGATE</b>Recover five pieces of evidence. Stand near glowing objects and press E or tap SEARCH.</div>
+      <div class="rule"><b>04 / INVESTIGATE</b>Recover physical evidence, then press J to study at least three clues. You must also interview Silas Venn inside Cypress Farmhouse before extraction will open.</div>
       <div class="rule"><b>02 / RESCUE</b>Find two missing people. They will follow you once you help them.</div>
       <div class="rule"><b>03 / STAY ALIVE</b>The Smiler stalks noisy officers. Sprinting and gunshots draw its attention.</div>
       <div class="rule"><b>04 / FIGHT SMART</b>Shots can interrupt the creature but will not kill it. Smaller marsh crawlers can be killed.</div>
       <div class="rule"><b>05 / SEARCH BUILDINGS</b>Press E at doors to enter rooms. Investigate interiors for supplies and clues.</div>
-      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors and follow the gold extraction beacon. Evidence, keys, and extra building searches are optional bonuses.</div>
+      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors, study three physical clues, cross-reference them, defend the supported theory, save Silas Venn’s statement, then follow the gold extraction beacon.</div>
     </div>
-    <p class="intro">Search sheds for ammunition, bandages, batteries, and notes. The flashlight helps you spot details, but it also reveals your position. Watch the minimap: red marks danger, gold marks optional evidence and extraction, and green marks survivors. Your only required escape objective is to rescue both survivors and enter the gold extraction zone.</p>
+    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, three studied clues, a cross-reference report, the accepted case theory, and a saved witness statement.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1127,10 +1150,39 @@ body.game-active.mobile-mode #minimap {
 </div>
 <div id="objectivePanel" class="overlay hidden">
   <div class="panel">
-    <div class="kicker">Incident FS-07</div>
-    <h2 class="section-title">Case file and objectives</h2>
+    <div class="kicker">Incident FS-07 · Evidence control</div>
+    <h2 class="section-title">Investigation case file</h2>
+    <p class="intro">Collected evidence is not automatically understood. Study each item, compare its findings, and build a credible timeline before requesting extraction. Some unattended items may disappear.</p>
     <div id="taskList"></div>
+    <h3 class="section-title" style="font-size:19px;margin-top:25px">Physical evidence and forensic notes</h3>
+    <div id="evidenceProgress" class="info-card">0 clues studied · 3 required</div>
+    <div id="evidenceBoard" class="evidence-board"></div>
+    <div class="page-buttons"><button id="compareEvidence">Compare studied clues</button></div>
+    <div id="comparisonReport" class="info-card">Study at least two items, then compare them for contradictions and a stronger timeline.</div>
+    <h3 class="section-title" style="font-size:19px;margin-top:25px">Choose your case theory</h3>
+    <p class="intro">A theory must explain the evidence, not just sound frightening. The dispatch log and radio recording contain an important contradiction.</p>
+    <div id="theoryChoices" class="interview-choices">
+      <button type="button" data-theory="storm-failure">The storm damaged the radios and created false echoes.</button>
+      <button type="button" data-theory="staged-witness">Silas staged the scene to hide an ordinary crime.</button>
+      <button type="button" data-theory="mimic-timeline">Something is imitating officers and transmitting before events occur.</button>
+      <button type="button" data-theory="duplicate-units">Two real patrol units were assigned to the same call.</button>
+    </div>
+    <div id="theoryFeedback" class="info-card" style="margin-top:10px">No theory submitted. Compare clues, then record the explanation that fits the timeline.</div>
+    <div class="page-buttons"><button id="submitTheory">Submit case theory</button></div>
+    <h3 class="section-title" style="font-size:17px;margin-top:24px">Disappearance log</h3>
+    <div id="missingLog" class="info-card">Nothing has gone missing yet. Keep track of the scene.</div>
     <div class="page-buttons"><button id="closeObjectives">Close case file</button></div>
+  </div>
+</div>
+<div id="interviewPanel" class="overlay hidden">
+  <div class="panel">
+    <div class="kicker">Recorded statement · Cypress Farmhouse</div>
+    <h2 class="section-title">Interview: Silas Venn</h2>
+    <p class="intro">The witness keeps watching the dark hallway instead of looking at you. Your approach changes what he is willing to tell you.</p>
+    <div id="interviewQuestion" class="interview-question"></div>
+    <div id="interviewChoices" class="interview-choices"></div>
+    <div id="interviewFeedback" class="interview-feedback">Record his answers carefully. Contradictions can be useful.</div>
+    <div class="page-buttons"><button id="interviewContinue" class="hidden">Continue interview</button><button id="endInterview" class="hidden">Save statement</button><button id="leaveInterview">End interview</button></div>
   </div>
 </div>
 <div id="inventoryPanel" class="overlay hidden">
@@ -1255,6 +1307,19 @@ const state={
   discovered:0,
   rescued:0,
   keysFound:false,
+  witnessInterviewed:false,
+  witnessTrust:0,
+  caseComparisons:[],
+  pendingTheory:'',
+  caseTheory:'',
+  theoryAttempts:0,
+  interviewStep:0,
+  interviewAwaitingContinue:false,
+  interviewChoiceFeedback:'',
+  missingTimer:36,
+  missingCount:0,
+  missingIds:[],
+  disappearanceLog:[],
   exploredRooms:0,
   kills:0,
   shots:0,
@@ -1287,6 +1352,7 @@ let touchRun=false;
 let ammo=6;
 let reserve=24;
 let evidence=0;
+let caseRecords=[];
 let medkits=0;
 let batteryCells=1;
 let flashlightBattery=100;
@@ -1345,7 +1411,8 @@ function setScreen(name){
     inventory:'inventoryPanel',
     pause:'pausePanel',
     ending:'endingPanel',
-    radio:'radioPanel'
+    radio:'radioPanel',
+    interview:'interviewPanel'
   };
   for(const id of Object.values(mapping))$(id).classList.add('hidden');
   if(mapping[name])$(mapping[name]).classList.remove('hidden');
@@ -1775,8 +1842,14 @@ function makeRoom(name){
   rooms.farmhouse.title='CYPRESS FARMHOUSE';
   rooms.farmhouse.w=900;rooms.farmhouse.h=620;rooms.farmhouse.spawn={x:450,y:520};rooms.farmhouse.exit={x:450,y:574};
   rooms.farmhouse.props=[{x:190,y:155,w:120,h:75,t:'bed'},{x:420,y:150,w:120,h:55,t:'desk'},{x:690,y:160,w:95,h:115,t:'cabinet'},{x:230,y:370,w:150,h:50,t:'table'},{x:670,y:380,w:120,h:50,t:'bed'}];
-  rooms.farmhouse.items=[{x:420,y:180,type:'loot',name:'Farmhouse emergency kit',loot:'medkit',found:false},{x:690,y:300,type:'loot',name:'Farmhouse spare ammo',loot:'ammo',found:false}];
-  return structuredClone(rooms[name]||rooms.checkpoint);
+  rooms.farmhouse.items=[{id:'farmhouse-medkit',x:420,y:180,type:'loot',name:'Farmhouse emergency kit',loot:'medkit',found:false},{id:'farmhouse-ammo',x:690,y:300,type:'loot',name:'Farmhouse spare ammo',loot:'ammo',found:false},{id:'silas-venn',x:500,y:300,type:'witness',name:'Silas Venn — witness',found:state.witnessInterviewed}];
+  const result=structuredClone(rooms[name]||rooms.checkpoint);
+  for(const item of result.items){
+    if(!item.id)item.id=name+'-'+String(item.name||'item').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+    if(state.missingIds.includes(item.id))item.missing=true;
+  }
+  if(name==='farmhouse')for(const item of result.items)if(item.type==='witness')item.found=state.witnessInterviewed;
+  return result;
 }
 function resetGame(){
   const spec=specs[state.selectedCharacter];
@@ -1786,6 +1859,20 @@ function resetGame(){
   ammo=spec.ammo;
   reserve=spec.reserve;
   evidence=0;
+  caseRecords=[];
+  state.witnessInterviewed=false;
+  state.witnessTrust=0;
+  state.caseComparisons=[];
+  state.pendingTheory='';
+  state.caseTheory='';
+  state.theoryAttempts=0;
+  state.interviewStep=0;
+  state.interviewAwaitingContinue=false;
+  state.interviewChoiceFeedback='';
+  state.missingTimer=36;
+  state.missingCount=0;
+  state.missingIds=[];
+  state.disappearanceLog=[];
   medkits=1;
   batteryCells=1;
   flashlightBattery=100;
@@ -2615,6 +2702,7 @@ function nearestInteractable(){
   let best=Infinity;
   for(const o of objects){
     if(o.type==='exit')continue;
+    if(o.missing)continue;
     if(o.type==='evidence'&&o.found)continue;
     if(o.type==='loot'&&o.found)continue;
     const d=dist(player.x,player.y,o.x,o.y);
@@ -2634,7 +2722,7 @@ function nearestInteriorObject(){
   let nearest=null;
   let best=67;
   for(const item of state.room.items){
-    if(item.found)continue;
+    if(item.found||item.missing)continue;
     const d=dist(player.x,player.y,item.x,item.y);
     if(d<best){best=d;nearest=item;}
   }
@@ -2659,16 +2747,20 @@ function interact(){
     target.found=true;
     evidence++;
     state.discovered++;
+    addCaseRecord(target);
     state.noise=Math.max(state.noise,.2);
     state.intensity=Math.min(1,state.intensity+.12);
     sound('pickup');
     showRadioText(target.name,target.detail||'The evidence may be useful later.');
-    toast('EVIDENCE LOGGED: '+target.name.toUpperCase()+' — '+(target.detail||'Added to case file.'),3.1);
+    toast('EVIDENCE BAGGED: '+target.name.toUpperCase()+'. OPEN CASE FILE [J] TO STUDY IT.',3.4);
     updateHUD();
     updateObjectives();
-    if(evidence===5)toast('FIVE CLUES RECOVERED. FIND THE SURVIVORS AND TRUCK KEYS.',3.2);
     activateMonster();
     if(state.options.personalScares&&evidence>=2&&state.personalScareCount===3&&state.personalScareCooldown<=0)triggerPersonalScare('address');
+    return;
+  }
+  if(target.type==='witness'){
+    beginWitnessInterview(target);
     return;
   }
   if(target.type==='building'){
@@ -2785,19 +2877,161 @@ function activateMonster(){
   toast('THE RADIO CUTS OUT. SOMETHING IS MOVING THROUGH THE TREES.',3.3);
   state.screenShake=.4;
 }
+function studyCount(){
+  return caseRecords.filter(r=>r.studied&&(r.kind==='evidence'||r.kind==='note')).length;
+}
+function collectedClueCount(){
+  return caseRecords.filter(r=>r.kind==='evidence'||r.kind==='note').length;
+}
+function investigationReady(){
+  return studyCount()>=3&&state.caseComparisons.length>=1&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed;
+}
 function currentTasks(){
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  const collected=collectedClueCount();
+  const studied=studyCount();
   return [
-    {done:rescued>=2,text:'MAIN OBJECTIVE: Rescue both missing people ('+rescued+'/2).'},
-    {done:state.won,text:'MAIN OBJECTIVE: Reach the extraction beacon alive.'},
-    {done:evidence>=5,text:'OPTIONAL CASE BONUS: Recover evidence ('+evidence+'/5).'},
+    {done:collected>=3,text:'INVESTIGATION: Recover physical evidence ('+Math.min(collected,3)+'/3 minimum).'},
+    {done:studied>=3,text:'FORENSICS: Study at least three clues in the case file [J] ('+Math.min(studied,3)+'/3).'},
+    {done:state.caseComparisons.length>=1,text:'ANALYSIS: Compare at least two studied clues in the case file.'},
+    {done:state.caseTheory==='mimic-timeline',text:'CASE THEORY: Explain the radio and timeline contradiction correctly.'},
+    {done:state.witnessInterviewed,text:'INTERVIEW: Question Silas Venn inside Cypress Farmhouse.'},
+    {done:rescued>=2,text:'RESCUE: Find both missing people ('+rescued+'/2).'},
+    {done:state.won,text:'EXTRACTION: Leave with the survivors and a defensible case.'},
     {done:state.keysFound,text:'OPTIONAL SUPPLY: Locate the patrol truck keys.'},
-    {done:state.exploredRooms>=2,text:'OPTIONAL EXPLORATION: Search buildings ('+state.exploredRooms+'/2).'}
+    {done:state.exploredRooms>=3,text:'OPTIONAL EXPLORATION: Search three buildings ('+state.exploredRooms+'/3).'}
   ];
+}
+function renderEvidenceBoard(){
+  const board=$('evidenceBoard');
+  if(!board)return;
+  const records=caseRecords.slice().reverse();
+  $('evidenceProgress').textContent=studyCount()+' clues studied · 3 required · '+collectedClueCount()+' physical clues collected · '+state.caseComparisons.length+' cross-reference reports';
+  board.innerHTML=records.length?records.map(r=>{
+    const missing=r.kind==='absence';
+    const status=missing?'DISAPPEARANCE REPORT':r.studied?'STUDIED · FINDINGS RECORDED':'UNEXAMINED EVIDENCE';
+    const analysis=r.studied?'<p><b>FORENSIC FINDING</b><br>'+escapeHTML(r.analysis)+'</p>':'';
+    const button=(!r.studied&&!missing)?'<button type="button" data-study-id="'+escapeHTML(r.id)+'">Study evidence</button>':missing?'':'<div class="evidence-meta">CROSS-REFERENCE SAVED</div>';
+    return '<article class="evidence-card '+(r.studied?'studied':'')+(missing?' missing':'')+'"><div class="evidence-meta">'+status+'</div><h3>'+escapeHTML(r.name)+'</h3><p>'+escapeHTML(r.detail)+'</p>'+analysis+button+'</article>';
+  }).join(''):'<div class="info-card">No physical evidence collected yet. Search glowing clues and readable notes, then return here to study them.</div>';
+  const log=$('missingLog');
+  if(log)log.innerHTML=state.disappearanceLog.length?state.disappearanceLog.slice().reverse().map(v=>'<div style="padding:6px 0;border-bottom:1px solid #263328"><b>'+escapeHTML(v.title)+'</b><br>'+escapeHTML(v.detail)+'</div>').join(''):'Nothing has gone missing yet. Keep track of the scene.';
+  const report=$('comparisonReport');
+  if(report&&state.caseComparisons.length)report.innerHTML=state.caseComparisons.slice().reverse().map(v=>'<div style="padding:8px 0;border-bottom:1px solid #263328"><b>'+escapeHTML(v.title)+'</b><br>'+escapeHTML(v.text)+'</div>').join('');
+  for(const button of document.querySelectorAll('[data-theory]'))button.classList.toggle('selected',button.dataset.theory===state.pendingTheory);
+  const theoryFeedback=$('theoryFeedback');
+  if(theoryFeedback&&state.caseTheory==='mimic-timeline')theoryFeedback.innerHTML='<b>THEORY ACCEPTED · PROVISIONAL</b><br>The timeline supports an imitator using the dispatch channel. The witness statement and missing-item pattern must still be recorded before extraction.';
+}
+function selectCaseTheory(id){
+  if(state.caseTheory==='mimic-timeline'){toast('CASE THEORY ALREADY ACCEPTED. Preserve the evidence and finish the interview.',2);return;}
+  if(!['storm-failure','staged-witness','mimic-timeline','duplicate-units'].includes(id))return;
+  state.pendingTheory=id;
+  for(const button of document.querySelectorAll('[data-theory]'))button.classList.toggle('selected',button.dataset.theory===id);
+  $('theoryFeedback').textContent='Selected working theory. Submit it when you are ready to defend your conclusion against the evidence.';
+}
+function submitCaseTheory(){
+  if(!state.pendingTheory){toast('SELECT A CASE THEORY FIRST.',1.8);return;}
+  if(studyCount()<3){toast('THE THEORY IS NOT READY: STUDY THREE PHYSICAL CLUES.',2.7);return;}
+  if(state.caseComparisons.length<1){toast('THE THEORY IS NOT READY: COMPARE TWO STUDIED CLUES FIRST.',2.7);return;}
+  state.theoryAttempts++;
+  const hasLog=caseRecords.some(r=>r.id==='log'&&r.studied);
+  const hasRadio=caseRecords.some(r=>r.id==='radio'&&r.studied);
+  if(state.pendingTheory==='mimic-timeline'&&hasLog&&hasRadio){
+    state.caseTheory='mimic-timeline';
+    $('theoryFeedback').innerHTML='<b>THEORY ACCEPTED · PROVISIONAL</b><br>The dispatch log and radio recording show the same voice arriving before the call. Your best explanation is an imitator that can copy an officer and speak ahead of the event. You still need Silas’s signed statement and both survivors.';
+    state.intensity=Math.min(1,state.intensity+.16);
+    sound('radio');
+    triggerWhisper('That is not what happened. That is what you can prove.','left','CASE FILE AUDIO');
+    toast('CASE THEORY ACCEPTED. NOW GET SILAS VENN ON RECORD.',3.3);
+  }else if(state.pendingTheory==='mimic-timeline'){
+    state.caseTheory='';
+    $('theoryFeedback').textContent='The explanation may fit, but the file cannot support it yet. Study both the waterlogged patrol log and cracked dispatch radio before submitting again.';
+    toast('INSUFFICIENT SUPPORT: STUDY THE LOG AND RADIO RECORDING.',3.0);
+  }else{
+    state.caseTheory='';
+    const feedback={
+      'storm-failure':'REJECTED: weather can distort a signal, but it cannot explain the dispatch time written before the call or the voice repeating words that have not been spoken.',
+      'staged-witness':'REJECTED: the witness may be unreliable, but the physical evidence predates your interview. A staged scene does not explain the impossible radio sequence.',
+      'duplicate-units':'REJECTED: dispatch confirms one available unit. The duplicate signal uses your call sign but has no vehicle telemetry or second GPS trail.'
+    };
+    $('theoryFeedback').textContent=feedback[state.pendingTheory]||'Theory rejected. Review the evidence.';
+    state.intensity=Math.min(1,state.intensity+.06);
+    if(Math.random()<.5)triggerWhisper('Keep trying. You have time. You think.','right','VOICE IN THE FILE');
+    toast('CASE THEORY REJECTED. THE EVIDENCE DOES NOT SUPPORT IT.',2.5);
+  }
+  updateObjectives();
+  updateHUD();
+}
+function compareEvidence(){
+  const studied=caseRecords.filter(r=>r.studied&&(r.kind==='evidence'||r.kind==='note'));
+  if(studied.length<2){toast('CROSS-REFERENCE FAILED: STUDY TWO PHYSICAL CLUES FIRST.',2.5);return;}
+  const ids=new Set(studied.map(r=>r.id));
+  const names=new Set(studied.map(r=>r.name.toLowerCase()));
+  const reports=[];
+  if(ids.has('log')&&ids.has('radio'))reports.push({id:'log-radio',title:'DISPATCH TIMELINE CONTRADICTION',text:'The radio voice appears before the logged call. The timeline was not merely altered afterward; the recording suggests someone knew what dispatch would say before dispatch spoke.'});
+  if(ids.has('cloth')&&ids.has('prints'))reports.push({id:'cloth-prints',title:'A SECOND SET OF MOVEMENTS',text:'The uniform fibers and the waterline prints do not describe the same person moving in one direction. Something may have returned from the water wearing a familiar uniform.'});
+  if(ids.has('log')&&ids.has('badge'))reports.push({id:'log-badge',title:'UNIT 14 SHOULD NOT EXIST',text:'The scratched time and badge number refer to an officer absent from county assignment records. The official report may have been built around a nonexistent unit.'});
+  if(names.has('final dispatch tape')&&ids.has('radio'))reports.push({id:'two-recordings',title:'THE VOICE PRECEDES THE EVENT',text:'Both recordings place a voice ahead of the event it describes. This is not a duplicate transmission; the sound is behaving like a rehearsal.'});
+  if(!reports.length)reports.push({id:'general-'+state.caseComparisons.length,title:'PARTIAL PATTERN IDENTIFIED',text:'The studied items disagree on timing or origin. Their shared detail is that each was present before an event and altered or displaced afterward. Keep collecting evidence to isolate a reliable sequence.'});
+  let added=0;
+  for(const report of reports){
+    if(state.caseComparisons.some(old=>old.id===report.id))continue;
+    state.caseComparisons.push(report);
+    added++;
+  }
+  if(!added){
+    state.caseComparisons.push({id:'review-'+state.caseComparisons.length,title:'REVIEW CONFIRMED',text:'The previous contradiction still holds. No new report can be generated from this exact pair. Study another item and compare again.'});
+  }
+  const panel=$('comparisonReport');
+  panel.innerHTML=state.caseComparisons.slice().reverse().map(v=>'<div style="padding:8px 0;border-bottom:1px solid #263328"><b>'+escapeHTML(v.title)+'</b><br>'+escapeHTML(v.text)+'</div>').join('');
+  state.intensity=Math.min(1,state.intensity+.08);
+  tone(310,.16,'triangle',.06,-120);
+  toast('CROSS-REFERENCE COMPLETE: '+state.caseComparisons[state.caseComparisons.length-1].title,2.7);
+  updateObjectives();
+  updateHUD();
+}
+function addCaseRecord(target){
+  const id=String(target.id||target.name||('clue-'+state.elapsed.toFixed(1)));
+  if(caseRecords.some(r=>r.id===id))return;
+  const analysis={
+    log:'The log contains two dispatch times stamped only seconds apart. One entry was recorded before Unit 14 left the station. The handwriting on the second timestamp is identical, but the ink is on top of the water damage.',
+    radio:'Two voices occupy the same channel at once. The lower voice repeats the officer’s words a fraction of a second before they are spoken. This is not ordinary radio echo.',
+    cloth:'The patch carries fresh marsh silt and a pale thread not used on state uniforms. The stitching is pulled outward, as if the uniform was taken off someone who was moving away.',
+    prints:'The large prints stop at the waterline. Smaller prints appear on the far side, facing back toward the bank. The pattern suggests something crossed the water and returned wearing a different gait.',
+    badge:'The badge is still warmer than the surrounding air. The last four digits match the number scratched into the patrol log, but the badge number itself belongs to a deputy officially listed as never assigned to this county.',
+    'incident memo':'The memo is signed by a supervisor who retired eleven years before this checkpoint was built. The ink is fresh.',
+    'missing person report':'The hikers were reported missing before the emergency call was placed. Their recorded last location changes every time the report is copied.',
+    'generator log':'The final generator entry is written in a hand that matches the scratched dispatch timestamp. The log reports power loss before the generator was switched on.',
+    'receipt with a warning':'The receipt is time-stamped tomorrow. It lists one item: a replacement radio for a unit that does not exist.',
+    'handwritten warning':'The writing pressure cuts through several pages below this one. The same sentence appears in reverse on the last sheet.',
+    'final dispatch tape':'The tape contains the officer’s next sentence before it is spoken. A second breath continues for several seconds after the tape ends.'
+  };
+  const key=String(target.id||target.name||'').toLowerCase();
+  let finding=analysis[key];
+  if(!finding){
+    const name=String(target.name||'').toLowerCase();
+    finding=analysis[name]||('The object has been logged and photographed. Its details do not match the official timeline. Compare its time, material, and location with another clue before deciding what it proves.');
+  }
+  caseRecords.push({id,name:target.name||'Unidentified clue',detail:target.detail||'Recovered from the incident scene.',analysis:finding,kind:target.type==='note'?'note':'evidence',studied:false});
+}
+function studyEvidence(id){
+  const record=caseRecords.find(r=>r.id===id);
+  if(!record||record.studied)return;
+  record.studied=true;
+  state.noise=Math.max(state.noise,.1);
+  state.intensity=Math.min(1,state.intensity+.09);
+  tone(520,.09,'triangle',.07,-90);
+  if(studyCount()===2){
+    record.analysis+=' Cross-reference: another clue suggests the missing officer’s last known position was deliberately changed in the records.';
+  }
+  toast('FORENSIC REVIEW COMPLETE: '+record.name.toUpperCase(),2.6);
+  updateObjectives();
+  updateHUD();
 }
 function updateObjectives(){
   const tasks=currentTasks();
   $('taskList').innerHTML=tasks.map(t=>'<div class="task-row '+(t.done?'done':'')+'"><div class="task-mark">'+(t.done?'✓':'□')+'</div><div class="task-copy">'+escapeHTML(t.text)+'</div></div>').join('');
+  renderEvidenceBoard();
 }
 function updateSurvivorLocator(){
   const box=$('survivorLocator');
@@ -2825,14 +3059,19 @@ function updateSurvivorLocator(){
     sub.textContent='RESCUED: '+rescued+'/2 · '+phrase;
     return;
   }
+  if(rescued>=2&&!investigationReady()){
+    main.textContent='SURVIVORS SECURED · CASE INCOMPLETE';
+    sub.textContent='Study three clues, compare at least two of them in the case file, and save Silas Venn’s witness statement before extraction can be requested.';
+    return;
+  }
   if(rescued>=2){
     const exit=objects.find(o=>o.type==='exit');
     const d=exit?dist(player.x,player.y,exit.x,exit.y):0;
     const a=exit?angleTo(player.x,player.y,exit.x,exit.y):0;
     const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
     const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
-    main.innerHTML='BOTH SURVIVORS FOUND <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
-    sub.textContent='EXTRACTION IS UNLOCKED. Follow the GOLD beacon and step into its zone. Evidence and truck keys are optional bonuses.';
+    main.innerHTML='CASE READY <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    sub.textContent='Investigation complete. Follow the GOLD beacon and enter the extraction zone.';
     return;
   }
   main.textContent='SEARCH FOR SURVIVORS';
@@ -2845,7 +3084,7 @@ function updateHUD(){
   $('staminafill').style.width=clamp(stamina/player.maxStamina*100,0,100)+'%';
   $('ammo').textContent=ammo;
   $('reserve').textContent=reserve;
-  $('evidence').textContent=evidence+'/5';
+  $('evidence').textContent=Math.min(collectedClueCount(),3)+'/3';
   const rescuedCount=survivors.filter(s=>s.found||s.following||s.delivered).length;
   $('survivors').textContent=rescuedCount+'/2';
   $('battery').textContent=Math.floor(flashlightBattery)+'%';
@@ -2855,8 +3094,13 @@ function updateHUD(){
   $('timeReadout').textContent=String(2+Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0')+' AM';
   $('status').textContent=monster&&monster.active?'RADIO: SIGNAL LOST':'RADIO: DISPATCH STANDBY';
   const completeSurvivors=survivors?survivors.filter(s=>s.found||s.following||s.delivered).length:0;
-  if(completeSurvivors<2){$('objective').textContent='MAIN OBJECTIVE: Rescue the missing people '+completeSurvivors+'/2. Follow green markers.';}
-  else{$('objective').textContent='EXTRACTION UNLOCKED: Follow the gold beacon and enter its zone. Evidence is optional.';}
+  if(collectedClueCount()<3){$('objective').textContent='INVESTIGATE: Collect clues ('+Math.min(collectedClueCount(),3)+'/3), then study them with J.';}
+  else if(studyCount()<3){$('objective').textContent='FORENSICS: Study clues in your case file ['+studyCount()+'/3]. Press J.';}
+  else if(state.caseComparisons.length<1){$('objective').textContent='ANALYSIS: Compare two studied clues in your case file [J].';}
+  else if(state.caseTheory!=='mimic-timeline'){$('objective').textContent='CASE THEORY: Submit a supported explanation in your case file [J].';}
+  else if(!state.witnessInterviewed){$('objective').textContent='WITNESS: Interview Silas Venn inside Cypress Farmhouse.';}
+  else if(completeSurvivors<2){$('objective').textContent='RESCUE: Find the missing people '+completeSurvivors+'/2. Follow green markers.';}
+  else{$('objective').textContent='CASE READY: Reach the gold extraction beacon.';}
   updateSurvivorLocator();
   const near=player&&state.running?nearestInteractable():null;
   if(near){
@@ -2889,7 +3133,27 @@ function useMedkit(){
 function tryExtraction(){
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
   if(rescued<2){
-    toast('EXTRACTION IS NOT READY. FIND THE SECOND SURVIVOR: '+rescued+'/2.',3.2);
+    toast('EXTRACTION LOCKED: RESCUE BOTH MISSING PEOPLE ('+rescued+'/2).',3.2);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(studyCount()<3){
+    toast('EXTRACTION LOCKED: STUDY THREE CLUES IN YOUR CASE FILE [J] ('+studyCount()+'/3).',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(state.caseComparisons.length<1){
+    toast('EXTRACTION LOCKED: COMPARE TWO STUDIED CLUES IN YOUR CASE FILE [J].',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(state.caseTheory!=='mimic-timeline'){
+    toast('EXTRACTION LOCKED: SUBMIT A SUPPORTED CASE THEORY IN YOUR CASE FILE [J].',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(!state.witnessInterviewed){
+    toast('EXTRACTION LOCKED: INTERVIEW SILAS VENN INSIDE CYPRESS FARMHOUSE.',3.5);
     state.exitHintCooldown=4;
     return;
   }
@@ -2917,7 +3181,7 @@ function finishGame(success){
   document.body.classList.remove('game-active');
   $('endingTitle').textContent=success?'CASE FILE: SURVIVORS RECOVERED':'OFFICER LOST IN THE MARSH';
   $('endingText').textContent=success?'You got the survivors out and brought back the evidence. Dispatch never explains the extra voice on the recording. On the final playback, it sounds exactly like you.':'Your radio keeps transmitting after your pulse stops. The rescue team finds your patrol car empty and the flashlight still on.';
-  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+evidence+'/5<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRooms;
+  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>WITNESS INTERVIEW: '+(state.witnessInterviewed?'RECORDED':'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRooms;
   setScreen('ending');
   if(success)tone(460,.4,'sine',.1,180);else sound('scare');
 }
@@ -2931,7 +3195,7 @@ function closeOverlay(){
   state.paused=false;
   state.running=true;
   state.screen='game';
-  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel'])$(id).classList.add('hidden');
+  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel','interviewPanel'])$(id).classList.add('hidden');
   $('hud').style.display='block';
   document.body.classList.add('game-active');
   state.lastFrame=performance.now();
@@ -2947,6 +3211,118 @@ function openObjectives(){
   if(!state.running)return;
   updateObjectives();
   enterScreen('objectives');
+}
+function beginWitnessInterview(target){
+  if(state.witnessInterviewed){toast('SILAS HAS ALREADY GIVEN HIS RECORDED STATEMENT. REVIEW THE CASE FILE [J].',3);return;}
+  state.interviewStep=0;
+  state.interviewAwaitingContinue=false;
+  state.interviewChoiceFeedback='';
+  audioStart();
+  sound('radio');
+  renderWitnessInterview();
+  enterScreen('interview');
+}
+function renderWitnessInterview(){
+  const prompts=[
+    '“I did not call for help,” Silas says. “The call came from the house after the house was empty.” How do you establish his timeline?',
+    'A burst of static rolls through the recorder. Silas flinches before the sound begins. What do you ask about the second voice?',
+    'Silas looks toward the stairs. “It takes things first. Little things. Then the things you need to prove it was ever here.” How do you press him?'
+  ];
+  const choices=[
+    [
+      {label:'Let him explain in his own words.',trust:1,text:'Silas relaxes slightly. He says he waited near the kitchen until the radio called him by his childhood nickname. He insists he never gave that name to the deputy.'},
+      {label:'Ask for a precise time and compare it with the patrol log.',trust:2,text:'You read back the conflicting times. Silas admits the call arrived before the lights went out, not after. Your calm cross-check makes him more cooperative.'},
+      {label:'Accuse him of staging the whole scene.',trust:-2,text:'Silas goes silent. “That is what the thing wants you to write.” He refuses to give a reliable timeline.'}
+    ],
+    [
+      {label:'Ask about the second voice beneath dispatch.',trust:2,requires:'radio',text:'Silas admits it copied the last words of everyone who entered the house. He heard the voice answer a question that nobody had asked yet.'},
+      {label:'Play the cracked radio evidence and let the silence sit.',trust:2,requires:'radio',text:'The recording repeats your breathing before you breathe. Silas gives you a second location: the upstairs landing.'},
+      {label:'Tell him the voice is just radio interference.',trust:-2,text:'He stares at you for several seconds. “Then why does it know who is alone?” His statement becomes less precise.'}
+    ],
+    [
+      {label:'Show him the clues and ask what has gone missing.',trust:2,requires:'anyStudy',text:'Silas describes a brass key, a family photograph, and a deputy’s notebook vanishing one after another. He believes the disappearances mark where the thing has been.'},
+      {label:'Ask what he saw upstairs without suggesting an answer.',trust:1,text:'He describes a shape at the end of the hall that was visible only in the dark window reflection. He never saw it turn around.'},
+      {label:'Threaten to arrest him unless he tells you everything.',trust:-2,text:'Silas agrees with every accusation, but his answers contradict themselves. The statement is recorded as unreliable.'}
+    ]
+  ];
+  const step=state.interviewStep;
+  const question=$('interviewQuestion');
+  const buttons=$('interviewChoices');
+  const feedback=$('interviewFeedback');
+  const next=$('interviewContinue');
+  const save=$('endInterview');
+  const leave=$('leaveInterview');
+  if(step>=3){
+    question.innerHTML='<b>STATEMENT CONCLUSION</b><br>Silas signs the last page, then asks why the pen is still writing. The ink forms your badge number without your hand touching it.';
+    buttons.innerHTML='';
+    feedback.textContent=state.witnessTrust>=2?'STATEMENT STATUS: PARTLY CORROBORATED. His timeline has usable details, but one part remains impossible.':'STATEMENT STATUS: UNRELIABLE. The timeline is incomplete. Compare it against your collected evidence.';
+    next.classList.add('hidden');
+    save.classList.remove('hidden');
+    leave.classList.add('hidden');
+    return;
+  }
+  question.innerHTML='<b>QUESTION '+(step+1)+' / 3</b><br>'+escapeHTML(prompts[step]);
+  feedback.textContent=state.interviewAwaitingContinue?state.interviewChoiceFeedback:'Choose how to question the witness. Answers can improve or damage the reliability of his statement.';
+  if(state.interviewAwaitingContinue){
+    buttons.innerHTML='';
+    next.classList.remove('hidden');
+    save.classList.add('hidden');
+    leave.classList.add('hidden');
+  }else{
+    next.classList.add('hidden');
+    save.classList.add('hidden');
+    leave.classList.remove('hidden');
+    buttons.innerHTML=choices[step].map((c,i)=>'<button type="button" data-witness-choice="'+i+'">'+escapeHTML(c.label)+'</button>').join('');
+  }
+}
+function answerWitness(index){
+  if(state.interviewAwaitingContinue||state.interviewStep>=3)return;
+  const choices=[
+    [
+      {label:'Let him explain in his own words.',trust:1,text:'Silas relaxes slightly. He says he waited near the kitchen until the radio called him by his childhood nickname.'},
+      {label:'Ask for a precise time and compare it with the patrol log.',trust:2,text:'You compare the conflicting times. Silas admits the call arrived before the lights went out. Your method earns a more useful statement.'},
+      {label:'Accuse him of staging the whole scene.',trust:-2,text:'Silas shuts down. “That is what the thing wants you to write.” He refuses to give a reliable timeline.'}
+    ],
+    [
+      {label:'Ask about the second voice beneath dispatch.',trust:caseRecords.some(r=>r.id==='radio'&&r.studied)?2:0,text:caseRecords.some(r=>r.id==='radio'&&r.studied)?'Your radio analysis supports the question. Silas admits the voice copied people before they spoke.':'Without studying the radio, Silas says you have no proof of a second voice.'},
+      {label:'Play the cracked radio evidence and let the silence sit.',trust:caseRecords.some(r=>r.id==='radio'&&r.studied)?2:0,text:caseRecords.some(r=>r.id==='radio'&&r.studied)?'The recording repeats your breathing before you breathe. Silas gives you a second location: the upstairs landing.':'The evidence is bagged but unexamined. Silas refuses to interpret it for you.'},
+      {label:'Tell him the voice is just radio interference.',trust:-2,text:'He stares at you. “Then why does it know who is alone?” His statement becomes less reliable.'}
+    ],
+    [
+      {label:'Show him the clues and ask what has gone missing.',trust:studyCount()>=1?2:0,text:studyCount()>=1?'Silas describes a brass key, a family photograph, and a deputy’s notebook vanishing one after another. He thinks the disappearances mark where the thing has been.':'You have not studied any clues. Silas asks you to bring him something concrete before he risks saying more.'},
+      {label:'Ask what he saw upstairs without suggesting an answer.',trust:1,text:'He describes a shape at the end of the hall, visible only in the dark window reflection. He never saw it turn around.'},
+      {label:'Threaten to arrest him unless he tells you everything.',trust:-2,text:'Silas agrees with every accusation, but his answers contradict themselves. The statement is recorded as unreliable.'}
+    ]
+  ];
+  const choice=choices[state.interviewStep][index];
+  if(!choice)return;
+  state.witnessTrust+=choice.trust;
+  state.interviewChoiceFeedback=choice.text;
+  state.interviewAwaitingContinue=true;
+  sound('radio');
+  renderWitnessInterview();
+}
+function continueWitnessInterview(){
+  if(!state.interviewAwaitingContinue)return;
+  state.interviewStep++;
+  state.interviewAwaitingContinue=false;
+  state.interviewChoiceFeedback='';
+  renderWitnessInterview();
+}
+function finishWitnessInterview(){
+  if(state.witnessInterviewed)return;
+  state.witnessInterviewed=true;
+  const reliable=state.witnessTrust>=2;
+  const record={id:'silas-statement',name:'Silas Venn — recorded statement',detail:reliable?'The statement is partly corroborated, with one unexplained timeline gap.':'The statement contains contradictions and requires comparison against physical evidence.',analysis:reliable?'Silas heard the radio imitate a person before that person arrived. He reports three objects disappearing in sequence. His description of the upstairs reflection matches the waterlogged patrol log.':'Silas changed his timeline under pressure. His account cannot stand alone, but it still identifies the upstairs landing and a sequence of missing objects as leads.',kind:'statement',studied:false};
+  caseRecords.push(record);
+  if(state.room){const witness=state.room.items.find(i=>i.type==='witness');if(witness)witness.found=true;}
+  state.noise=Math.max(state.noise,.28);
+  state.intensity=Math.min(1,state.intensity+.15);
+  toast(reliable?'STATEMENT SAVED: PARTLY CORROBORATED. COMPARE IT WITH THE FORENSIC REPORTS.':'STATEMENT SAVED: UNRELIABLE. YOU NEED STRONGER PHYSICAL EVIDENCE.',4);
+  tone(210,.25,'sawtooth',.06,-95);
+  updateObjectives();
+  updateHUD();
+  closeOverlay();
 }
 function openInventory(){
   if(!state.running)return;
@@ -3317,6 +3693,41 @@ function drawFalseFigure(){
   ctx.fillStyle='#d3c2a1';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('SIGNAL LOST',x,y+33);
   ctx.restore();
 }
+function updateVanishingItems(dt){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp'||state.missingCount>=4)return;
+  state.missingTimer-=dt;
+  if(state.missingTimer>0)return;
+  state.missingTimer=31+Math.random()*17;
+  const available=[];
+  for(const item of objects){
+    if(!item.found&&!item.missing&&['loot','evidence'].includes(item.type))available.push(item);
+  }
+  if(state.floor==='inside'&&state.room){
+    for(const item of state.room.items){
+      if(!item.found&&!item.missing&&['loot','note'].includes(item.type))available.push(item);
+    }
+  }
+  if(!available.length)return;
+  const loot=available.filter(item=>item.type==='loot');
+  const uncollectedWorldEvidence=objects.filter(item=>item.type==='evidence'&&!item.found&&!item.missing).length;
+  const notes=available.filter(item=>item.type==='note');
+  const safeEvidence=available.filter(item=>item.type==='evidence'&&uncollectedWorldEvidence>3);
+  const pool=loot.length?loot:notes.length?notes:safeEvidence;
+  if(!pool.length){state.missingTimer=18;return;}
+  const item=choose(pool);
+  item.missing=true;
+  if(item.id&&!state.missingIds.includes(item.id))state.missingIds.push(item.id);
+  state.missingCount++;
+  const detail='You remember seeing '+item.name+' here. It is gone now. No footsteps lead away from the spot.';
+  state.disappearanceLog.push({title:'FIELD NOTE '+String(state.missingCount).padStart(2,'0')+' · '+String(item.name).toUpperCase(),detail});
+  caseRecords.push({id:'absence-'+state.missingCount,name:'Disappearance: '+item.name,detail,analysis:'The disappearance happened without a broken lock, disturbed dust, or a visible trail. The object was present during the previous sweep. The scene may be changing when you are not looking.',kind:'absence',studied:false});
+  state.intensity=Math.min(1,state.intensity+.12);
+  state.screenShake=Math.max(state.screenShake,.16);
+  sound('radio');
+  if(state.options.voiceWhispers&&Math.random()<.65)triggerWhisper(choose(['You should have taken it sooner.','There was something on the table a moment ago.','You keep losing things. Soon you will lose the way out.','Count the objects again. Slowly.']),choose(['left','right']),'VOICE FROM THE EMPTY ROOM');
+  toast(choose(['SOMETHING HAS GONE MISSING: ','YOU LOOK AWAY. WHEN YOU LOOK BACK, IT IS GONE: ','FIELD INVENTORY DOES NOT MATCH: '])+item.name.toUpperCase(),4);
+  updateObjectives();
+}
 function update(dt){
   if(state.prologueStage!=='swamp'){updatePrologue(dt);return;}
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
@@ -3356,13 +3767,15 @@ function update(dt){
   movePlayer(dt);
   updateSurvivors(dt);
   state.exitHintCooldown=Math.max(0,(state.exitHintCooldown||0)-dt);
+  updateVanishingItems(dt);
   if(state.floor==='outside'){
     const extraction=objects.find(o=>o.type==='exit');
     const rescuedAtExit=survivors.filter(s=>s.found||s.following||s.delivered).length;
     if(extraction&&dist(player.x,player.y,extraction.x,extraction.y)<142){
-      if(rescuedAtExit>=2){tryExtraction();return;}
+      if(rescuedAtExit>=2&&investigationReady()){tryExtraction();return;}
       if(state.exitHintCooldown<=0){
-        toast('EXTRACTION IS HERE — RESCUE THE SECOND PERSON FIRST ('+rescuedAtExit+'/2).',3.2);
+        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':studyCount()<3?'STUDY THREE CLUES IN CASE FILE [J] ('+studyCount()+'/3)':'INTERVIEW SILAS VENN INSIDE CYPRESS FARMHOUSE';
+        toast('EXTRACTION LOCKED: '+blocker+'.',3.5);
         state.exitHintCooldown=5;
       }
     }
@@ -3938,6 +4351,7 @@ function drawWorld(){
   for(const t of trees)drawTree(t);
   drawPatrolCarWorld();
   for(const o of objects){
+    if(o.missing)continue;
     if(o.type==='building')drawBuilding(o);
     if(o.type==='evidence')drawEvidence(o);
     if(o.type==='loot')drawLoot(o);
@@ -3978,7 +4392,7 @@ function drawInterior(){
   px(sx,sy+room.h-24,room.w,24,'#171d15');
   for(const p of room.props)drawFurniture(p,sx,sy);
   for(const item of room.items){
-    if(item.found)continue;
+    if(item.found||item.missing)continue;
     const x=item.x+sx;
     const y=item.y+sy;
     const pulse=Math.sin(state.elapsed*4)>0;
@@ -3987,6 +4401,13 @@ function drawInterior(){
       px(x-5,y-3,10,2,'#514c38');
       px(x-5,y,8,2,'#6c6143');
       if(pulse)px(x-10,y-8,20,2,'#d1b96f');
+    }else if(item.type==='witness'){
+      px(x-8,y-14,16,14,'#080b08');
+      px(x-6,y-22,12,10,'#8b8064');
+      px(x-8,y-24,16,4,'#171a13');
+      px(x-5,y-5,4,3,'#d0b88a');
+      px(x+2,y-5,4,3,'#d0b88a');
+      if(pulse){px(x-12,y-27,24,2,'#bca66e');}
     }else{
       px(x-8,y-5,16,10,'#7f7959');
       px(x-4,y-2,8,4,'#c9b57a');
@@ -4097,7 +4518,7 @@ function drawSurvivorGuidance(){
   if(state.prologueStage!=='swamp'||state.floor!=='outside'||!state.running)return;
   const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
-  const isExit=missing.length===0&&rescued>=2;
+  const isExit=missing.length===0&&rescued>=2&&investigationReady();
   if(!missing.length&&!isExit)return;
   const target=isExit?objects.find(o=>o.type==='exit'):missing[0];
   if(!target)return;
@@ -4401,6 +4822,26 @@ function bindEvents(){
   $('enableVoiceWhispers').addEventListener('change',e=>state.options.voiceWhispers=e.target.checked);
   $('objectiveToggle').addEventListener('click',openObjectives);
   $('closeObjectives').addEventListener('click',closeOverlay);
+  $('evidenceBoard').addEventListener('click',e=>{
+    const button=e.target.closest('[data-study-id]');
+    if(button)studyEvidence(button.dataset.studyId);
+  });
+  $('compareEvidence').addEventListener('click',compareEvidence);
+  $('theoryChoices').addEventListener('click',e=>{
+    const button=e.target.closest('[data-theory]');
+    if(button)selectCaseTheory(button.dataset.theory);
+  });
+  $('submitTheory').addEventListener('click',submitCaseTheory);
+  $('interviewChoices').addEventListener('click',e=>{
+    const button=e.target.closest('[data-witness-choice]');
+    if(button)answerWitness(Number(button.dataset.witnessChoice));
+  });
+  $('interviewContinue').addEventListener('click',continueWitnessInterview);
+  $('endInterview').addEventListener('click',finishWitnessInterview);
+  $('leaveInterview').addEventListener('click',()=>{
+    toast('INTERVIEW INTERRUPTED. SILAS MAY NOT WAIT FOR ANOTHER CHANCE.',2.8);
+    closeOverlay();
+  });
   $('closeInventory').addEventListener('click',closeOverlay);
   $('useMed').addEventListener('click',useMedkit);
   $('resume').addEventListener('click',closeOverlay);
