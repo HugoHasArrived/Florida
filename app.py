@@ -1123,14 +1123,14 @@ body.game-active.mobile-mode #minimap {
       <div class="rule"><b>01 / ANSWER THE CALL</b>Begin inside your patrol car. Press E or tap the screen to accept dispatch.</div>
       <div class="rule"><b>02 / DRIVE TO MILE MARKER 9</b>Hold W / Up to accelerate, A / D or arrows to steer, and S / Down to brake. Mobile players use the direction pad.</div>
       <div class="rule"><b>03 / YOU ARE ALONE</b>Arrive at the roadside and press E or SEARCH to leave the car. Backup is unavailable.</div>
-      <div class="rule"><b>04 / INVESTIGATE</b>Recover physical evidence, then press J to study at least three clues. You must also interview Silas Venn inside Cypress Farmhouse before extraction will open.</div>
+      <div class="rule"><b>04 / INVESTIGATE</b>Recover at least four physical clues, then press J to study four clues. You must also interview Silas Venn inside Cypress Farmhouse before extraction will open.</div>
       <div class="rule"><b>02 / RESCUE</b>Find two missing people. They will follow you once you help them.</div>
       <div class="rule"><b>03 / STAY ALIVE</b>The Smiler stalks noisy officers. Sprinting and gunshots draw its attention.</div>
       <div class="rule"><b>04 / FIGHT SMART</b>Shots can interrupt the creature but will not kill it. Smaller marsh crawlers can be killed.</div>
       <div class="rule"><b>05 / SEARCH BUILDINGS</b>Press E at doors to enter rooms. Investigate interiors for supplies and clues.</div>
-      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors, study three physical clues, cross-reference them, defend the supported theory, save Silas Venn’s statement, then follow the gold extraction beacon.</div>
+      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors, recover and study four clues, generate two distinct cross-reference reports, defend the theory, recover the truck keys, search three different buildings, save Silas Venn’s statement, then survive the 20-second extraction defense.</div>
     </div>
-    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, three studied clues, a cross-reference report, the accepted case theory, and a saved witness statement.</p>
+    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, four collected and studied clues, two distinct cross-reference reports, the accepted case theory, a saved witness statement, truck keys, three different buildings searched, and a 20-second holdout under attack.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1155,7 +1155,7 @@ body.game-active.mobile-mode #minimap {
     <p class="intro">Collected evidence is not automatically understood. Study each item, compare its findings, and build a credible timeline before requesting extraction. Some unattended items may disappear.</p>
     <div id="taskList"></div>
     <h3 class="section-title" style="font-size:19px;margin-top:25px">Physical evidence and forensic notes</h3>
-    <div id="evidenceProgress" class="info-card">0 clues studied · 3 required</div>
+    <div id="evidenceProgress" class="info-card">0 clues studied · 4 required</div>
     <div id="evidenceBoard" class="evidence-board"></div>
     <div class="page-buttons"><button id="compareEvidence">Compare studied clues</button></div>
     <div id="comparisonReport" class="info-card">Study at least two items, then compare them for contradictions and a stronger timeline.</div>
@@ -1311,6 +1311,13 @@ const state={
   keysFound:false,
   witnessInterviewed:false,
   witnessTrust:0,
+  extractionStarted:false,
+  extractionHold:0,
+  extractionWave1:false,
+  extractionWave2:false,
+  extractionLastToast:0,
+  extractionWasOutside:false,
+  exploredRoomIds:[],
   caseComparisons:[],
   pendingTheory:'',
   caseTheory:'',
@@ -1341,6 +1348,13 @@ let objects=[];
 let bullets=[];
 let particles=[];
 let trees=[];
+let treeGrid=new Map();
+let roadDetails=[];
+let groundCanvas=null;
+let interiorBaseCache={room:null,canvas:null};
+let lastMiniDraw=-999;
+let lastMiniFloor=null;
+let lastMiniRoom=null;
 let wetPatches=[];
 let reeds=[];
 let raindrops=[];
@@ -1387,7 +1401,7 @@ function angleTo(ax,ay,bx,by){return Math.atan2(by-ay,bx-ax)}
 function seeded(x,y){let n=Math.sin(x*127.1+y*311.7+17.17)*43758.5453;return n-Math.floor(n)}
 function choose(list){return list[Math.floor(Math.random()*list.length)]}
 function resize(){
-  dpr=Math.min(window.devicePixelRatio||1,2);
+  dpr=Math.min(window.devicePixelRatio||1,window.innerWidth<900?1.2:1.5);
   W=innerWidth;
   H=innerHeight;
   canvas.width=Math.floor(W*dpr);
@@ -1711,9 +1725,13 @@ function initializeAssets(){
   for(let i=0;i<55;i++){
     fireflies.push({x:seeded(i*7,2)*WORLD.w,y:seeded(i*11,4)*WORLD.h,phase:seeded(i,4)*7,speed:.5+seeded(i,9)});
   }
-  for(let i=0;i<160;i++){
+  for(let i=0;i<Math.min(115,Math.max(70,Math.floor(W*H/14000)));i++){
     raindrops.push({x:Math.random()*W,y:Math.random()*H,speed:190+Math.random()*460,length:7+Math.random()*8});
   }
+  buildTreeGrid();
+  buildRoadDetails();
+  if(!groundCanvas)buildGroundCache();
+  interiorBaseCache={room:null,canvas:null};
 }
 function roadPoints(){
   return [
@@ -1765,6 +1783,37 @@ function roadDistance(x,y){
   }
   return result;
 }
+function buildTreeGrid(){
+  treeGrid=new Map();
+  for(const t of trees){
+    const gx=Math.floor(t.x/128),gy=Math.floor(t.y/128),key=gx+','+gy;
+    if(!treeGrid.has(key))treeGrid.set(key,[]);
+    treeGrid.get(key).push(t);
+  }
+}
+function treeNear(x,y,rx,ry){
+  const minX=Math.floor((x-rx)/128),maxX=Math.floor((x+rx)/128);
+  const minY=Math.floor((y-ry)/128),maxY=Math.floor((y+ry)/128);
+  for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++){
+    const bucket=treeGrid.get(gx+','+gy);
+    if(!bucket)continue;
+    for(const t of bucket)if(Math.abs(t.x-x)<=rx&&Math.abs(t.y-y)<=ry&&dist(x,y,t.x,t.y)<18*t.s)return true;
+  }
+  return false;
+}
+function buildRoadDetails(){
+  roadDetails=[];
+  for(let i=0;i<60;i++){
+    const x=130+(i*173)%3000;
+    const y=75+(i*197)%2350;
+    if(roadDistance(x,y)<49)roadDetails.push({x,y,i});
+  }
+}
+function addParticle(p){
+  if(particles.length>=260)particles.splice(0,particles.length-220);
+  particles.push(p);
+}
+
 function buildingAt(x,y,padding=0){
   const list=[
     {x:375,y:390,w:145,h:112},
@@ -1871,6 +1920,13 @@ function resetGame(){
   caseRecords=[];
   state.witnessInterviewed=false;
   state.witnessTrust=0;
+  state.extractionStarted=false;
+  state.extractionHold=0;
+  state.extractionWave1=false;
+  state.extractionWave2=false;
+  state.extractionLastToast=0;
+  state.extractionWasOutside=false;
+  state.exploredRoomIds=[];
   state.caseComparisons=[];
   state.pendingTheory='';
   state.caseTheory='';
@@ -1972,6 +2028,8 @@ function resetGame(){
   growlTimer=5;
   ambientTimer=0;
   initializeAssets();
+  lastMiniDraw=-999;lastMiniFloor=null;lastMiniRoom=null;
+  interiorBaseCache={room:null,canvas:null};
   $('officerName').textContent=spec.name.toUpperCase();
   resetPartnerChat();
   $('hud').style.display='block';
@@ -2840,6 +2898,16 @@ function enterBuilding(target){
   player.angle=-Math.PI/2;
   player.speed=specs[state.selectedCharacter].speed*1.02;
   state.exploredRooms++;
+  if(!state.exploredRoomIds.includes(target.room))state.exploredRoomIds.push(target.room);
+  if(state.exploredRoomIds.length>=2&&!state.horrorEventFlags.secondStructureReveal){
+    state.horrorEventFlags.secondStructureReveal=true;
+    state.intensity=1;
+    state.screenShake=Math.max(state.screenShake,.34);
+    queueStoryScare('contact','secondStructureReveal',.8);
+    if(state.options.voiceWhispers)triggerWhisper('You are not the first person to enter this room tonight.','left','VOICE BEHIND THE DOOR');
+    sound('scare');
+    toast('THE DOOR CLOSES BEHIND YOU. THE ROOM WAS NOT LIKE THIS BEFORE.',4.2);
+  }
   bullets=[];
   sound('door');
   toast('ENTERED: '+state.room.title+'. LISTEN BEFORE MOVING.',2.4);
@@ -2898,30 +2966,34 @@ function studyCount(){
 function collectedClueCount(){
   return caseRecords.filter(r=>r.kind==='evidence'||r.kind==='note').length;
 }
+function validCrossReferenceCount(){
+  return state.caseComparisons.filter(report=>!String(report.id).startsWith('review-')&&!String(report.id).startsWith('general-')).length;
+}
 function investigationReady(){
-  return studyCount()>=3&&state.caseComparisons.length>=1&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed;
+  return collectedClueCount()>=4&&studyCount()>=4&&validCrossReferenceCount()>=2&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed;
 }
 function currentTasks(){
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
   const collected=collectedClueCount();
   const studied=studyCount();
   return [
-    {done:collected>=3,text:'INVESTIGATION: Recover physical evidence ('+Math.min(collected,3)+'/3 minimum).'},
-    {done:studied>=3,text:'FORENSICS: Study at least three clues in the case file [J] ('+Math.min(studied,3)+'/3).'},
-    {done:state.caseComparisons.length>=1,text:'ANALYSIS: Compare at least two studied clues in the case file.'},
+    {done:collected>=4,text:'INVESTIGATION: Recover at least four physical clues ('+Math.min(collected,4)+'/4).'},
+    {done:studied>=4,text:'FORENSICS: Study four clues in the case file [J] ('+Math.min(studied,4)+'/4).'},
+    {done:validCrossReferenceCount()>=2,text:'ANALYSIS: Produce two distinct cross-reference reports ('+validCrossReferenceCount()+'/2).'},
     {done:state.caseTheory==='mimic-timeline',text:'CASE THEORY: Explain the radio and timeline contradiction correctly.'},
     {done:state.witnessInterviewed,text:'INTERVIEW: Question Silas Venn inside Cypress Farmhouse.'},
     {done:rescued>=2,text:'RESCUE: Find both missing people ('+rescued+'/2).'},
     {done:state.won,text:'EXTRACTION: Leave with the survivors and a defensible case.'},
-    {done:state.keysFound,text:'OPTIONAL SUPPLY: Locate the patrol truck keys.'},
-    {done:state.exploredRooms>=3,text:'OPTIONAL EXPLORATION: Search three buildings ('+state.exploredRooms+'/3).'}
+    {done:state.keysFound,text:'SUPPLY: Recover the patrol truck keys.'},
+    {done:state.exploredRoomIds.length>=3,text:'EXPLORATION: Search three different buildings ('+state.exploredRoomIds.length+'/3).'},
+    {done:state.extractionHold>=20,text:'FINAL DEFENSE: Hold the extraction zone for 20 seconds.'}
   ];
 }
 function renderEvidenceBoard(){
   const board=$('evidenceBoard');
   if(!board)return;
   const records=caseRecords.slice().reverse();
-  $('evidenceProgress').textContent=studyCount()+' clues studied · 3 required · '+collectedClueCount()+' physical clues collected · '+state.caseComparisons.length+' cross-reference reports';
+  $('evidenceProgress').textContent=studyCount()+' clues studied · 4 required · '+collectedClueCount()+' physical clues collected · '+validCrossReferenceCount()+' distinct cross-reference reports';
   board.innerHTML=records.length?records.map(r=>{
     const missing=r.kind==='absence';
     const status=missing?'DISAPPEARANCE REPORT':r.studied?'STUDIED · FINDINGS RECORDED':'UNEXAMINED EVIDENCE';
@@ -2946,8 +3018,9 @@ function selectCaseTheory(id){
 }
 function submitCaseTheory(){
   if(!state.pendingTheory){toast('SELECT A CASE THEORY FIRST.',1.8);return;}
-  if(studyCount()<3){toast('THE THEORY IS NOT READY: STUDY THREE PHYSICAL CLUES.',2.7);return;}
-  if(state.caseComparisons.length<1){toast('THE THEORY IS NOT READY: COMPARE TWO STUDIED CLUES FIRST.',2.7);return;}
+  if(collectedClueCount()<4){toast('THE THEORY IS NOT READY: RECOVER FOUR PHYSICAL CLUES.',2.7);return;}
+  if(studyCount()<4){toast('THE THEORY IS NOT READY: STUDY FOUR PHYSICAL CLUES.',2.7);return;}
+  if(validCrossReferenceCount()<2){toast('THE THEORY IS NOT READY: PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS.',2.7);return;}
   state.theoryAttempts++;
   const hasLog=caseRecords.some(r=>r.id==='log'&&r.studied);
   const hasRadio=caseRecords.some(r=>r.id==='radio'&&r.studied);
@@ -2957,7 +3030,8 @@ function submitCaseTheory(){
     state.intensity=Math.min(1,state.intensity+.16);
     sound('radio');
     triggerWhisper('That is not what happened. That is what you can prove.','left','CASE FILE AUDIO');
-    toast('CASE THEORY ACCEPTED. NOW GET SILAS VENN ON RECORD.',3.3);
+    queueStoryScare('duplicate','caseTheoryAccepted',1.1);
+    toast('CASE THEORY ACCEPTED. THE FILE HAS A NEW PAGE YOU DID NOT WRITE.',3.8);
   }else if(state.pendingTheory==='mimic-timeline'){
     state.caseTheory='';
     $('theoryFeedback').textContent='The explanation may fit, but the file cannot support it yet. Study both the waterlogged patrol log and cracked dispatch radio before submitting again.';
@@ -2986,6 +3060,10 @@ function compareEvidence(){
   if(ids.has('log')&&ids.has('radio'))reports.push({id:'log-radio',title:'DISPATCH TIMELINE CONTRADICTION',text:'The radio voice appears before the logged call. The timeline was not merely altered afterward; the recording suggests someone knew what dispatch would say before dispatch spoke.'});
   if(ids.has('cloth')&&ids.has('prints'))reports.push({id:'cloth-prints',title:'A SECOND SET OF MOVEMENTS',text:'The uniform fibers and the waterline prints do not describe the same person moving in one direction. Something may have returned from the water wearing a familiar uniform.'});
   if(ids.has('log')&&ids.has('badge'))reports.push({id:'log-badge',title:'UNIT 14 SHOULD NOT EXIST',text:'The scratched time and badge number refer to an officer absent from county assignment records. The official report may have been built around a nonexistent unit.'});
+  if(ids.has('radio')&&ids.has('cloth'))reports.push({id:'radio-cloth',title:'THE VOICE WORE THE UNIFORM',text:'The voice on the radio uses the same phrase found in the uniform stitching pattern: an expression associated with a deputy who was never assigned to this unit.'});
+  if(ids.has('radio')&&ids.has('badge'))reports.push({id:'radio-badge',title:'A CALL SIGN WITH NO OWNER',text:'The radio addresses the badge number of a deputy missing from assignment records. The signal appears to know the identity of the person it is trying to replace.'});
+  if(ids.has('cloth')&&ids.has('badge'))reports.push({id:'cloth-badge',title:'THE UNIFORM DOES NOT FIT THE BADGE',text:'The recovered patch and badge belong to incompatible personnel records. The scene may contain pieces taken from more than one officer.'});
+  if(ids.has('prints')&&ids.has('badge'))reports.push({id:'prints-badge',title:'THE RETURN TRACK',text:'The prints turn back from the water while the badge remains warm. Something returned to the bank after the missing deputy should have crossed away from it.'});
   if(names.has('final dispatch tape')&&ids.has('radio'))reports.push({id:'two-recordings',title:'THE VOICE PRECEDES THE EVENT',text:'Both recordings place a voice ahead of the event it describes. This is not a duplicate transmission; the sound is behaving like a rehearsal.'});
   if(!reports.length)reports.push({id:'general-'+state.caseComparisons.length,title:'PARTIAL PATTERN IDENTIFIED',text:'The studied items disagree on timing or origin. Their shared detail is that each was present before an event and altered or displaced afterward. Keep collecting evidence to isolate a reliable sequence.'});
   let added=0;
@@ -3076,7 +3154,12 @@ function updateSurvivorLocator(){
   }
   if(rescued>=2&&!investigationReady()){
     main.textContent='SURVIVORS SECURED · CASE INCOMPLETE';
-    sub.textContent='Study three clues, compare at least two of them in the case file, and save Silas Venn’s witness statement before extraction can be requested.';
+    sub.textContent='Recover and study four clues, produce two distinct cross-reference reports, recover the truck keys, search three buildings, save Silas Venn’s statement, then survive the extraction defense.';
+    return;
+  }
+  if(rescued>=2&&(!state.keysFound||state.exploredRoomIds.length<3)){
+    main.textContent='CASEWORK DONE · PREPARE EXTRACTION';
+    sub.textContent=(!state.keysFound?'Recover the patrol truck keys. ':'')+(state.exploredRoomIds.length<3?'Search '+(3-state.exploredRoomIds.length)+' more different building(s).':'')+' Then follow the gold beacon and hold for 20 seconds.';
     return;
   }
   if(rescued>=2){
@@ -3085,8 +3168,8 @@ function updateSurvivorLocator(){
     const a=exit?angleTo(player.x,player.y,exit.x,exit.y):0;
     const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
     const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
-    main.innerHTML='CASE READY <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
-    sub.textContent='Investigation complete. Follow the GOLD beacon and enter the extraction zone.';
+    main.innerHTML=state.extractionStarted?'DEFEND EXTRACTION <span class="locator-range">'+Math.max(0,20-Math.floor(state.extractionHold))+'s</span>':'CASE READY <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    sub.textContent=state.extractionStarted?'EXTRACTION UNDER ATTACK · HOLD POSITION. LEAVING RESETS THE TIMER.':'Casework complete. Press E at the gold beacon and survive the 20-second defense.';
     return;
   }
   main.textContent='SEARCH FOR SURVIVORS';
@@ -3099,7 +3182,7 @@ function updateHUD(){
   $('staminafill').style.width=clamp(stamina/player.maxStamina*100,0,100)+'%';
   $('ammo').textContent=ammo;
   $('reserve').textContent=reserve;
-  $('evidence').textContent=Math.min(collectedClueCount(),3)+'/3';
+  $('evidence').textContent=Math.min(collectedClueCount(),4)+'/4';
   const rescuedCount=survivors.filter(s=>s.found||s.following||s.delivered).length;
   $('survivors').textContent=rescuedCount+'/2';
   $('battery').textContent=Math.floor(flashlightBattery)+'%';
@@ -3109,13 +3192,16 @@ function updateHUD(){
   $('timeReadout').textContent=String(2+Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0')+' AM';
   $('status').textContent=monster&&monster.active?'RADIO: SIGNAL LOST':'RADIO: DISPATCH STANDBY';
   const completeSurvivors=survivors?survivors.filter(s=>s.found||s.following||s.delivered).length:0;
-  if(collectedClueCount()<3){$('objective').textContent='INVESTIGATE: Collect clues ('+Math.min(collectedClueCount(),3)+'/3), then study them with J.';}
-  else if(studyCount()<3){$('objective').textContent='FORENSICS: Study clues in your case file ['+studyCount()+'/3]. Press J.';}
-  else if(state.caseComparisons.length<1){$('objective').textContent='ANALYSIS: Compare two studied clues in your case file [J].';}
+  if(state.extractionStarted){$('objective').textContent='EXTRACTION DEFENSE: HOLD THE BEACON '+Math.min(20,Math.floor(state.extractionHold))+'/20 SECONDS. DO NOT LEAVE THE ZONE.';}
+  else if(collectedClueCount()<4){$('objective').textContent='INVESTIGATE: Collect four clues ('+Math.min(collectedClueCount(),4)+'/4), then study them with J.';}
+  else if(studyCount()<4){$('objective').textContent='FORENSICS: Study four clues in your case file ['+studyCount()+'/4]. Press J.';}
+  else if(validCrossReferenceCount()<2){$('objective').textContent='ANALYSIS: Produce two DISTINCT cross-reference reports in your case file ['+validCrossReferenceCount()+'/2].';}
   else if(state.caseTheory!=='mimic-timeline'){$('objective').textContent='CASE THEORY: Submit a supported explanation in your case file [J].';}
   else if(!state.witnessInterviewed){$('objective').textContent='WITNESS: Interview Silas Venn inside Cypress Farmhouse.';}
+  else if(!state.keysFound){$('objective').textContent='SUPPLY: Recover the patrol truck keys.';}
+  else if(state.exploredRoomIds.length<3){$('objective').textContent='EXPLORATION: Search three different buildings ['+state.exploredRoomIds.length+'/3].';}
   else if(completeSurvivors<2){$('objective').textContent='RESCUE: Find the missing people '+completeSurvivors+'/2. Follow green markers.';}
-  else{$('objective').textContent='CASE READY: Reach the gold extraction beacon.';}
+  else{$('objective').textContent='CASE READY: Press E at the gold beacon and survive the 20-second defense.';}
   updateSurvivorLocator();
   const near=player&&state.running?nearestInteractable():null;
   if(near){
@@ -3152,13 +3238,18 @@ function tryExtraction(){
     state.exitHintCooldown=4;
     return;
   }
-  if(studyCount()<3){
-    toast('EXTRACTION LOCKED: STUDY THREE CLUES IN YOUR CASE FILE [J] ('+studyCount()+'/3).',3.5);
+  if(collectedClueCount()<4){
+    toast('EXTRACTION LOCKED: COLLECT FOUR PHYSICAL CLUES ('+collectedClueCount()+'/4).',3.5);
     state.exitHintCooldown=4;
     return;
   }
-  if(state.caseComparisons.length<1){
-    toast('EXTRACTION LOCKED: COMPARE TWO STUDIED CLUES IN YOUR CASE FILE [J].',3.5);
+  if(studyCount()<4){
+    toast('EXTRACTION LOCKED: STUDY FOUR CLUES IN YOUR CASE FILE [J] ('+studyCount()+'/4).',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(validCrossReferenceCount()<2){
+    toast('EXTRACTION LOCKED: PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/2).',3.5);
     state.exitHintCooldown=4;
     return;
   }
@@ -3172,6 +3263,38 @@ function tryExtraction(){
     state.exitHintCooldown=4;
     return;
   }
+  if(!state.keysFound){
+    toast('EXTRACTION LOCKED: RECOVER THE PATROL TRUCK KEYS.',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(state.exploredRoomIds.length<3){
+    toast('EXTRACTION LOCKED: SEARCH THREE DIFFERENT BUILDINGS ('+state.exploredRoomIds.length+'/3).',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(!investigationReady()){
+    toast('EXTRACTION LOCKED: FINISH THE FULL EVIDENCE REVIEW.',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(state.extractionStarted){
+    toast('EXTRACTION ALREADY ACTIVE. HOLD THE ZONE UNTIL THE TIMER ENDS.',2.2);
+    return;
+  }
+  state.extractionStarted=true;
+  state.extractionHold=0;
+  state.extractionWave1=false;
+  state.extractionWave2=false;
+  state.extractionLastToast=0;
+  state.extractionWasOutside=false;
+  state.intensity=1;
+  state.noise=1;
+  sound('scare');
+  tone(48,1.2,'sawtooth',.18,-20);
+  toast('EXTRACTION UNDER ATTACK. HOLD THE BEACON FOR 20 SECONDS. LEAVING THE ZONE RESETS THE TIMER.',5.2);
+}
+function completeExtraction(){
   for(const survivor of survivors){
     if(survivor.found||survivor.following||survivor.delivered){
       survivor.found=true;
@@ -3196,7 +3319,7 @@ function finishGame(success){
   document.body.classList.remove('game-active');
   $('endingTitle').textContent=success?'CASE FILE: SURVIVORS RECOVERED':'OFFICER LOST IN THE MARSH';
   $('endingText').textContent=success?'You got the survivors out and brought back the evidence. Dispatch never explains the extra voice on the recording. On the final playback, it sounds exactly like you.':'Your radio keeps transmitting after your pulse stops. The rescue team finds your patrol car empty and the flashlight still on.';
-  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>WITNESS INTERVIEW: '+(state.witnessInterviewed?'RECORDED':'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRooms;
+  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>CROSS-REFERENCES: '+validCrossReferenceCount()+'<br>TRUCK KEYS: '+(state.keysFound?'RECOVERED':'MISSING')+'<br>WITNESS INTERVIEW: '+(state.witnessInterviewed?'RECORDED':'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRoomIds.length+'<br>EXTRACTION HOLD: '+Math.floor(state.extractionHold)+'/20 SECONDS';
   setScreen('ending');
   if(success)tone(460,.4,'sine',.1,180);else sound('scare');
 }
@@ -3372,7 +3495,7 @@ function shoot(){
   player.angle=a;
   bullets.push({x:player.x+Math.cos(a)*17,y:player.y+Math.sin(a)*17,vx:Math.cos(a)*620,vy:Math.sin(a)*620,life:.72,owner:'player',r:3});
   for(let i=0;i<9;i++){
-    particles.push({x:player.x+Math.cos(a)*16,y:player.y+Math.sin(a)*16,vx:Math.cos(a+Math.random()-.5)*(60+Math.random()*150),vy:Math.sin(a+Math.random()-.5)*(60+Math.random()*150),life:.15+Math.random()*.18,color:choose(['#f6daa2','#c7ab69','#f5e9c7']),size:1+Math.random()*2});
+    addParticle({x:player.x+Math.cos(a)*16,y:player.y+Math.sin(a)*16,vx:Math.cos(a+Math.random()-.5)*(60+Math.random()*150),vy:Math.sin(a+Math.random()-.5)*(60+Math.random()*150),life:.15+Math.random()*.18,color:choose(['#f6daa2','#c7ab69','#f5e9c7']),size:1+Math.random()*2});
   }
   updateHUD();
 }
@@ -3434,9 +3557,15 @@ function movePlayer(dt){
 }
 function blockedAt(x,y,r){
   if(state.prologueStage==='swamp'&&dist(x,y,245,278)<43+r)return true;
-  for(const t of trees){
-    if(Math.abs(t.x-x)>r+12||Math.abs(t.y-y)>r+15)continue;
-    if(dist(x,y,t.x,t.y)<r+9*t.s)return true;
+  const minX=Math.floor((x-r-15)/128),maxX=Math.floor((x+r+15)/128);
+  const minY=Math.floor((y-r-15)/128),maxY=Math.floor((y+r+15)/128);
+  for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++){
+    const bucket=treeGrid.get(gx+','+gy);
+    if(!bucket)continue;
+    for(const t of bucket){
+      if(Math.abs(t.x-x)>r+12||Math.abs(t.y-y)>r+15)continue;
+      if(dist(x,y,t.x,t.y)<r+9*t.s)return true;
+    }
   }
   for(const o of objects){
     if(o.type!=='building')continue;
@@ -3524,7 +3653,7 @@ function updateCrawlers(dt){
       if(!blockedAt(c.x,ny,c.r))c.y=ny;
       if(d<c.r+player.r+5&&c.attack<=0){
         c.attack=1.3;
-        damagePlayer(9,'crawler');
+        damagePlayer(11,'crawler');
       }
     }else if(Math.sin(c.phase*.7)>.94){
       c.x+=Math.cos(c.phase)*18*dt;
@@ -3554,13 +3683,12 @@ function updateMonster(dt){
   const towardMonster=angleTo(player.x,player.y,monster.x,monster.y);
   const beamDelta=Math.atan2(Math.sin(towardMonster-flashlightAngle()),Math.cos(towardMonster-flashlightAngle()));
   monster.frozenByLight=flashlight&&flashlightBattery>0&&d<505&&Math.abs(beamDelta)<.235;
-  if(monster.frozenByLight&&d>58&&monster.stun<=0){
-    monster.lastMove=0;
-    return;
-  }
+  const slowedByLight=monster.frozenByLight&&d>58&&monster.stun<=0;
   if(monster.stun>0)return;
   const rescuedPressure=survivors.filter(s=>s.found||s.following||s.delivered).length;
-  let speed=(d<280?111:state.noise>.3?88:62)+Math.min(28,evidence*2.4+rescuedPressure*6+state.elapsed/100);
+  const huntRamp=Math.min(38,state.elapsed*.075+state.missingCount*3.2+evidence*2.8+rescuedPressure*5);
+  let speed=(d<280?119:state.noise>.3?96:72)+Math.min(34,evidence*2.8+rescuedPressure*7+state.elapsed/85)+huntRamp;
+  if(slowedByLight)speed*=.34;
   if(d>780&&state.noise<.2){
     monster.lastMove+=dt;
     if(monster.lastMove>7&&monster.warpCooldown<=0){
@@ -3576,7 +3704,7 @@ function updateMonster(dt){
   monster.y+=Math.sin(a)*speed*dt;
   if(d<43&&monster.attack<=0){
     monster.attack=1.45;
-    damagePlayer(21,'smiler');
+    damagePlayer(25+Math.min(8,Math.floor(state.elapsed/150)*2),'smiler');
     monster.x=clamp(monster.x-Math.cos(a)*44,30,WORLD.w-30);
     monster.y=clamp(monster.y-Math.sin(a)*44,30,WORLD.h-30);
   }
@@ -3626,10 +3754,10 @@ function updateBullets(dt){
   particles=particles.filter(p=>p.life>0);
 }
 function spawnBlood(x,y){
-  for(let i=0;i<7;i++)particles.push({x,y,vx:(Math.random()-.5)*160,vy:(Math.random()-.5)*160,life:.18+Math.random()*.4,color:choose(['#76302b','#a53b37','#47201d']),size:2+Math.random()*3});
+  for(let i=0;i<7;i++)addParticle({x,y,vx:(Math.random()-.5)*160,vy:(Math.random()-.5)*160,life:.18+Math.random()*.4,color:choose(['#76302b','#a53b37','#47201d']),size:2+Math.random()*3});
 }
 function spawnSparks(x,y){
-  for(let i=0;i<12;i++)particles.push({x,y,vx:(Math.random()-.5)*240,vy:(Math.random()-.5)*240,life:.12+Math.random()*.26,color:choose(['#d9c58e','#a2b28b','#efdfb2']),size:1+Math.random()*3});
+  for(let i=0;i<12;i++)addParticle({x,y,vx:(Math.random()-.5)*240,vy:(Math.random()-.5)*240,life:.12+Math.random()*.26,color:choose(['#d9c58e','#a2b28b','#efdfb2']),size:1+Math.random()*3});
 }
 function updateWeather(dt){
   state.lightningNext-=dt;
@@ -3763,10 +3891,10 @@ function updateVanishingItems(dt){
     }
   }
   if(!available.length)return;
-  const loot=available.filter(item=>item.type==='loot');
+  const loot=available.filter(item=>item.type==='loot'&&item.loot!=='keys');
   const uncollectedWorldEvidence=objects.filter(item=>item.type==='evidence'&&!item.found&&!item.missing).length;
   const notes=available.filter(item=>item.type==='note');
-  const safeEvidence=available.filter(item=>item.type==='evidence'&&uncollectedWorldEvidence>3);
+  const safeEvidence=available.filter(item=>item.type==='evidence'&&uncollectedWorldEvidence>4);
   const pool=loot.length?loot:notes.length?notes:safeEvidence;
   if(!pool.length){state.missingTimer=18;return;}
   const item=choose(pool);
@@ -3815,7 +3943,7 @@ function update(dt){
     keys.r=false;
   }
   if(state.floor==='outside'){
-    const onReed=trees.some(t=>Math.abs(t.x-player.x)<25&&Math.abs(t.y-player.y)<25);
+    const onReed=treeNear(player.x,player.y,25,25);
     player.hidden=onReed&&!keys.shift&&state.noise<.2;
   }else player.hidden=false;
   movePlayer(dt);
@@ -3825,10 +3953,40 @@ function update(dt){
   if(state.floor==='outside'){
     const extraction=objects.find(o=>o.type==='exit');
     const rescuedAtExit=survivors.filter(s=>s.found||s.following||s.delivered).length;
-    if(extraction&&dist(player.x,player.y,extraction.x,extraction.y)<142){
-      if(rescuedAtExit>=2&&investigationReady()){tryExtraction();return;}
-      if(state.exitHintCooldown<=0){
-        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':studyCount()<3?'STUDY THREE CLUES IN CASE FILE [J] ('+studyCount()+'/3)':'INTERVIEW SILAS VENN INSIDE CYPRESS FARMHOUSE';
+    const exitDistance=extraction?dist(player.x,player.y,extraction.x,extraction.y):Infinity;
+    if(state.extractionStarted){
+      if(exitDistance>165){
+        state.extractionHold=0;
+        state.extractionLastToast=0;
+        if(!state.extractionWasOutside)toast('EXTRACTION ABORTED: RETURN TO THE BEACON. THE DEFENSE TIMER RESET.',3.1);
+        state.extractionWasOutside=true;
+      }else{
+        state.extractionWasOutside=false;
+        state.extractionHold+=dt;
+        const held=Math.floor(state.extractionHold);
+        if(held>=5&&!state.extractionWave1){
+          state.extractionWave1=true;
+          for(let i=0;i<2;i++)crawlers.push({x:clamp(player.x+(i===0?-1:1)*180,80,WORLD.w-80),y:clamp(player.y+(i===0?-1:1)*130,80,WORLD.h-80),r:10,hp:2,speed:88+Math.random()*12,phase:Math.random()*8,alert:true,attack:0,dead:false,hiddenUntil:0});
+          toast('MOVEMENT IN THE DARK. FIRST WAVE ON THE PERIMETER.',2.8);
+          sound('roar');
+        }
+        if(held>=12&&!state.extractionWave2){
+          state.extractionWave2=true;
+          for(let i=0;i<3;i++)crawlers.push({x:clamp(player.x+Math.cos(i*Math.PI*2/3)*215,80,WORLD.w-80),y:clamp(player.y+Math.sin(i*Math.PI*2/3)*190,80,WORLD.h-80),r:11,hp:2,speed:93+Math.random()*16,phase:Math.random()*8,alert:true,attack:0,dead:false,hiddenUntil:0});
+          toast('SECOND WAVE. DO NOT LET THEM BOX YOU IN.',3.1);
+          sound('scare');
+        }
+        if(held>=state.extractionLastToast+5&&held<20){
+          state.extractionLastToast=held;
+          toast('EXTRACTION HOLD: '+(20-held)+' SECONDS REMAIN. STAY INSIDE THE BEACON RADIUS.',2.2);
+        }
+        if(state.extractionHold>=20){completeExtraction();return;}
+      }
+    }else if(extraction&&exitDistance<142){
+      if(rescuedAtExit>=2&&investigationReady()&&state.keysFound&&state.exploredRoomIds.length>=3){
+        if(state.exitHintCooldown<=0){toast('CASEWORK COMPLETE. PRESS E TO START THE 20-SECOND EXTRACTION DEFENSE.',3.0);state.exitHintCooldown=5;}
+      }else if(state.exitHintCooldown<=0){
+        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':collectedClueCount()<4?'COLLECT FOUR CLUES ('+collectedClueCount()+'/4)':studyCount()<4?'STUDY FOUR CLUES IN CASE FILE [J] ('+studyCount()+'/4)':validCrossReferenceCount()<2?'PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/2)':state.caseTheory!=='mimic-timeline'?'SUBMIT A SUPPORTED CASE THEORY':!state.witnessInterviewed?'INTERVIEW SILAS VENN':!state.keysFound?'RECOVER THE PATROL TRUCK KEYS':'SEARCH THREE DIFFERENT BUILDINGS';
         toast('EXTRACTION LOCKED: '+blocker+'.',3.5);
         state.exitHintCooldown=5;
       }
@@ -3839,7 +3997,9 @@ function update(dt){
   updateBullets(dt);
   updateWeather(dt);
   if(flashlight&&flashlightBattery>0){
-    flashlightBattery=Math.max(0,flashlightBattery-dt*(state.floor==='inside'?.48:.22));
+    const nearThreat=monster&&monster.active&&dist(player.x,player.y,monster.x,monster.y)<370?0.34:0;
+    const dangerDrain=1+Math.min(.7,state.elapsed/240)+state.missingCount*.045+nearThreat;
+    flashlightBattery=Math.max(0,flashlightBattery-dt*(state.floor==='inside'?.56:.27)*dangerDrain);
     if(flashlightBattery<=0){flashlight=false;toast('FLASHLIGHT BATTERY EXHAUSTED.',2);}
   }
   if(state.floor==='outside'){
@@ -3854,7 +4014,8 @@ function update(dt){
     if(state.toastTimer<=0)hideToast();
   }
   state.radioTimer=Math.max(0,state.radioTimer-dt);
-  updateHUD();
+  state.hudClock=(state.hudClock||0)+dt;
+  if(state.hudClock>=.075){state.hudClock=0;updateHUD();}
   if(pointer.down&&state.controlMode==='desktop')shoot();
 }
 function screenJitter(){
@@ -3873,28 +4034,40 @@ function px(x,y,w,h,color){
 function worldPx(x,y,w,h,color){
   px(x-camera.x+shakeX,y-camera.y+shakeY,w,h,color);
 }
-function drawGround(){
-  px(0,0,W,H,'#101a13');
-  const startX=Math.floor(camera.x/TILE)*TILE;
-  const startY=Math.floor(camera.y/TILE)*TILE;
-  for(let wy=startY;wy<camera.y+H+TILE;wy+=TILE){
-    for(let wx=startX;wx<camera.x+W+TILE;wx+=TILE){
-      const x=wx-camera.x+shakeX;
-      const y=wy-camera.y+shakeY;
+function buildGroundCache(){
+  const cache=document.createElement('canvas');
+  cache.width=WORLD.w;
+  cache.height=WORLD.h;
+  const g=cache.getContext('2d',{alpha:false});
+  g.fillStyle='#101a13';
+  g.fillRect(0,0,WORLD.w,WORLD.h);
+  for(let wy=0;wy<WORLD.h;wy+=TILE){
+    for(let wx=0;wx<WORLD.w;wx+=TILE){
       const n=seeded(Math.floor(wx/TILE),Math.floor(wy/TILE));
       const color=n>.79?'#1b291b':n>.57?'#162319':n>.3?'#122018':'#101b14';
-      px(x,y,TILE,TILE,color);
+      g.fillStyle=color;
+      g.fillRect(wx,wy,TILE,TILE);
       if(n>.91){
-        px(x+5,y+7,9,2,'#35412c');
-        px(x+9,y+11,4,2,'#28382a');
+        g.fillStyle='#35412c';g.fillRect(wx+5,wy+7,9,2);
+        g.fillStyle='#28382a';g.fillRect(wx+9,wy+11,4,2);
       }
       if(n<.06){
-        px(x+13,y+20,8,4,'#27352a');
-        px(x+16,y+21,3,1,'#536151');
+        g.fillStyle='#27352a';g.fillRect(wx+13,wy+20,8,4);
+        g.fillStyle='#536151';g.fillRect(wx+16,wy+21,3,1);
       }
-      if(n>.48&&n<.52)px(x+23,y+6,2,7,'#202f22');
+      if(n>.48&&n<.52){g.fillStyle='#202f22';g.fillRect(wx+23,wy+6,2,7);}
     }
   }
+  groundCanvas=cache;
+}
+function drawGround(){
+  px(0,0,W,H,'#101a13');
+  if(!groundCanvas)buildGroundCache();
+  const sx=clamp(camera.x,0,WORLD.w-1);
+  const sy=clamp(camera.y,0,WORLD.h-1);
+  const sw=Math.min(W,WORLD.w-sx);
+  const sh=Math.min(H,WORLD.h-sy);
+  if(sw>0&&sh>0)ctx.drawImage(groundCanvas,sx,sy,sw,sh,shakeX,shakeY,sw,sh);
 }
 function drawRoad(){
   ctx.save();
@@ -3911,16 +4084,12 @@ function drawRoad(){
     ctx.lineWidth=2;ctx.strokeStyle='#8f8567';ctx.setLineDash([18,23]);ctx.stroke();ctx.setLineDash([]);
   }
   ctx.restore();
-  for(let i=0;i<60;i++){
-    const wx=130+(i*173)%3000;
-    const wy=75+(i*197)%2350;
-    if(roadDistance(wx,wy)<49){
-      const x=wx-camera.x+shakeX;
-      const y=wy-camera.y+shakeY;
-      if(x>-40&&x<W+40&&y>-30&&y<H+30){
-        px(x-10,y,22,3,'#222920');px(x-5,y+1,12,1,'#716c55');
-        if(i%3===0){px(x+7,y-4,2,8,'#343c2f');px(x+4,y-7,8,4,'#a6a085');}
-      }
+  for(const detail of roadDetails){
+    const x=detail.x-camera.x+shakeX;
+    const y=detail.y-camera.y+shakeY;
+    if(x>-40&&x<W+40&&y>-30&&y<H+30){
+      px(x-10,y,22,3,'#222920');px(x-5,y+1,12,1,'#716c55');
+      if(detail.i%3===0){px(x+7,y-4,2,8,'#343c2f');px(x+4,y-7,8,4,'#a6a085');}
     }
   }
 }
@@ -4437,36 +4606,43 @@ function drawWorld(){
   drawMini();
   if(state.sceneFade>0){ctx.fillStyle='rgba(0,0,0,'+state.sceneFade+')';ctx.fillRect(0,0,W,H);}
 }
+function drawInteriorBase(room,sx,sy){
+  if(!interiorBaseCache.canvas||interiorBaseCache.room!==room){
+    const cache=document.createElement('canvas');
+    cache.width=room.w;
+    cache.height=room.h;
+    const g=cache.getContext('2d',{alpha:false});
+    g.fillStyle=room.color||'#292e25';g.fillRect(0,0,room.w,room.h);
+    for(let y=0;y<room.h;y+=32){
+      for(let x=0;x<room.w;x+=32){
+        const n=seeded(x,y);
+        g.fillStyle=n>.5?'#414437':'#393e32';g.fillRect(x,y,32,32);
+        g.fillStyle=n>.5?'#34382d':'#2c332a';g.fillRect(x+2,y+2,28,28);
+        if(n>.82){g.fillStyle='#4b4c3b';g.fillRect(x+5,y+12,18,2);g.fillStyle='#1d241c';g.fillRect(x+8,y+15,7,1);}
+        if(n<.12){g.fillStyle='#252d25';g.fillRect(x+4,y+4,2,17);g.fillStyle='#4b4836';g.fillRect(x+6,y+14,10,2);}
+        if(n>.25&&n<.29){g.fillStyle='#1b241d';g.fillRect(x+2,y+25,28,1);g.fillStyle='#151e17';g.fillRect(x+14,y+27,1,4);}
+        if(n>.59&&n<.63){g.fillStyle='#6a6148';g.fillRect(x+6,y+6,2,2);g.fillStyle='#1c241d';g.fillRect(x+10,y+10,1,6);}
+      }
+    }
+    for(let i=0;i<18;i++){
+      const wx=28+seeded(i,3)*Math.max(1,room.w-56);
+      const wy=42+seeded(i,8)*Math.max(1,room.h-84);
+      const n=seeded(i,13);
+      if(n>.35&&n<.52){g.fillStyle='#24251e';g.fillRect(wx,wy,8+seeded(i,2)*22,2);g.fillRect(wx+3,wy+2,2,7);}
+      if(n>.84){g.fillStyle='#50302b';g.fillRect(wx,wy,3,2);g.fillStyle='#352522';g.fillRect(wx+2,wy+2,2,4);}
+    }
+    g.fillStyle='#171d15';g.fillRect(0,0,room.w,24);g.fillRect(0,0,24,room.h);g.fillRect(room.w-24,0,24,room.h);g.fillRect(0,room.h-24,room.w,24);
+    interiorBaseCache={room,canvas:cache};
+  }
+  ctx.drawImage(interiorBaseCache.canvas,sx,sy);
+}
 function drawInterior(){
   if(!state.room)return;
   const room=state.room;
   px(0,0,W,H,'#131811');
   const sx=-camera.x+shakeX;
   const sy=-camera.y+shakeY;
-  px(sx,sy,room.w,room.h,room.color);
-  for(let y=0;y<room.h;y+=32){
-    for(let x=0;x<room.w;x+=32){
-      const n=seeded(x,y);
-      const base=n>.5?'#34382d':'#2c332a';
-      px(x+sx,y+sy,32,32,n>.5?'#414437':'#393e32');
-      px(x+sx+2,y+sy+2,28,28,base);
-      if(n>.82){px(x+sx+5,y+sy+12,18,2,'#4b4c3b');px(x+sx+8,y+sy+15,7,1,'#1d241c');}
-      if(n<.12){px(x+sx+4,y+sy+4,2,17,'#252d25');px(x+sx+6,y+sy+14,10,2,'#4b4836');}
-      if(n>.25&&n<.29){px(x+sx+2,y+sy+25,28,1,'#1b241d');px(x+sx+14,y+sy+27,1,4,'#151e17');}
-      if(n>.59&&n<.63){px(x+sx+6,y+sy+6,2,2,'#6a6148');px(x+sx+10,y+sy+10,1,6,'#1c241d');}
-    }
-  }
-  for(let i=0;i<18;i++){
-    const wx=28+seeded(i,3)*Math.max(1,room.w-56)+sx;
-    const wy=42+seeded(i,8)*Math.max(1,room.h-84)+sy;
-    const n=seeded(i,13);
-    if(n>.35&&n<.52){px(wx,wy,8+seeded(i,2)*22,2,'#24251e');px(wx+3,wy+2,2,7,'#252720');}
-    if(n>.84){px(wx,wy,3,2,'#50302b');px(wx+2,wy+2,2,4,'#352522');}
-  }
-  px(sx,sy,room.w,24,'#171d15');
-  px(sx,sy,24,room.h,'#171d15');
-  px(sx+room.w-24,sy,24,room.h,'#171d15');
-  px(sx,sy+room.h-24,room.w,24,'#171d15');
+  drawInteriorBase(room,sx,sy);
   for(const p of room.props)drawFurniture(p,sx,sy);
   for(const item of room.items){
     if(item.found||item.missing)continue;
@@ -4701,6 +4877,8 @@ function drawSurvivorGuidance(){
   }
 }
 function drawMini(){
+  if(state.elapsed-lastMiniDraw<.12&&lastMiniFloor===state.floor&&lastMiniRoom===state.room)return;
+  lastMiniDraw=state.elapsed;lastMiniFloor=state.floor;lastMiniRoom=state.room;
   const mw=mini.width;
   const mh=mini.height;
   mctx.fillStyle='#07100a';
@@ -5113,6 +5291,7 @@ function menuFrame(){
 }
 function loop(now){
   if(!state.running)return;
+  if(document.hidden){state.lastFrame=now;requestAnimationFrame(loop);return;}
   const dt=Math.min(.035,Math.max(.001,(now-state.lastFrame)/1000));
   state.lastFrame=now;
   if(!state.paused&&!state.gameOver)update(dt);
