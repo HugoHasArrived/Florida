@@ -990,7 +990,7 @@ body.game-active.mobile-mode #minimap {
   <div class="partner-hint">ENTER TO SEND · SECURE CHANNEL</div>
 </div>
 <div id="driveLaneHUD" aria-label="Driving lane indicator">
-  <div class="drive-lane-kicker">PATROL VEHICLE · LANE ASSIST</div>
+  <div class="drive-lane-kicker">FIELD MOVEMENT · OBJECTIVE GUIDE</div>
   <div id="driveLaneLabel">RIGHT / TRAVEL LANE</div>
   <div class="lane-track"><div class="lane-oncoming"></div><div class="lane-center"></div><div class="lane-travel"></div><div id="laneMarker"></div></div>
   <div class="lane-labels"><span>ONCOMING</span><span>DOUBLE YELLOW</span><span>YOUR LANE</span></div>
@@ -1120,17 +1120,17 @@ body.game-active.mobile-mode #minimap {
     <div class="kicker">Field manual</div>
     <h2 class="section-title">Survive the night shift</h2>
     <div class="rule-list">
-      <div class="rule"><b>01 / ANSWER THE CALL</b>Begin inside your patrol car. Press E or tap the screen to accept dispatch.</div>
-      <div class="rule"><b>02 / DRIVE TO MILE MARKER 9</b>Hold W / Up to accelerate, A / D or arrows to steer, and S / Down to brake. Mobile players use the direction pad.</div>
-      <div class="rule"><b>03 / YOU ARE ALONE</b>Arrive at the roadside and press E or SEARCH to leave the car. Backup is unavailable.</div>
-      <div class="rule"><b>04 / INVESTIGATE</b>Recover at least four physical clues, then press J to study four clues. You must also interview Silas Venn inside Cypress Farmhouse before extraction will open.</div>
-      <div class="rule"><b>02 / RESCUE</b>Find two missing people. They will follow you once you help them.</div>
-      <div class="rule"><b>03 / STAY ALIVE</b>The Smiler stalks noisy officers. Sprinting and gunshots draw its attention.</div>
-      <div class="rule"><b>04 / FIGHT SMART</b>Shots can interrupt the creature but will not kill it. Smaller marsh crawlers can be killed.</div>
-      <div class="rule"><b>05 / SEARCH BUILDINGS</b>Press E at doors to enter rooms. Investigate interiors for supplies and clues.</div>
-      <div class="rule"><b>06 / ESCAPE</b>Rescue both survivors, recover and study four clues, generate two distinct cross-reference reports, defend the theory, recover the truck keys, search three different buildings, save Silas Venn’s statement, then survive the 20-second extraction defense.</div>
+      <div class="rule"><b>01 / ANSWER THE CALL</b>Begin on foot at the edge of the woods. Press E or tap to accept dispatch.</div>
+      <div class="rule"><b>02 / FOLLOW THE FOOTPATH</b>Move on foot with WASD or arrow keys. Use the flashlight to reveal only the ground directly ahead.</div>
+      <div class="rule"><b>03 / YOU ARE ALONE</b>Follow the trail toward the first clues. Your partner is on the radio, but something else has learned their voice.</div>
+      <div class="rule"><b>04 / INVESTIGATE</b>Recover at least six physical clues, study six clues with J, and make four distinct cross-reference reports. Interview Silas Venn before extraction can open.</div>
+      <div class="rule"><b>05 / RESCUE</b>Find both missing people. They follow after you help them, and their footsteps attract attention.</div>
+      <div class="rule"><b>06 / STAY ALIVE</b>The Smiler learns your route. Sprinting, gunshots, opening doors, and studying evidence can draw its attention.</div>
+      <div class="rule"><b>07 / FIGHT SMART</b>Shots only interrupt the Smiler. Ammunition and batteries are limited; smaller marsh crawlers can be killed.</div>
+      <div class="rule"><b>08 / SEARCH BUILDINGS</b>Press E at doors. Search five different buildings, and check rooms again: items may vanish when you look away.</div>
+      <div class="rule"><b>09 / ESCAPE</b>Rescue both survivors, recover and study six clues, generate four distinct cross-reference reports, defend the theory, recover the relay override key, search five different buildings, save Silas Venn’s statement, then survive the 30-second extraction defense.</div>
     </div>
-    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, four collected and studied clues, two distinct cross-reference reports, the accepted case theory, a saved witness statement, truck keys, three different buildings searched, and a 20-second holdout under attack.</p>
+    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a saved witness statement, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1155,10 +1155,10 @@ body.game-active.mobile-mode #minimap {
     <p class="intro">Collected evidence is not automatically understood. Study each item, compare its findings, and build a credible timeline before requesting extraction. Some unattended items may disappear.</p>
     <div id="taskList"></div>
     <h3 class="section-title" style="font-size:19px;margin-top:25px">Physical evidence and forensic notes</h3>
-    <div id="evidenceProgress" class="info-card">0 clues studied · 4 required</div>
+    <div id="evidenceProgress" class="info-card">0 clues studied · 6 required</div>
     <div id="evidenceBoard" class="evidence-board"></div>
     <div class="page-buttons"><button id="compareEvidence">Compare studied clues</button></div>
-    <div id="comparisonReport" class="info-card">Study at least two items, then compare them for contradictions and a stronger timeline.</div>
+    <div id="comparisonReport" class="info-card">Study at least two items, then compare them for contradictions. Four distinct reports are required to prove the timeline.</div>
     <h3 class="section-title" style="font-size:19px;margin-top:25px">Choose your case theory</h3>
     <p class="intro">A theory must explain the evidence, not just sound frightening. The dispatch log and radio recording contain an important contradiction.</p>
     <div id="theoryChoices" class="interview-choices">
@@ -1194,7 +1194,7 @@ body.game-active.mobile-mode #minimap {
       <div class="inventory-slot"><span>▣</span>Ammo boxes<br><b id="invAmmo">24</b></div>
       <div class="inventory-slot"><span>✚</span>Medical packs<br><b id="invMed">0</b></div>
       <div class="inventory-slot"><span>ϟ</span>Battery cells<br><b id="invBat">0</b></div>
-      <div class="inventory-slot"><span>⌑</span>Truck keys<br><b id="invKeys">Missing</b></div>
+      <div class="inventory-slot"><span>⌑</span>Relay key<br><b id="invKeys">Missing</b></div>
     </div>
     <div class="page-buttons"><button id="useMed">Use medical pack</button><button id="closeInventory">Close inventory</button></div>
   </div>
@@ -1254,6 +1254,8 @@ const state={
   personalScareTimer:0,
   personalScareCooldown:0,
   personalScareCount:0,
+  threatTier:0,
+  flashlightFlickerTimer:0,
   running:false,
   paused:false,
   prologueStage:'call',
@@ -1315,6 +1317,8 @@ const state={
   extractionHold:0,
   extractionWave1:false,
   extractionWave2:false,
+  extractionWave3:false,
+  extractionWave4:false,
   extractionLastToast:0,
   extractionWasOutside:false,
   exploredRoomIds:[],
@@ -1328,6 +1332,7 @@ const state={
   missingTimer:36,
   missingCount:0,
   missingIds:[],
+  roomItemStates:{},
   disappearanceLog:[],
   exploredRooms:0,
   kills:0,
@@ -1442,11 +1447,11 @@ function setScreen(name){
   }
 }
 function triggerPersonalScare(kind){
-  if(!state.options.personalScares||state.personalScareCooldown>0||state.personalScareTimer>0)return;
+  if(!state.options.personalScares||state.personalScareCount>=3||state.personalScareCooldown>0||state.personalScareTimer>0)return;
   const officer=specs[state.selectedCharacter].name.toUpperCase();
   const records={
-    personnel:{title:'YOU WERE NEVER ALONE',message:'OFFICER: '+officer+'\nPERSONNEL FILE OPENED FROM INSIDE YOUR VEHICLE.\nTHE CAMERA SHOWS YOU STILL SITTING IN THE DRIVER’S SEAT.\nTHEN WHO IS STANDING OUTSIDE?',stamp:'BODYCAM 04:17:09 // FRAME DOES NOT MATCH'},
-    contact:{title:'SOMEONE ANSWERED YOUR RADIO',message:'EMERGENCY CONTACT: UNKNOWN\nCALL ORIGIN: REAR SEAT\nNO SECOND OFFICER WAS DISPATCHED.\nDO NOT LOOK IN THE MIRROR.',stamp:'RADIO CHANNEL 0 // VOICEPRINT MATCH: YOURS'},
+    personnel:{title:'YOU WERE NEVER ALONE',message:'OFFICER: '+officer+'\nPERSONNEL FILE OPENED FROM INSIDE THE EMPTY HOUSE.\nTHE BODYCAM SHOWS YOU STANDING PERFECTLY STILL.\nTHEN WHO IS MOVING BEHIND YOU?',stamp:'BODYCAM 04:17:09 // FRAME DOES NOT MATCH'},
+    contact:{title:'SOMEONE ANSWERED YOUR RADIO',message:'EMERGENCY CONTACT: UNKNOWN\nCALL ORIGIN: INSIDE THE WALLS\nNO SECOND OFFICER WAS DISPATCHED.\nDO NOT LOOK BEHIND YOU.',stamp:'RADIO CHANNEL 0 // VOICEPRINT MATCH: YOURS'},
     duplicate:{title:'SECOND OFFICER DETECTED',message:'SUBJECT: '+officer+'\nACTIVE RECORDS: 2\nONE RECORD IS STANDING BEHIND YOU.\nTHE OTHER ONE IS READING THIS MESSAGE.',stamp:'IDENTITY CONFLICT // BOTH SUBJECTS ACTIVE'},
     address:{title:'THE FILE KNOWS WHERE YOU ARE',message:'LOCATION: MILE MARKER 9\nENTRY SOURCE: UNKNOWN\nREAL-WORLD PERSONAL DATA: NOT ACCESSED.\nTHIS FICTIONAL RECORD WAS CREATED JUST NOW.',stamp:'LOCAL CASE FILE // NO PRIVATE DATA ACCESSED'}
   };
@@ -1472,12 +1477,12 @@ function triggerPersonalScare(kind){
   tone(31,1.05,'sawtooth',.17,-7);
   voiceNoise(choose(['left','right']),.27);
   if(state.options.voiceWhispers){
-    const lines={personnel:'Look in the rearview.',contact:'I am in the back seat.',duplicate:'I am the other officer.',address:'You brought it here.'};
+    const lines={personnel:'Look at the doorway.',contact:'I am inside the wall.',duplicate:'I am the other officer.',address:'You brought it inside.'};
     speakWhisper(lines[kind]||lines.personnel,choose(['left','right']));
   }
 }
 function queueStoryScare(kind,key,delay=0.8){
-  if(!state.options.personalScares||state.horrorEventFlags[key])return;
+  if(!state.options.personalScares||state.personalScareCount>=3||state.horrorEventFlags[key])return;
   state.horrorEventFlags[key]=true;
   if(!Array.isArray(state.storyScareQueue))state.storyScareQueue=[];
   state.storyScareQueue.push({kind,delay:Math.max(0,delay)});
@@ -1561,12 +1566,12 @@ function updateWhispers(dt){
   }
   if(!state.options.voiceWhispers||!state.running||state.paused||state.gameOver)return;
   if(state.prologueStage==='drive'){
-    if(state.driveProgress>10)oneShotWhisper('drive10','Don’t look in the back seat.', 'right','UNIDENTIFIED VOICE');
-    if(state.driveProgress>31)oneShotWhisper('drive31','Your partner is not in the car with you.', 'left','VOICE ON A DEAD CHANNEL');
+    if(state.driveProgress>10)oneShotWhisper('drive10','Don’t look behind you.', 'right','UNIDENTIFIED VOICE');
+    if(state.driveProgress>31)oneShotWhisper('drive31','Your partner is not outside with you.', 'left','VOICE ON A DEAD CHANNEL');
     if(state.driveProgress>58)oneShotWhisper('drive58','You have already passed this road.', 'center','VOICE UNDER THE ENGINE');
-    if(state.driveProgress>82)oneShotWhisper('drive82','When you arrive, leave the headlights on. It hates the light.', 'right','UNIDENTIFIED VOICE');
+    if(state.driveProgress>82)oneShotWhisper('drive82','When you arrive, keep the flashlight on. It hates the light.', 'right','UNIDENTIFIED VOICE');
     if(state.prologueTimer>12&&!state.voiceEventFlags.driveRadio){
-      oneShotWhisper('driveRadio','Unit fourteen is already there. It is standing beside your car.', 'left','DISPATCH // IMPOSSIBLE TRANSMISSION');
+      oneShotWhisper('driveRadio','Unit fourteen is already there. It is standing beside the empty road.', 'left','DISPATCH // IMPOSSIBLE TRANSMISSION');
     }
   }else if(state.prologueStage==='arrival'){
     if(state.prologueTimer>1.6)oneShotWhisper('arrival16','Do not open the door. That is not your partner outside.', 'right','VOICE FROM THE REAR SEAT');
@@ -1583,7 +1588,7 @@ function updateWhispers(dt){
       const lines=[
         ['Your radio is breathing. Can you hear it?','left','LOW WHISPER'],
         ['Don’t answer if you hear your own voice.','right','VOICE BEHIND THE TREES'],
-        ['The car is still running. Something is in the back seat.','center','DISTANT RADIO'],
+        ['The hallway is still lit. Something is standing inside the wall.','center','DISTANT RADIO'],
         ['You left somebody behind.','left','CHILDLIKE WHISPER'],
         ['I saw you before you were born.','right','BROKEN TRANSMISSION'],
         ['This is not the way out. You know that.','center','VOICE IN THE FOG'],
@@ -1849,9 +1854,8 @@ function makeObjects(){
     {id:'medkit1',x:500,y:430,type:'loot',name:'First-aid pouch',loot:'medkit',found:false,icon:'+'},
     {id:'ammo1',x:1010,y:805,type:'loot',name:'Ammunition box',loot:'ammo',found:false,icon:'▪'},
     {id:'battery1',x:1525,y:520,type:'loot',name:'Flashlight batteries',loot:'battery',found:false,icon:'ϟ'},
-    {id:'keys',x:2120,y:1480,type:'loot',name:'Truck keys',loot:'keys',found:false,icon:'⌑'},
     {id:'ammo2',x:2225,y:1590,type:'loot',name:'Emergency ammo pouch',loot:'ammo',found:false,icon:'▪'},
-    {id:'exit',x:2920,y:2300,type:'exit',name:'Patrol truck extraction',detail:'A unit is waiting on the county road.',icon:'▰'}
+    {id:'exit',x:2920,y:2300,type:'exit',name:'Emergency extraction beacon',detail:'A portable emergency beacon awaits a completed case file and the relay override key.',icon:'✦'}
   ];
   survivors=[
     {id:'ana',x:1110,y:660,name:'Mara',found:false,following:false,delivered:false,hp:1,dialogue:'Please, please get me out of here. It keeps calling from the trees.'},
@@ -1863,8 +1867,8 @@ function makeRoom(name){
     checkpoint:{title:'CHECKPOINT SHACK',w:700,h:480,spawn:{x:350,y:392},exit:{x:350,y:435},color:'#453f30',props:[{x:205,y:150,w:110,h:52,t:'desk'},{x:500,y:150,w:80,h:75,t:'cabinet'},{x:440,y:310,w:120,h:40,t:'bed'}],items:[{x:220,y:175,type:'note',name:'Incident memo',detail:'“Do not answer a voice if it uses your badge number.”',found:false},{x:505,y:270,type:'loot',name:'Small ammo stash',loot:'ammo',found:false}]},
     station:{title:'RANGER STATION',w:820,h:570,spawn:{x:410,y:474},exit:{x:410,y:526},color:'#3b4032',props:[{x:150,y:140,w:150,h:56,t:'desk'},{x:400,y:130,w:90,h:80,t:'shelves'},{x:660,y:160,w:70,h:140,t:'cabinet'},{x:220,y:350,w:145,h:55,t:'table'},{x:570,y:390,w:110,h:45,t:'bed'}],items:[{x:160,y:170,type:'note',name:'Missing person report',detail:'Three hikers disappeared near the drainage ditch.',found:false},{x:660,y:300,type:'loot',name:'Medical supplies',loot:'medkit',found:false},{x:416,y:180,type:'note',name:'Generator log',detail:'The generator starts when the relay is powered.',found:false}]},
     gas:{title:'SWAMP GAS STOP',w:760,h:500,spawn:{x:380,y:412},exit:{x:380,y:458},color:'#3d3b2d',props:[{x:145,y:130,w:100,h:150,t:'shelves'},{x:300,y:130,w:100,h:150,t:'shelves'},{x:560,y:120,w:130,h:70,t:'desk'},{x:520,y:320,w:115,h:45,t:'table'}],items:[{x:560,y:155,type:'note',name:'Receipt with a warning',detail:'“Do not follow the headlights past mile marker 9.”',found:false},{x:320,y:310,type:'loot',name:'Battery pack',loot:'battery',found:false}]},
-    cabin:{title:'LEANING CABIN',w:760,h:520,spawn:{x:380,y:432},exit:{x:380,y:478},color:'#41372d',props:[{x:180,y:140,w:120,h:75,t:'bed'},{x:540,y:145,w:100,h:100,t:'cabinet'},{x:350,y:160,w:100,h:50,t:'desk'},{x:530,y:330,w:130,h:46,t:'table'}],items:[{x:350,y:190,type:'note',name:'Handwritten warning',detail:'It stands perfectly still until you use the flashlight.',found:false},{x:550,y:270,type:'loot',name:'Truck keys',loot:'keys',found:false}]},
-    tower:{title:'RADIO RELAY HUT',w:800,h:560,spawn:{x:400,y:472},exit:{x:400,y:520},color:'#30392f',props:[{x:170,y:130,w:110,h:70,t:'desk'},{x:400,y:140,w:200,h:100,t:'console'},{x:650,y:170,w:75,h:120,t:'cabinet'},{x:380,y:340,w:180,h:50,t:'table'}],items:[{x:400,y:190,type:'note',name:'Final dispatch tape',detail:'The voice on the recording says your next line before you speak it.',found:false},{x:650,y:300,type:'loot',name:'Emergency medical pack',loot:'medkit',found:false}]}
+    cabin:{title:'LEANING CABIN',w:760,h:520,spawn:{x:380,y:432},exit:{x:380,y:478},color:'#41372d',props:[{x:180,y:140,w:120,h:75,t:'bed'},{x:540,y:145,w:100,h:100,t:'cabinet'},{x:350,y:160,w:100,h:50,t:'desk'},{x:530,y:330,w:130,h:46,t:'table'}],items:[{x:350,y:190,type:'note',name:'Handwritten warning',detail:'It stands perfectly still until you use the flashlight.',found:false},{x:550,y:270,type:'loot',name:'Dead flashlight cell',loot:'battery',found:false}]},
+    tower:{title:'RADIO RELAY HUT',w:800,h:560,spawn:{x:400,y:472},exit:{x:400,y:520},color:'#30392f',props:[{x:170,y:130,w:110,h:70,t:'desk'},{x:400,y:140,w:200,h:100,t:'console'},{x:650,y:170,w:75,h:120,t:'cabinet'},{x:380,y:340,w:180,h:50,t:'table'}],items:[{x:400,y:190,type:'note',name:'Final dispatch tape',detail:'The voice on the recording says your next line before you speak it.',found:false},{x:650,y:300,type:'loot',name:'Emergency medical pack',loot:'medkit',found:false},{x:250,y:400,type:'loot',name:'Relay override key',loot:'keys',found:false}]}
   };
   rooms.motel=structuredClone(rooms.cabin);
   rooms.motel.title='PINE REST MOTEL';
@@ -1904,9 +1908,11 @@ function makeRoom(name){
   const result=structuredClone(rooms[name]||rooms.checkpoint);
   for(const item of result.items){
     if(!item.id)item.id=name+'-'+String(item.name||'item').toLowerCase().replace(/[^a-z0-9]+/g,'-');
-    if(state.missingIds.includes(item.id))item.missing=true;
+    const savedState=state.roomItemStates&&state.roomItemStates[item.id];
+    if(savedState){item.found=!!savedState.found;item.missing=!!savedState.missing;}
+    else if(state.missingIds.includes(item.id))item.missing=true;
   }
-  if(name==='farmhouse')for(const item of result.items)if(item.type==='witness')item.found=state.witnessInterviewed;
+  if(name==='farmhouse')for(const item of result.items)if(item.type==='witness')item.found=state.witnessInterviewed&&state.witnessTrust>=2;
   return result;
 }
 function resetGame(){
@@ -1924,6 +1930,8 @@ function resetGame(){
   state.extractionHold=0;
   state.extractionWave1=false;
   state.extractionWave2=false;
+  state.extractionWave3=false;
+  state.extractionWave4=false;
   state.extractionLastToast=0;
   state.extractionWasOutside=false;
   state.exploredRoomIds=[];
@@ -1937,6 +1945,7 @@ function resetGame(){
   state.missingTimer=36;
   state.missingCount=0;
   state.missingIds=[];
+  state.roomItemStates={};
   state.disappearanceLog=[];
   medkits=1;
   batteryCells=1;
@@ -2006,6 +2015,8 @@ function resetGame(){
   state.personalScareTimer=0;
   state.personalScareCooldown=0;
   state.personalScareCount=0;
+  state.threatTier=0;
+  state.flashlightFlickerTimer=0;
   state.storyScareQueue=[];
   state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0};
   $('personalScare').classList.remove('active','variant-personnel','variant-contact','variant-duplicate','variant-address');
@@ -2030,7 +2041,7 @@ function resetGame(){
   initializeAssets();
   lastMiniDraw=-999;lastMiniFloor=null;lastMiniRoom=null;
   interiorBaseCache={room:null,canvas:null};
-  $('officerName').textContent=spec.name.toUpperCase();
+  $('officerName').textContent=spec.name.replace(/^Officer\s+/i,'').toUpperCase();
   resetPartnerChat();
   $('hud').style.display='block';
   document.body.classList.add('game-active','prologue-mode','prologue-call');
@@ -2064,10 +2075,10 @@ function setPrologueStage(stage){
 function acceptDispatch(){
   if(state.prologueStage!=='call')return;
   audioStart();
-  setPrologueStage('drive');
+  enterNightSearch();
 }
-function exitPatrolCar(){
-  if(state.prologueStage!=='arrival')return;
+function enterNightSearch(){
+  if(state.prologueStage==='swamp')return;
   keys={};
   touchRun=false;
   pointer.down=false;
@@ -2079,12 +2090,15 @@ function exitPatrolCar(){
   camera.x=clamp(player.x-W/2,0,WORLD.w-W);
   camera.y=clamp(player.y-H/2,0,WORLD.h-H);
   lastSafe={x:player.x,y:player.y};
-  state.elapsed=0;state.horrorBeat=0;state.lightningNext=3.2;state.sceneFade=.78;
+  state.elapsed=0;state.horrorBeat=0;state.lightningNext=3.2;state.sceneFade=.9;
+  state.threatTier=0;
+  state.flashlightFlickerTimer=0;
   updateHUD();updateObjectives();
-  toast('RESCUE TRACKER ONLINE: FOLLOW THE GREEN SOS MARKERS. MARA IS BY THE RANGER STATION; ELI IS ALONG THE SOUTHEAST ROAD.',5.2);
-  partnerExchange('survivorSignalBriefing','I have two weak bodycam heat signatures. Mara is near the ranger station; Eli is further along the southeast county road. Green SOS markers should show their positions.','Copy. I will follow the green markers and bring them back.');
-  tone(58,.8,'triangle',.07,-25);
+  toast('MILE MARKER 9. YOU ARE ON FOOT. THE ONLY FOOTPRINTS IN THE MUD ARE YOURS — UNTIL THEY ARE NOT.',5.2);
+  partnerExchange('survivorSignalBriefing','I have two weak bodycam heat signatures. Mara is near the ranger station; Eli is further along the southeast trail. Green SOS markers should show their positions. The dispatch system says you are the only living officer on the channel.','Copy. I will follow the green markers. If you hear my voice, verify it is actually me.');
+  tone(48,.9,'triangle',.085,-22);
 }
+function exitPatrolCar(){enterNightSearch();}
 function driveTrafficLane(i){
   const offsets=[.015,-.02,.035,-.035,.005,.025,-.015,.04,-.03,.01,-.025,.03];
   return (i%3===0?.25:-.25)+offsets[i];
@@ -2129,15 +2143,14 @@ function partnerExchange(key,incoming,outgoing){
 }
 function partnerReplyFor(message){
   const text=message.toLowerCase();
-  if(/\b(help|scared|afraid|panic|hurt|injured)\b/.test(text))return state.prologueStage==='drive'?'I’m here. Keep your eyes on the road and keep moving toward Mile Marker 9. I can’t get another unit cleared to you.':'Stay with me. Keep the flashlight up and move toward the next marked objective. I am not seeing anyone else on your camera.';
-  if(/\b(where|location|position|map)\b/.test(text))return state.prologueStage==='drive'?'Your tracker says Mile Marker 9, but the road feed keeps looping. Read the signs, not the GPS.':'Your signal is moving even when the map says you’re standing still. Follow the evidence markers and don’t trust the minimap blindly.';
+  if(/\b(help|scared|afraid|panic|hurt|injured)\b/.test(text))return 'Stay with me. Keep the flashlight up and move toward the next marked objective. I am not seeing anyone else on your camera.';
+  if(/\b(where|location|position|map)\b/.test(text))return 'Your signal is moving even when the map says you’re standing still. Follow the evidence markers and don’t trust the minimap blindly.';
   if(/\b(backup|police|dispatch|unit)\b/.test(text))return 'Dispatch says you are still the only unit assigned to this call. I’m checking the roster again. Please don’t answer any other voice using our call signs.';
   if(/\b(smiler|monster|creature|thing|figure|someone|person)\b/.test(text))return 'Don’t approach it. Keep distance and use the light only when you need to. If it stops moving, that does not mean it is gone.';
-  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'Easy on the gas. Stay right of the double yellow lines, brake before the bend, and watch for headlights that do not move.';
+  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'No one is coming to collect you. Follow the footpath, stay near the flashlight beam, and watch for a shape that copies your movement.';
   if(/\b(evidence|clue|file|case)\b/.test(text))return 'Copy. Log everything you find, but don’t read the personnel details over the radio. The file system has been showing records that do not exist.';
   if(/\b(hello|hey|hi|you there|copy)\b/.test(text))return 'I’m here. Radio is clear on my end, although I keep hearing your microphone open when you are not speaking.';
   if(/\b(trust|fake|real|you)\b/.test(text))return 'Listen carefully: I will never ask you for your real name, address, or personal details. If a message asks for that, it is not me.';
-  if(state.prologueStage==='drive')return 'Received. I’m staying on the channel. Keep the vehicle steady and keep watching the shoulder—something is pacing your car.';
   return 'Received. I’m still here on the secure channel. Keep moving, keep your flashlight ready, and tell me if you see another figure.';
 }
 function sendPartnerChat(){
@@ -2146,7 +2159,7 @@ function sendPartnerChat(){
   const message=input.value.trim();
   if(!message)return;
   if(!state.running||state.gameOver){toast('CHAT CHANNEL IS NOT ACTIVE.',1.3);return;}
-  if(!['drive','arrival','swamp'].includes(state.prologueStage)){toast('WAIT UNTIL THE DISPATCH CALL CONNECTS.',1.4);return;}
+  if(!['call','drive','arrival','swamp'].includes(state.prologueStage)){toast('WAIT UNTIL THE DISPATCH CALL CONNECTS.',1.4);return;}
   input.value='';
   addPartnerMessage(message,'outgoing');
   const reply=partnerReplyFor(message);
@@ -2159,14 +2172,14 @@ function updatePartnerChat(){
   if(stage==='drive'){
     const p=state.driveProgress;
     if(p>=7)partnerExchange('drive7','You good? Dispatch says you’re the only unit heading out. Watch the standing water.','Copy. I’m rolling to Mile Marker 9.');
-    if(p>=21)partnerExchange('drive21','My map shows two patrol units under your call sign. You should only be seeing one.','I’m the only car on this road.');
-    if(p>=39)partnerExchange('drive39','Your siren is coming through my radio, but your unit signal says the lightbar is off.','The red and blue lights are flashing right in front of me.');
+    if(p>=21)partnerExchange('drive21','My map shows two patrol units under your call sign. You should only be seeing one.','I’m the only one on this trail.');
+    if(p>=39)partnerExchange('drive39','Your breathing is coming through my radio, but you are not speaking.','My flashlight is shaking, but nothing is in front of me.');
     if(p>=60)partnerExchange('drive60','Don’t stop for anyone standing on the shoulder. Especially anyone in uniform.','Who else would be out here?');
-    if(p>=81)partnerExchange('drive81','Dashcam feed just caught someone in your back seat. Keep driving. Don’t look.','There’s nobody behind me. I’m not looking.');
+    if(p>=81)partnerExchange('drive81','Bodycam feed just caught someone directly behind you. Keep moving. Don’t look.','There is nobody behind me. I am not looking.');
   }else if(stage==='arrival'){
-    if(state.prologueTimer>2.5)partnerExchange('arrival2','I just lost your camera feed. I can still hear the engine, but the picture is gone.','Stay on the line. I’m stepping out now.');
+    if(state.prologueTimer>2.5)partnerExchange('arrival2','I just lost your bodycam feed. I can still hear your breathing, but the picture is gone.','Stay on the line. I’m stepping into the woods now.');
   }else if(stage==='swamp'){
-    if(state.elapsed>5.2)partnerExchange('swamp5','Your bodycam shows you standing beside the cruiser. Something is standing exactly where you were.','I’m looking at the car. There’s nothing there.');
+    if(state.elapsed>5.2)partnerExchange('swamp5','Your bodycam shows a second figure following your steps. It stops every time you turn around.','I’m looking at the treeline. There’s nothing there.');
     if(state.elapsed>16)partnerExchange('swamp16','That voice on channel two isn’t me. I haven’t said a word for the last minute.','Then who keeps answering my radio?');
     if(evidence>=1)partnerExchange('evidence1','I’m getting text from the case file. It says “stop trusting the person on this chat.”','Is that supposed to be a joke?');
     if(evidence>=3)partnerExchange('evidence3','I can see your flashlight on the live feed. There is a second beam moving beside yours.','I only have one flashlight.');
@@ -2309,30 +2322,55 @@ function drawRadioScreen(x,y,w,h,active){
   px(x+w-18,y+9,4,4,active?'#bf5149':'#3a463b');
 }
 function drawPrologueCall(){
-  px(0,0,W,H,'#050907');
-  const sky=ctx.createLinearGradient(0,0,0,H*.7);sky.addColorStop(0,'#080f13');sky.addColorStop(.55,'#182324');sky.addColorStop(1,'#0e1513');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*.72);
-  const horizon=H*.38;
-  for(let i=0;i<24;i++){const bw=22+(i*37)%66,bh=55+(i*53)%Math.max(70,H*.34),x=(i*91-state.prologueTimer*3)%(W+bw)-bw;const y=horizon-bh;px(x,y,bw,bh,i%4===0?'#1a282a':'#101d20');px(x+3,y+6,bw-6,3,'#2a3735');for(let wy=y+14;wy<horizon-9;wy+=13)for(let wx=x+6;wx<x+bw-5;wx+=12)if(seeded(Math.floor(wx),Math.floor(wy))>.48)px(wx,wy,4,5,Math.sin(state.prologueTimer*2+wx)>.88?'#b5a06e':'#39483e');}
-  poly([[0,horizon],[W*.32,horizon-8],[W*.69,horizon-3],[W,horizon+10],[W,H*.73],[0,H*.73]],'#18211d');
-  ctx.strokeStyle='rgba(175,199,194,.34)';ctx.lineWidth=1;for(const r of raindrops){ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.lineTo(r.x-5,r.y+15);ctx.stroke();}
-  poly([[0,H*.77],[W*.16,H*.57],[W*.84,H*.57],[W,H*.77],[W,H],[0,H]],'#101613');
-  poly([[0,H*.79],[W*.27,H*.65],[W*.73,H*.65],[W,H*.79],[W,H],[0,H]],'#202620');
-  px(0,H*.77,W,H*.23,'#090d0b');
-  for(let i=0;i<8;i++){const x=W*.12+i*W*.11;px(x,H*.78,2,H*.08,'#26302a');px(x-13,H*.81,28,3,'#3c4035');}
-  const dashY=H*.70;poly([[0,dashY],[W*.19,H*.64],[W*.81,H*.64],[W,dashY],[W,H],[0,H]],'#171d19');poly([[0,H*.78],[W*.22,H*.68],[W*.78,H*.68],[W,H*.78],[W,H],[0,H]],'#252a23');
-  px(W*.1,H*.76,W*.8,4,'#454639');px(W*.13,H*.79,W*.74,2,'#111612');
-  ctx.save();ctx.translate(W*.50,H*.91);ctx.strokeStyle='#050706';ctx.lineWidth=Math.max(11,W*.018);ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.16,Math.PI*1.05,Math.PI*1.95);ctx.stroke();ctx.strokeStyle='#596052';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,Math.min(W,H)*.16,Math.PI*1.05,Math.PI*1.95);ctx.stroke();ctx.restore();
-  drawRadioScreen(W*.065,H*.755,W*.23,H*.10,true);
-  px(W*.72,H*.76,W*.19,H*.11,'#050706');px(W*.73,H*.77,W*.17,H*.075,'#121b14');ctx.fillStyle='#a7b492';ctx.font='bold '+Math.max(10,Math.floor(W*.012))+'px monospace';ctx.textAlign='center';ctx.fillText('02:17 AM',W*.815,H*.80);ctx.fillStyle='#cb5a50';ctx.fillText('UNIT 14 / LOST',W*.815,H*.825);
-  px(W*.39,H*.77,W*.22,H*.075,'#0a0d0b');px(W*.405,H*.79,W*.19,H*.012,'#455047');px(W*.405,H*.81,W*.13,H*.008,'#262f27');
-  px(0,0,W,Math.max(4,H*.012),'#060908');
-  const pw=Math.min(690,W-34),ph=Math.min(220,H*.34),bx=(W-pw)/2,by=H*.09;
-  px(bx-3,by-3,pw+6,ph+6,'#0a0d0b');px(bx,by,pw,ph,'rgba(5,10,8,.94)');strokePoly([[bx,by],[bx+pw,by],[bx+pw,by+ph],[bx,by+ph]],'#75816b',1);
-  px(bx+17,by+17,4,ph-34,'#ad4a43');ctx.textAlign='left';ctx.fillStyle='#b8c5a8';ctx.font='bold 12px monospace';ctx.fillText('INCOMING DISPATCH // PRIORITY CALL',bx+34,by+31);
-  ctx.fillStyle='#e9e6d6';ctx.font='bold '+Math.max(16,Math.min(24,W*.026))+'px monospace';ctx.fillText('MILE MARKER 9 — OFFICER NEEDS ASSISTANCE',bx+34,by+67);
-  ctx.fillStyle='#aab4a3';ctx.font=Math.max(11,Math.min(15,W*.015))+'px monospace';ctx.fillText('Unit 14 abandoned its patrol vehicle. One deputy missing.',bx+34,by+98);ctx.fillText('No backup units available. Weather is getting worse.',bx+34,by+120);
-  ctx.fillStyle='#d6b87a';ctx.font='bold '+Math.max(11,Math.min(14,W*.014))+'px monospace';ctx.fillText('DISPATCH: “Respond alone. Keep your radio open.”',bx+34,by+154);
-  const blink=Math.floor(state.prologueTimer*2)%2===0;ctx.textAlign='center';ctx.fillStyle=blink?'#f0dfb4':'#89927e';ctx.font='bold '+Math.max(12,Math.min(16,W*.017))+'px monospace';ctx.fillText('PRESS E / ENTER OR TAP TO ACCEPT CALL',W/2,by+ph-18);
+  px(0,0,W,H,'#000000');
+  const sky=ctx.createLinearGradient(0,0,0,H*.68);
+  sky.addColorStop(0,'#010302');
+  sky.addColorStop(.58,'#050907');
+  sky.addColorStop(1,'#000000');
+  ctx.fillStyle=sky;
+  ctx.fillRect(0,0,W,H);
+  const horizon=H*.43;
+  for(let i=0;i<45;i++){
+    const x=(i*83)%Math.max(1,W);
+    const height=72+(i*47)%Math.max(80,Math.floor(H*.42));
+    const width=12+(i*17)%42;
+    const sway=Math.sin(state.prologueTimer*.4+i)*2;
+    px(x+sway,horizon-height,width,height,'#020403');
+    px(x-5+sway,horizon-height*.61,width+10,height*.12,'#030604');
+    px(x-9+sway,horizon-height*.39,width+18,height*.09,'#010302');
+  }
+  poly([[0,horizon],[W*.12,H*.48],[W*.29,H*.41],[W*.41,H*.47],[W*.58,H*.40],[W*.77,H*.47],[W,H*.43],[W,H],[0,H]],'#010201');
+  poly([[W*.33,H],[W*.44,H*.53],[W*.56,H*.53],[W*.72,H],[W,H],[0,H]],'#020403');
+  for(let i=0;i<70;i++){
+    const x=(i*137+Math.sin(state.prologueTimer*.7+i)*9)%Math.max(1,W);
+    const y=(i*61+state.prologueTimer*(i%3===0?1.3:0.2))%Math.max(1,H);
+    const a=.08+(i%5)*.025;
+    ctx.fillStyle='rgba(137,151,126,'+a+')';
+    ctx.fillRect(x,y,1+(i%7===0?1:0),1);
+  }
+  const fog=ctx.createRadialGradient(W*.5,H*.61,8,W*.5,H*.61,Math.max(W,H)*.72);
+  fog.addColorStop(0,'rgba(12,19,13,.19)');
+  fog.addColorStop(.48,'rgba(2,5,3,.21)');
+  fog.addColorStop(1,'rgba(0,0,0,.98)');
+  ctx.fillStyle=fog;
+  ctx.fillRect(0,0,W,H);
+  const pxp=W*.5,pyp=H*.70;
+  ctx.fillStyle='#000';
+  ctx.beginPath();
+  ctx.moveTo(pxp-15,pyp-30);ctx.lineTo(pxp+13,pyp-30);ctx.lineTo(pxp+19,pyp+10);ctx.lineTo(pxp+10,pyp+40);ctx.lineTo(pxp+5,pyp+76);ctx.lineTo(pxp-6,pyp+76);ctx.lineTo(pxp-10,pyp+40);ctx.lineTo(pxp-20,pyp+10);ctx.closePath();ctx.fill();
+  px(pxp-11,pyp-50,22,23,'#000');
+  px(pxp-7,pyp-43,4,2,'#8e171d');px(pxp+4,pyp-43,4,2,'#8e171d');
+  drawRadioScreen(W*.065,H*.73,W*.23,H*.105,true);
+  const pw=Math.min(720,W-34),ph=Math.min(235,H*.38),bx=(W-pw)/2,by=H*.075;
+  px(bx-3,by-3,pw+6,ph+6,'#000');px(bx,by,pw,ph,'rgba(0,0,0,.97)');
+  strokePoly([[bx,by],[bx+pw,by],[bx+pw,by+ph],[bx,by+ph]],'#3c4937',1);
+  px(bx+17,by+17,4,ph-34,'#8d2728');
+  ctx.textAlign='left';ctx.fillStyle='#899681';ctx.font='bold 12px monospace';ctx.fillText('INCOMING DISPATCH // PRIORITY CALL',bx+34,by+31);
+  ctx.fillStyle='#e5e6dc';ctx.font='bold '+Math.max(16,Math.min(24,W*.026))+'px monospace';ctx.fillText('MILE MARKER 9 — OFFICER NEEDS ASSISTANCE',bx+34,by+67);
+  ctx.fillStyle='#8f9c8a';ctx.font=Math.max(11,Math.min(15,W*.015))+'px monospace';ctx.fillText('The unit is gone. The road is empty. The radio is not.',bx+34,by+99);ctx.fillText('You must continue on foot. No backup will be sent.',bx+34,by+121);
+  ctx.fillStyle='#d4b878';ctx.font='bold '+Math.max(11,Math.min(14,W*.014))+'px monospace';ctx.fillText('DISPATCH: “Keep the light on. Do not answer yourself.”',bx+34,by+155);
+  ctx.fillStyle='#aeb9a7';ctx.font='11px monospace';ctx.fillText('A second breath is audible on the channel.',bx+34,by+178);
+  const blink=Math.floor(state.prologueTimer*1.6)%2===0;ctx.textAlign='center';ctx.fillStyle=blink?'#eee0b6':'#646c5e';ctx.font='bold '+Math.max(12,Math.min(16,W*.017))+'px monospace';ctx.fillText('PRESS E / ENTER OR TAP TO ENTER THE WOODS',W/2,by+ph-18);
   drawVignette();
 }
 function drawTrafficCars(horizon,roadCenter,topHalf,bottomHalf,city){
@@ -2744,15 +2782,13 @@ function drawArrivalScene(){
   ctx.strokeStyle='rgba(163,180,177,.30)';ctx.lineWidth=1;ctx.beginPath();for(const drop of raindrops){ctx.moveTo(drop.x,drop.y);ctx.lineTo(drop.x-4,drop.y+11);}ctx.stroke();
   const ox=W*.62,oy=H*.64;px(ox-8,oy-42,16,18,'#101511');px(ox-11,oy-23,22,37,'#1f2c23');px(ox-18,oy-21,7,27,'#151e18');px(ox+11,oy-21,7,27,'#151e18');px(ox-8,oy+10,7,22,'#121813');px(ox+2,oy+10,7,22,'#121813');px(ox-9,oy-45,18,6,'#756b49');
   ctx.save();ctx.globalAlpha=.7;ctx.strokeStyle='#d9ddbd';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ox+8,oy-17);ctx.lineTo(W*.84,H*.4);ctx.lineTo(W*.91,H*.22);ctx.stroke();ctx.restore();
-  ctx.fillStyle='rgba(192,208,195,.24)';ctx.font='12px monospace';ctx.textAlign='left';ctx.fillText('MILE MARKER 9',W*.07,H*.18);ctx.fillStyle='#d8ddcc';ctx.font='bold '+Math.max(18,Math.min(34,W*.04))+'px monospace';ctx.fillText('NO BACKUP ON SCENE',W*.07,H*.24);ctx.fillStyle='#abb7a6';ctx.font=Math.max(11,Math.min(16,W*.017))+'px monospace';ctx.fillText('One patrol car. One officer. No movement in the trees.',W*.07,H*.29);ctx.fillText('The radio is receiving a transmission from your own unit.',W*.07,H*.32);
+  ctx.fillStyle='rgba(192,208,195,.24)';ctx.font='12px monospace';ctx.textAlign='left';ctx.fillText('MILE MARKER 9',W*.07,H*.18);ctx.fillStyle='#d8ddcc';ctx.font='bold '+Math.max(18,Math.min(34,W*.04))+'px monospace';ctx.fillText('NO BACKUP ON SCENE',W*.07,H*.24);ctx.fillStyle='#abb7a6';ctx.font=Math.max(11,Math.min(16,W*.017))+'px monospace';ctx.fillText('One officer. No backup. Movement in the trees.',W*.07,H*.29);ctx.fillText('The radio is receiving a transmission from your own unit.',W*.07,H*.32);
   px(W*.07,H*.37,W*.005,H*.09,'#b34b43');ctx.fillStyle='#d4bb7e';ctx.font='bold 13px monospace';ctx.fillText('PRESS E / TAP SEARCH TO STEP OUT',W*.09,H*.415);drawVignette();
 }
 function drawVignette(){const v=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.16,W*.5,H*.48,Math.max(W,H)*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(.7,'rgba(0,0,0,.18)');v.addColorStop(1,'rgba(0,0,0,.72)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
 function drawPrologue(){
   screenJitter();
-  if(state.prologueStage==='call')drawPrologueCall();
-  else if(state.prologueStage==='drive')drawDriveScene();
-  else drawArrivalScene();
+  drawPrologueCall();
 }
 function drawPatrolCarWorld(){
   const x=245-camera.x+shakeX,y=278-camera.y+shakeY;
@@ -2804,7 +2840,7 @@ function nearestInteriorObject(){
 }
 function interact(){
   if(state.prologueStage==='call'){acceptDispatch();return;}
-  if(state.prologueStage==='arrival'){exitPatrolCar();return;}
+  if(state.prologueStage==='arrival'){enterNightSearch();return;}
   if(state.prologueStage==='drive'){toast('KEEP MOVING. MILE MARKER 9 IS AHEAD.',1.2);return;}
   if(!state.running||state.paused||state.gameOver||interactCooldown>0)return;
   interactCooldown=.15;
@@ -2816,6 +2852,7 @@ function interact(){
   }
   if(target.type==='evidence'||target.type==='note'){
     target.found=true;
+    if(state.floor==='inside'&&target.id){state.roomItemStates=state.roomItemStates||{};state.roomItemStates[target.id]={found:true,missing:false};}
     evidence++;
     state.discovered++;
     addCaseRecord(target);
@@ -2827,7 +2864,7 @@ function interact(){
     updateHUD();
     updateObjectives();
     activateMonster();
-    if(evidence>=3)queueStoryScare('duplicate','thirdEvidenceReveal',1.0);
+    if(evidence>=6&&!state.horrorEventFlags.sixthClueWhisper){state.horrorEventFlags.sixthClueWhisper=true;state.flashlightFlickerTimer=2.3;triggerWhisper('That was the last clue. I was hoping you would never find it.','center','VOICE INSIDE THE FILE');toast('THE SIXTH CLUE HAS YOUR HANDWRITING ON IT.',3.8);}
     return;
   }
   if(target.type==='witness'){
@@ -2864,6 +2901,7 @@ function interact(){
 }
 function collectLoot(target){
   target.found=true;
+  if(state.floor==='inside'&&target.id){state.roomItemStates=state.roomItemStates||{};state.roomItemStates[target.id]={found:true,missing:false};}
   sound('pickup');
   if(target.loot==='ammo'){
     reserve+=12;
@@ -2880,7 +2918,7 @@ function collectLoot(target){
   }
   if(target.loot==='keys'){
     state.keysFound=true;
-    toast('PICKED UP THE PATROL TRUCK KEYS. EXTRACTION IS AVAILABLE.');
+    toast('RELAY OVERRIDE KEY RECOVERED. THE BEACON WILL RESPOND WHEN THE CASE IS COMPLETE.');
   }
   updateHUD();
   updateInventory();
@@ -2892,7 +2930,7 @@ function enterBuilding(target){
   state.floor='inside';
   state.room=makeRoom(target.room);
   state.indoorPresence={timer:0,cooldown:6+Math.random()*4,x:clamp(player.x+choose([-1,1])*Math.min(280,state.room.w*.34),80,state.room.w-80),y:clamp(player.y-180,80,state.room.h-80),phase:Math.random()*9};
-  if(target.room==='farmhouse')queueStoryScare('contact','farmhouseThreshold',1.25);
+  if(target.room==='farmhouse'){state.indoorPresence.timer=1.2;state.indoorPresence.cooldown=8;state.intensity=1;state.screenShake=Math.max(state.screenShake,.28);voiceNoise(choose(['left','right']),.19);toast('THE UPSTAIRS FLOOR CREAKS. YOU ARE STILL ON THE GROUND FLOOR.',3.2);}
   player.x=state.room.spawn.x;
   player.y=state.room.spawn.y;
   player.angle=-Math.PI/2;
@@ -2903,7 +2941,6 @@ function enterBuilding(target){
     state.horrorEventFlags.secondStructureReveal=true;
     state.intensity=1;
     state.screenShake=Math.max(state.screenShake,.34);
-    queueStoryScare('contact','secondStructureReveal',.8);
     if(state.options.voiceWhispers)triggerWhisper('You are not the first person to enter this room tonight.','left','VOICE BEHIND THE DOOR');
     sound('scare');
     toast('THE DOOR CLOSES BEHIND YOU. THE ROOM WAS NOT LIKE THIS BEFORE.',4.2);
@@ -2960,6 +2997,95 @@ function activateMonster(){
   toast('THE RADIO CUTS OUT. SOMETHING IS MOVING THROUGH THE TREES.',3.3);
   state.screenShake=.4;
 }
+function spawnCrawlerWave(count=2,minRadius=180,speedBase=92,hp=2){
+  if(state.floor!=='outside'||!player)return 0;
+  let alive=crawlers.filter(c=>!c.dead).length;
+  let made=0;
+  for(let i=0;i<count&&alive<10;i++){
+    const angle=(Math.PI*2*i/Math.max(1,count))+Math.random()*.55;
+    const radius=minRadius+Math.random()*70;
+    let x=clamp(player.x+Math.cos(angle)*radius,70,WORLD.w-70);
+    let y=clamp(player.y+Math.sin(angle)*radius,70,WORLD.h-70);
+    for(let attempt=0;attempt<5&&blockedAt(x,y,11);attempt++){
+      const a=angle+attempt*1.17;
+      x=clamp(player.x+Math.cos(a)*(radius+attempt*28),70,WORLD.w-70);
+      y=clamp(player.y+Math.sin(a)*(radius+attempt*28),70,WORLD.h-70);
+    }
+    crawlers.push({x,y,r:11,hp:hp+Math.floor((state.threatTier||0)/3),speed:speedBase+(state.threatTier||0)*4+Math.random()*10,phase:Math.random()*8,alert:true,attack:0,dead:false,hiddenUntil:0});
+    alive++;made++;
+  }
+  return made;
+}
+function updateThreatEscalation(dt){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp')return;
+  const clues=collectedClueCount();
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  if(clues>=2&&!state.horrorEventFlags.pressureTwoClues){
+    state.horrorEventFlags.pressureTwoClues=true;
+    state.threatTier=Math.max(state.threatTier||0,1);
+    state.intensity=Math.max(state.intensity,.62);
+    state.apparitionCooldown=Math.min(state.apparitionCooldown,3.5);
+    triggerWhisper('The second clue changes everything. It knows what you will open next.','left','CASE FILE // LIVE TRANSMISSION');
+    toast('CASE PRESSURE INCREASED. YOUR EVIDENCE IS ATTRACTING SOMETHING.',3.4);
+  }
+  if(clues>=3&&!state.horrorEventFlags.pressureThreeClues){
+    state.horrorEventFlags.pressureThreeClues=true;
+    state.threatTier=Math.max(state.threatTier||0,2);
+    state.flashlightFlickerTimer=1.5;
+    state.screenShake=Math.max(state.screenShake,.25);
+    spawnCrawlerWave(2,205,94,2);
+    triggerWhisper('You have enough proof to leave. You do not have enough to survive leaving.','right','VOICE IN THE RECORDER');
+    toast('THE TREELINE MOVED CLOSER WHILE YOU WERE READING.',3.2);
+  }
+  if(clues>=5&&!state.horrorEventFlags.pressureFiveClues){
+    state.horrorEventFlags.pressureFiveClues=true;
+    state.threatTier=Math.max(state.threatTier||0,3);
+    state.flashlightFlickerTimer=2.1;
+    state.intensity=1;
+    if(state.floor==='outside')spawnCrawlerWave(2,230,103,3);
+    triggerWhisper('Five pieces. Five versions of the same night. One of them is yours.','center','UNKNOWN CHANNEL');
+    toast('THE EVIDENCE FILE NOW CONTAINS A PAGE WITH YOUR HANDWRITING.',3.8);
+  }
+  if(clues>=6&&!state.horrorEventFlags.pressureSixClues){
+    state.horrorEventFlags.pressureSixClues=true;
+    state.threatTier=Math.max(state.threatTier||0,4);
+    state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,2.4);
+    state.intensity=1;
+    if(state.floor==='outside')spawnCrawlerWave(2,250,112,4);
+    triggerWhisper('You found all six. Now the house knows you can prove it.','center','THE HOUSE IS ON THE CHANNEL');
+    toast('THE CASE IS COMPLETE. THE NIGHT IS NOT.',4.1);
+  }
+  if(rescued>=1&&!state.horrorEventFlags.pressureFirstRescue){
+    state.horrorEventFlags.pressureFirstRescue=true;
+    state.threatTier=Math.max(state.threatTier||0,3);
+    if(state.floor==='outside')spawnCrawlerWave(1,200,103,3);
+    state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,1.1);
+  }
+  if(state.missingCount>=1&&!state.horrorEventFlags.pressureFirstDisappearance){
+    state.horrorEventFlags.pressureFirstDisappearance=true;
+    state.threatTier=Math.max(state.threatTier||0,3);
+    state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,1.65);
+    state.intensity=1;
+    triggerWhisper('It has started taking the things you need. Next it will take the way back.','center','VOICE FROM THE EMPTY ROOM');
+  }
+  if(state.elapsed>=150&&!state.horrorEventFlags.pressureMidnight){
+    state.horrorEventFlags.pressureMidnight=true;
+    state.threatTier=Math.max(state.threatTier||0,4);
+    if(state.floor==='outside')spawnCrawlerWave(2,240,110,3);
+    state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,2.2);
+    toast('THE NIGHT HAS CHANGED. THE THINGS OUT THERE HAVE STOPPED HIDING.',3.7);
+    sound('roar');
+  }
+  if(state.elapsed>=270&&!state.horrorEventFlags.pressureLateNight){
+    state.horrorEventFlags.pressureLateNight=true;
+    state.threatTier=Math.max(state.threatTier||0,5);
+    if(state.floor==='outside')spawnCrawlerWave(2,245,116,3);
+    state.intensity=1;
+    triggerWhisper('Dispatch is no longer on the other end. Something is waiting for you to finish the report.','left','CHANNEL ZERO');
+  }
+  state.flashlightFlickerTimer=Math.max(0,(state.flashlightFlickerTimer||0)-dt);
+}
+
 function studyCount(){
   return caseRecords.filter(r=>r.studied&&(r.kind==='evidence'||r.kind==='note')).length;
 }
@@ -2970,30 +3096,30 @@ function validCrossReferenceCount(){
   return state.caseComparisons.filter(report=>!String(report.id).startsWith('review-')&&!String(report.id).startsWith('general-')).length;
 }
 function investigationReady(){
-  return collectedClueCount()>=4&&studyCount()>=4&&validCrossReferenceCount()>=2&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed;
+  return collectedClueCount()>=6&&studyCount()>=6&&validCrossReferenceCount()>=4&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed&&state.witnessTrust>=2;
 }
 function currentTasks(){
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
   const collected=collectedClueCount();
   const studied=studyCount();
   return [
-    {done:collected>=4,text:'INVESTIGATION: Recover at least four physical clues ('+Math.min(collected,4)+'/4).'},
-    {done:studied>=4,text:'FORENSICS: Study four clues in the case file [J] ('+Math.min(studied,4)+'/4).'},
-    {done:validCrossReferenceCount()>=2,text:'ANALYSIS: Produce two distinct cross-reference reports ('+validCrossReferenceCount()+'/2).'},
+    {done:collected>=6,text:'INVESTIGATION: Recover at least six physical clues ('+Math.min(collected,6)+'/6).'},
+    {done:studied>=6,text:'FORENSICS: Study six clues in the case file [J] ('+Math.min(studied,6)+'/6).'},
+    {done:validCrossReferenceCount()>=4,text:'ANALYSIS: Produce four distinct cross-reference reports ('+validCrossReferenceCount()+'/4).'},
     {done:state.caseTheory==='mimic-timeline',text:'CASE THEORY: Explain the radio and timeline contradiction correctly.'},
-    {done:state.witnessInterviewed,text:'INTERVIEW: Question Silas Venn inside Cypress Farmhouse.'},
+    {done:state.witnessInterviewed&&state.witnessTrust>=2,text:state.witnessInterviewed&&state.witnessTrust<2?'WITNESS: Statement unreliable. Study six clues and interview Silas again.':'WITNESS: Obtain a corroborated statement from Silas Venn.'},
     {done:rescued>=2,text:'RESCUE: Find both missing people ('+rescued+'/2).'},
     {done:state.won,text:'EXTRACTION: Leave with the survivors and a defensible case.'},
-    {done:state.keysFound,text:'SUPPLY: Recover the patrol truck keys.'},
-    {done:state.exploredRoomIds.length>=3,text:'EXPLORATION: Search three different buildings ('+state.exploredRoomIds.length+'/3).'},
-    {done:state.extractionHold>=20,text:'FINAL DEFENSE: Hold the extraction zone for 20 seconds.'}
+    {done:state.keysFound,text:'SUPPLY: Recover the relay override key inside the Radio Relay Hut.'},
+    {done:state.exploredRoomIds.length>=5,text:'EXPLORATION: Search five different buildings ('+state.exploredRoomIds.length+'/5).'},
+    {done:state.extractionHold>=30,text:'FINAL DEFENSE: Hold the extraction zone for 30 seconds.'}
   ];
 }
 function renderEvidenceBoard(){
   const board=$('evidenceBoard');
   if(!board)return;
   const records=caseRecords.slice().reverse();
-  $('evidenceProgress').textContent=studyCount()+' clues studied · 4 required · '+collectedClueCount()+' physical clues collected · '+validCrossReferenceCount()+' distinct cross-reference reports';
+  $('evidenceProgress').textContent=studyCount()+' clues studied · 6 required · '+collectedClueCount()+' physical clues collected · '+validCrossReferenceCount()+' distinct cross-reference reports · 4 required';
   board.innerHTML=records.length?records.map(r=>{
     const missing=r.kind==='absence';
     const status=missing?'DISAPPEARANCE REPORT':r.studied?'STUDIED · FINDINGS RECORDED':'UNEXAMINED EVIDENCE';
@@ -3018,9 +3144,9 @@ function selectCaseTheory(id){
 }
 function submitCaseTheory(){
   if(!state.pendingTheory){toast('SELECT A CASE THEORY FIRST.',1.8);return;}
-  if(collectedClueCount()<4){toast('THE THEORY IS NOT READY: RECOVER FOUR PHYSICAL CLUES.',2.7);return;}
-  if(studyCount()<4){toast('THE THEORY IS NOT READY: STUDY FOUR PHYSICAL CLUES.',2.7);return;}
-  if(validCrossReferenceCount()<2){toast('THE THEORY IS NOT READY: PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS.',2.7);return;}
+  if(collectedClueCount()<6){toast('THE THEORY IS NOT READY: RECOVER SIX PHYSICAL CLUES.',2.7);return;}
+  if(studyCount()<6){toast('THE THEORY IS NOT READY: STUDY SIX PHYSICAL CLUES.',2.7);return;}
+  if(validCrossReferenceCount()<4){toast('THE THEORY IS NOT READY: PRODUCE FOUR DISTINCT CROSS-REFERENCE REPORTS.',2.7);return;}
   state.theoryAttempts++;
   const hasLog=caseRecords.some(r=>r.id==='log'&&r.studied);
   const hasRadio=caseRecords.some(r=>r.id==='radio'&&r.studied);
@@ -3154,12 +3280,12 @@ function updateSurvivorLocator(){
   }
   if(rescued>=2&&!investigationReady()){
     main.textContent='SURVIVORS SECURED · CASE INCOMPLETE';
-    sub.textContent='Recover and study four clues, produce two distinct cross-reference reports, recover the truck keys, search three buildings, save Silas Venn’s statement, then survive the extraction defense.';
+    sub.textContent='Recover and study six clues, produce four distinct cross-reference reports, recover the relay override key, search five buildings, save Silas Venn’s statement, then survive the extraction defense.';
     return;
   }
-  if(rescued>=2&&(!state.keysFound||state.exploredRoomIds.length<3)){
+  if(rescued>=2&&(!state.keysFound||state.exploredRoomIds.length<5)){
     main.textContent='CASEWORK DONE · PREPARE EXTRACTION';
-    sub.textContent=(!state.keysFound?'Recover the patrol truck keys. ':'')+(state.exploredRoomIds.length<3?'Search '+(3-state.exploredRoomIds.length)+' more different building(s).':'')+' Then follow the gold beacon and hold for 20 seconds.';
+    sub.textContent=(!state.keysFound?'Recover the relay override key in the Radio Relay Hut. ':'')+(state.exploredRoomIds.length<5?'Search '+(5-state.exploredRoomIds.length)+' more different building(s).':'')+' Then follow the gold beacon and hold for 30 seconds.';
     return;
   }
   if(rescued>=2){
@@ -3168,8 +3294,8 @@ function updateSurvivorLocator(){
     const a=exit?angleTo(player.x,player.y,exit.x,exit.y):0;
     const arrows=['→','↘','↓','↙','←','↖','↑','↗'];
     const direction=arrows[(Math.round(a/(Math.PI/4)+8)%8)];
-    main.innerHTML=state.extractionStarted?'DEFEND EXTRACTION <span class="locator-range">'+Math.max(0,20-Math.floor(state.extractionHold))+'s</span>':'CASE READY <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
-    sub.textContent=state.extractionStarted?'EXTRACTION UNDER ATTACK · HOLD POSITION. LEAVING RESETS THE TIMER.':'Casework complete. Press E at the gold beacon and survive the 20-second defense.';
+    main.innerHTML=state.extractionStarted?'DEFEND EXTRACTION <span class="locator-range">'+Math.max(0,30-Math.floor(state.extractionHold))+'s</span>':'CASE READY <span class="locator-range">'+direction+' '+Math.round(d)+'m</span>';
+    sub.textContent=state.extractionStarted?'EXTRACTION UNDER ATTACK · HOLD POSITION. LEAVING RESETS THE TIMER.':'Casework complete. Press E at the gold beacon and survive the 30-second defense.';
     return;
   }
   main.textContent='SEARCH FOR SURVIVORS';
@@ -3182,26 +3308,27 @@ function updateHUD(){
   $('staminafill').style.width=clamp(stamina/player.maxStamina*100,0,100)+'%';
   $('ammo').textContent=ammo;
   $('reserve').textContent=reserve;
-  $('evidence').textContent=Math.min(collectedClueCount(),4)+'/4';
+  $('evidence').textContent=Math.min(collectedClueCount(),6)+'/6';
   const rescuedCount=survivors.filter(s=>s.found||s.following||s.delivered).length;
   $('survivors').textContent=rescuedCount+'/2';
   $('battery').textContent=Math.floor(flashlightBattery)+'%';
-  $('officerName').textContent=specs[state.selectedCharacter].name.toUpperCase();
+  $('officerName').textContent=specs[state.selectedCharacter].name.replace(/^Officer\s+/i,'').toUpperCase();
   const minutes=Math.floor(state.missionClock/60);
   const seconds=Math.floor(state.missionClock%60);
   $('timeReadout').textContent=String(2+Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0')+' AM';
   $('status').textContent=monster&&monster.active?'RADIO: SIGNAL LOST':'RADIO: DISPATCH STANDBY';
   const completeSurvivors=survivors?survivors.filter(s=>s.found||s.following||s.delivered).length:0;
-  if(state.extractionStarted){$('objective').textContent='EXTRACTION DEFENSE: HOLD THE BEACON '+Math.min(20,Math.floor(state.extractionHold))+'/20 SECONDS. DO NOT LEAVE THE ZONE.';}
-  else if(collectedClueCount()<4){$('objective').textContent='INVESTIGATE: Collect four clues ('+Math.min(collectedClueCount(),4)+'/4), then study them with J.';}
-  else if(studyCount()<4){$('objective').textContent='FORENSICS: Study four clues in your case file ['+studyCount()+'/4]. Press J.';}
-  else if(validCrossReferenceCount()<2){$('objective').textContent='ANALYSIS: Produce two DISTINCT cross-reference reports in your case file ['+validCrossReferenceCount()+'/2].';}
+  if(state.extractionStarted){$('objective').textContent='EXTRACTION DEFENSE: HOLD THE BEACON '+Math.min(30,Math.floor(state.extractionHold))+'/30 SECONDS. DO NOT LEAVE THE ZONE.';}
+  else if(collectedClueCount()<6){$('objective').textContent='INVESTIGATE: Collect six clues ('+Math.min(collectedClueCount(),6)+'/6), then study them with J.';}
+  else if(studyCount()<6){$('objective').textContent='FORENSICS: Study six clues in your case file ['+studyCount()+'/6]. Press J.';}
+  else if(validCrossReferenceCount()<4){$('objective').textContent='ANALYSIS: Produce four DISTINCT cross-reference reports in your case file ['+validCrossReferenceCount()+'/4].';}
   else if(state.caseTheory!=='mimic-timeline'){$('objective').textContent='CASE THEORY: Submit a supported explanation in your case file [J].';}
   else if(!state.witnessInterviewed){$('objective').textContent='WITNESS: Interview Silas Venn inside Cypress Farmhouse.';}
-  else if(!state.keysFound){$('objective').textContent='SUPPLY: Recover the patrol truck keys.';}
-  else if(state.exploredRoomIds.length<3){$('objective').textContent='EXPLORATION: Search three different buildings ['+state.exploredRoomIds.length+'/3].';}
+  else if(state.witnessTrust<2){$('objective').textContent='WITNESS: Silas’s statement is unreliable. Study six clues, return to him, and earn a corroborated statement.';}
+  else if(!state.keysFound){$('objective').textContent='SUPPLY: Recover the relay override key inside the Radio Relay Hut.';}
+  else if(state.exploredRoomIds.length<5){$('objective').textContent='EXPLORATION: Search five different buildings ['+state.exploredRoomIds.length+'/5].';}
   else if(completeSurvivors<2){$('objective').textContent='RESCUE: Find the missing people '+completeSurvivors+'/2. Follow green markers.';}
-  else{$('objective').textContent='CASE READY: Press E at the gold beacon and survive the 20-second defense.';}
+  else{$('objective').textContent='CASE READY: Press E at the gold beacon and survive the 30-second defense.';}
   updateSurvivorLocator();
   const near=player&&state.running?nearestInteractable():null;
   if(near){
@@ -3238,18 +3365,18 @@ function tryExtraction(){
     state.exitHintCooldown=4;
     return;
   }
-  if(collectedClueCount()<4){
-    toast('EXTRACTION LOCKED: COLLECT FOUR PHYSICAL CLUES ('+collectedClueCount()+'/4).',3.5);
+  if(collectedClueCount()<6){
+    toast('EXTRACTION LOCKED: COLLECT SIX PHYSICAL CLUES ('+collectedClueCount()+'/6).',3.5);
     state.exitHintCooldown=4;
     return;
   }
-  if(studyCount()<4){
-    toast('EXTRACTION LOCKED: STUDY FOUR CLUES IN YOUR CASE FILE [J] ('+studyCount()+'/4).',3.5);
+  if(studyCount()<6){
+    toast('EXTRACTION LOCKED: STUDY SIX CLUES IN YOUR CASE FILE [J] ('+studyCount()+'/6).',3.5);
     state.exitHintCooldown=4;
     return;
   }
-  if(validCrossReferenceCount()<2){
-    toast('EXTRACTION LOCKED: PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/2).',3.5);
+  if(validCrossReferenceCount()<4){
+    toast('EXTRACTION LOCKED: PRODUCE FOUR DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/4).',3.5);
     state.exitHintCooldown=4;
     return;
   }
@@ -3263,13 +3390,18 @@ function tryExtraction(){
     state.exitHintCooldown=4;
     return;
   }
-  if(!state.keysFound){
-    toast('EXTRACTION LOCKED: RECOVER THE PATROL TRUCK KEYS.',3.5);
+  if(state.witnessTrust<2){
+    toast('EXTRACTION LOCKED: SILAS’S STATEMENT IS NOT CORROBORATED. STUDY SIX CLUES AND INTERVIEW HIM AGAIN.',4.0);
     state.exitHintCooldown=4;
     return;
   }
-  if(state.exploredRoomIds.length<3){
-    toast('EXTRACTION LOCKED: SEARCH THREE DIFFERENT BUILDINGS ('+state.exploredRoomIds.length+'/3).',3.5);
+  if(!state.keysFound){
+    toast('EXTRACTION LOCKED: RECOVER THE RELAY OVERRIDE KEY IN THE RADIO RELAY HUT.',3.5);
+    state.exitHintCooldown=4;
+    return;
+  }
+  if(state.exploredRoomIds.length<5){
+    toast('EXTRACTION LOCKED: SEARCH FIVE DIFFERENT BUILDINGS ('+state.exploredRoomIds.length+'/5).',3.5);
     state.exitHintCooldown=4;
     return;
   }
@@ -3279,20 +3411,22 @@ function tryExtraction(){
     return;
   }
   if(state.extractionStarted){
-    toast('EXTRACTION ALREADY ACTIVE. HOLD THE ZONE UNTIL THE TIMER ENDS.',2.2);
+    toast('EXTRACTION ALREADY ACTIVE. HOLD THE ZONE UNTIL THE 30-SECOND TIMER ENDS.',2.2);
     return;
   }
   state.extractionStarted=true;
   state.extractionHold=0;
   state.extractionWave1=false;
   state.extractionWave2=false;
+  state.extractionWave3=false;
+  state.extractionWave4=false;
   state.extractionLastToast=0;
   state.extractionWasOutside=false;
   state.intensity=1;
   state.noise=1;
   sound('scare');
   tone(48,1.2,'sawtooth',.18,-20);
-  toast('EXTRACTION UNDER ATTACK. HOLD THE BEACON FOR 20 SECONDS. LEAVING THE ZONE RESETS THE TIMER.',5.2);
+  toast('EXTRACTION UNDER ATTACK. HOLD THE BEACON FOR 30 SECONDS. FOUR WAVES ARE COMING. LEAVING RESETS THE TIMER.',5.2);
 }
 function completeExtraction(){
   for(const survivor of survivors){
@@ -3318,8 +3452,8 @@ function finishGame(success){
   $('hud').style.display='none';
   document.body.classList.remove('game-active');
   $('endingTitle').textContent=success?'CASE FILE: SURVIVORS RECOVERED':'OFFICER LOST IN THE MARSH';
-  $('endingText').textContent=success?'You got the survivors out and brought back the evidence. Dispatch never explains the extra voice on the recording. On the final playback, it sounds exactly like you.':'Your radio keeps transmitting after your pulse stops. The rescue team finds your patrol car empty and the flashlight still on.';
-  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>CROSS-REFERENCES: '+validCrossReferenceCount()+'<br>TRUCK KEYS: '+(state.keysFound?'RECOVERED':'MISSING')+'<br>WITNESS INTERVIEW: '+(state.witnessInterviewed?'RECORDED':'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRoomIds.length+'<br>EXTRACTION HOLD: '+Math.floor(state.extractionHold)+'/20 SECONDS';
+  $('endingText').textContent=success?'You got the survivors out and brought back the evidence. Dispatch never explains the extra voice on the recording. On the final playback, it sounds exactly like you—and it is already answering the rescue team.':'Your radio keeps transmitting after your pulse stops. The rescue team finds the flashlight still on. Your footprints end inside a locked room.';
+  $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>CROSS-REFERENCES: '+validCrossReferenceCount()+'<br>RELAY KEY: '+(state.keysFound?'RECOVERED':'MISSING')+'<br>WITNESS STATEMENT: '+(state.witnessInterviewed?(state.witnessTrust>=2?'CORROBORATED':'UNRELIABLE'):'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRoomIds.length+'<br>EXTRACTION HOLD: '+Math.floor(state.extractionHold)+'/30 SECONDS';
   setScreen('ending');
   if(success)tone(460,.4,'sine',.1,180);else sound('scare');
 }
@@ -3351,7 +3485,9 @@ function openObjectives(){
   enterScreen('objectives');
 }
 function beginWitnessInterview(target){
-  if(state.witnessInterviewed){toast('SILAS HAS ALREADY GIVEN HIS RECORDED STATEMENT. REVIEW THE CASE FILE [J].',3);return;}
+  if(state.witnessInterviewed&&state.witnessTrust>=2){toast('SILAS HAS ALREADY GIVEN A CORROBORATED STATEMENT. REVIEW THE CASE FILE [J].',3);return;}
+  if(state.witnessInterviewed&&state.witnessTrust<2&&studyCount()<6){toast('SILAS’S STATEMENT IS UNRELIABLE. STUDY SIX CLUES BEFORE ASKING HIM AGAIN.',3.2);return;}
+  if(state.witnessInterviewed&&state.witnessTrust<2){state.witnessInterviewed=false;state.witnessTrust=0;state.interviewStep=0;state.interviewAwaitingContinue=false;state.interviewChoiceFeedback='';toast('SILAS WILL REOPEN HIS STATEMENT, BUT HE WILL NOT WAIT FOREVER.',3.0);}
   state.interviewStep=0;
   state.interviewAwaitingContinue=false;
   state.interviewChoiceFeedback='';
@@ -3450,11 +3586,11 @@ function continueWitnessInterview(){
 function finishWitnessInterview(){
   if(state.witnessInterviewed)return;
   state.witnessInterviewed=true;
-  queueStoryScare('address','witnessStatementReveal',1.05);
   const reliable=state.witnessTrust>=2;
   const record={id:'silas-statement',name:'Silas Venn — recorded statement',detail:reliable?'The statement is partly corroborated, with one unexplained timeline gap.':'The statement contains contradictions and requires comparison against physical evidence.',analysis:reliable?'Silas heard the radio imitate a person before that person arrived. He reports three objects disappearing in sequence. His description of the upstairs reflection matches the waterlogged patrol log.':'Silas changed his timeline under pressure. His account cannot stand alone, but it still identifies the upstairs landing and a sequence of missing objects as leads.',kind:'statement',studied:false};
-  caseRecords.push(record);
-  if(state.room){const witness=state.room.items.find(i=>i.type==='witness');if(witness)witness.found=true;}
+  const priorStatement=caseRecords.find(r=>r.id==='silas-statement');
+  if(priorStatement)Object.assign(priorStatement,record);else caseRecords.push(record);
+  if(state.room){const witness=state.room.items.find(i=>i.type==='witness');if(witness){witness.found=true;if(witness.id){state.roomItemStates=state.roomItemStates||{};state.roomItemStates[witness.id]={found:true,missing:false};}}}
   state.noise=Math.max(state.noise,.28);
   state.intensity=Math.min(1,state.intensity+.15);
   toast(reliable?'STATEMENT SAVED: PARTLY CORROBORATED. COMPARE IT WITH THE FORENSIC REPORTS.':'STATEMENT SAVED: UNRELIABLE. YOU NEED STRONGER PHYSICAL EVIDENCE.',4);
@@ -3556,7 +3692,6 @@ function movePlayer(dt){
   player.y=clamp(player.y,22,WORLD.h-22);
 }
 function blockedAt(x,y,r){
-  if(state.prologueStage==='swamp'&&dist(x,y,245,278)<43+r)return true;
   const minX=Math.floor((x-r-15)/128),maxX=Math.floor((x+r+15)/128);
   const minY=Math.floor((y-r-15)/128),maxY=Math.floor((y+r+15)/128);
   for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++){
@@ -3653,7 +3788,7 @@ function updateCrawlers(dt){
       if(!blockedAt(c.x,ny,c.r))c.y=ny;
       if(d<c.r+player.r+5&&c.attack<=0){
         c.attack=1.3;
-        damagePlayer(11,'crawler');
+        damagePlayer(13+Math.min(5,state.threatTier||0),'crawler');
       }
     }else if(Math.sin(c.phase*.7)>.94){
       c.x+=Math.cos(c.phase)*18*dt;
@@ -3671,12 +3806,19 @@ function updateMonster(dt){
   if(d<390)monster.spotted=true;
   if(state.floor==='inside'){
     monster.frozenByLight=false;
-    if(d<200&&monster.warpCooldown<=0){
-      monster.warpCooldown=9;
-      monster.x=clamp(player.x+choose([-1,1])*430,70,WORLD.w-70);
-      monster.y=clamp(player.y+choose([-1,1])*350,70,WORLD.h-70);
-      showRadioText('UNKNOWN TRANSMISSION','You can hear footsteps outside the building.');
-      toast('SOMETHING MOVES OUTSIDE THE WALLS.',2.3);
+    const apparition=state.indoorPresence;
+    if(apparition&&apparition.timer>0){
+      const roomDistance=dist(player.x,player.y,apparition.x,apparition.y);
+      if(roomDistance<58&&monster.attack<=0){
+        monster.attack=1.8;
+        damagePlayer(15+Math.min(12,(state.threatTier||0)*2),'smiler');
+        apparition.timer=0;
+        apparition.cooldown=5.5;
+        state.intensity=1;
+        toast('IT WAS NOT A SHADOW. IT TOUCHED YOU.',2.8);
+      }else if(roomDistance<145){
+        state.intensity=Math.max(state.intensity,.8);
+      }
     }
     return;
   }
@@ -3686,9 +3828,9 @@ function updateMonster(dt){
   const slowedByLight=monster.frozenByLight&&d>58&&monster.stun<=0;
   if(monster.stun>0)return;
   const rescuedPressure=survivors.filter(s=>s.found||s.following||s.delivered).length;
-  const huntRamp=Math.min(38,state.elapsed*.075+state.missingCount*3.2+evidence*2.8+rescuedPressure*5);
-  let speed=(d<280?119:state.noise>.3?96:72)+Math.min(34,evidence*2.8+rescuedPressure*7+state.elapsed/85)+huntRamp;
-  if(slowedByLight)speed*=.34;
+  const huntRamp=Math.min(58,state.elapsed*.105+state.missingCount*4.1+evidence*3.4+rescuedPressure*7+(state.threatTier||0)*5);
+  let speed=(d<280?126:state.noise>.3?108:78)+Math.min(44,evidence*3.5+rescuedPressure*9+state.elapsed/68)+huntRamp;
+  if(slowedByLight)speed*=.58;
   if(d>780&&state.noise<.2){
     monster.lastMove+=dt;
     if(monster.lastMove>7&&monster.warpCooldown<=0){
@@ -3704,7 +3846,7 @@ function updateMonster(dt){
   monster.y+=Math.sin(a)*speed*dt;
   if(d<43&&monster.attack<=0){
     monster.attack=1.45;
-    damagePlayer(25+Math.min(8,Math.floor(state.elapsed/150)*2),'smiler');
+    damagePlayer(28+Math.min(12,Math.floor(state.elapsed/115)*2)+Math.min(8,(state.threatTier||0)*2),'smiler');
     monster.x=clamp(monster.x-Math.cos(a)*44,30,WORLD.w-30);
     monster.y=clamp(monster.y-Math.sin(a)*44,30,WORLD.h-30);
   }
@@ -3877,10 +4019,10 @@ function drawFalseFigure(){
   ctx.restore();
 }
 function updateVanishingItems(dt){
-  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp'||state.missingCount>=4)return;
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp'||state.missingCount>=5)return;
   state.missingTimer-=dt;
   if(state.missingTimer>0)return;
-  state.missingTimer=31+Math.random()*17;
+  state.missingTimer=27+Math.random()*14;
   const available=[];
   for(const item of objects){
     if(!item.found&&!item.missing&&['loot','evidence'].includes(item.type))available.push(item);
@@ -3900,6 +4042,7 @@ function updateVanishingItems(dt){
   const item=choose(pool);
   item.missing=true;
   if(item.id&&!state.missingIds.includes(item.id))state.missingIds.push(item.id);
+  if(state.floor==='inside'&&item.id){state.roomItemStates=state.roomItemStates||{};state.roomItemStates[item.id]={found:false,missing:true};}
   state.missingCount++;
   const detail='You remember seeing '+item.name+' here. It is gone now. No footsteps lead away from the spot.';
   state.disappearanceLog.push({title:'FIELD NOTE '+String(state.missingCount).padStart(2,'0')+' · '+String(item.name).toUpperCase(),detail});
@@ -3918,10 +4061,11 @@ function update(dt){
   state.elapsed+=dt;
   updateWhispers(dt);
   updateFearDirector(dt);
+  updateThreatEscalation(dt);
   state.missionClock+=dt;
   updatePartnerChat();
-  if(state.horrorBeat===0&&state.elapsed>4.8){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you beside the car.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.7;state.screenShake=.15;}
-  if(state.horrorBeat===1&&state.elapsed>10.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED.',3.1);}
+  if(state.horrorBeat===0&&state.elapsed>6.5){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you at the tree line.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.78;state.screenShake=.19;triggerWhisper('Do not use your own voice to answer dispatch.','right','UNKNOWN OFFICER');}
+  if(state.horrorBeat===1&&state.elapsed>15.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED. IT IS CLOSER THAN THE MAP SAYS.',3.4);}
   growlTimer-=dt;
   shootTimer=Math.max(0,shootTimer-dt);
   reloadTimer=Math.max(0,reloadTimer-dt);
@@ -3964,29 +4108,45 @@ function update(dt){
         state.extractionWasOutside=false;
         state.extractionHold+=dt;
         const held=Math.floor(state.extractionHold);
-        if(held>=5&&!state.extractionWave1){
+        if(held>=4&&!state.extractionWave1){
           state.extractionWave1=true;
-          for(let i=0;i<2;i++)crawlers.push({x:clamp(player.x+(i===0?-1:1)*180,80,WORLD.w-80),y:clamp(player.y+(i===0?-1:1)*130,80,WORLD.h-80),r:10,hp:2,speed:88+Math.random()*12,phase:Math.random()*8,alert:true,attack:0,dead:false,hiddenUntil:0});
-          toast('MOVEMENT IN THE DARK. FIRST WAVE ON THE PERIMETER.',2.8);
+          spawnCrawlerWave(2,185,98,3);
+          toast('FIRST WAVE. THE BEACON IS DRAWING THEM TO YOU.',2.8);
           sound('roar');
         }
-        if(held>=12&&!state.extractionWave2){
+        if(held>=11&&!state.extractionWave2){
           state.extractionWave2=true;
-          for(let i=0;i<3;i++)crawlers.push({x:clamp(player.x+Math.cos(i*Math.PI*2/3)*215,80,WORLD.w-80),y:clamp(player.y+Math.sin(i*Math.PI*2/3)*190,80,WORLD.h-80),r:11,hp:2,speed:93+Math.random()*16,phase:Math.random()*8,alert:true,attack:0,dead:false,hiddenUntil:0});
-          toast('SECOND WAVE. DO NOT LET THEM BOX YOU IN.',3.1);
+          spawnCrawlerWave(3,225,108,3);
+          toast('SECOND WAVE. THEY ARE LEARNING YOUR ROUTE.',3.1);
           sound('scare');
         }
-        if(held>=state.extractionLastToast+5&&held<20){
-          state.extractionLastToast=held;
-          toast('EXTRACTION HOLD: '+(20-held)+' SECONDS REMAIN. STAY INSIDE THE BEACON RADIUS.',2.2);
+        if(held>=18&&!state.extractionWave3){
+          state.extractionWave3=true;
+          spawnCrawlerWave(3,255,116,4);
+          state.intensity=1;
+          toast('THIRD WAVE. THE FIGURES ARE MOVING IN FORMATION.',3.4);
+          sound('roar');
+          triggerWhisper('They were never trying to stop you leaving. They were waiting for you to bring the others back.','center','DISPATCH // CHANNEL ZERO');
         }
-        if(state.extractionHold>=20){completeExtraction();return;}
+        if(held>=25&&!state.extractionWave4){
+          state.extractionWave4=true;
+          spawnCrawlerWave(4,275,122,4);
+          state.intensity=1;
+          state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,1.4);
+          toast('FOURTH WAVE. SOMETHING IS STANDING INSIDE THE BEACON.',3.6);
+          sound('scare');
+        }
+        if(held>=state.extractionLastToast+5&&held<30){
+          state.extractionLastToast=held;
+          toast('EXTRACTION HOLD: '+(30-held)+' SECONDS REMAIN. STAY INSIDE THE BEACON RADIUS.',2.2);
+        }
+        if(state.extractionHold>=30){completeExtraction();return;}
       }
     }else if(extraction&&exitDistance<142){
-      if(rescuedAtExit>=2&&investigationReady()&&state.keysFound&&state.exploredRoomIds.length>=3){
-        if(state.exitHintCooldown<=0){toast('CASEWORK COMPLETE. PRESS E TO START THE 20-SECOND EXTRACTION DEFENSE.',3.0);state.exitHintCooldown=5;}
+      if(rescuedAtExit>=2&&investigationReady()&&state.keysFound&&state.exploredRoomIds.length>=5){
+        if(state.exitHintCooldown<=0){toast('CASEWORK COMPLETE. PRESS E TO START THE 30-SECOND EXTRACTION DEFENSE.',3.0);state.exitHintCooldown=5;}
       }else if(state.exitHintCooldown<=0){
-        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':collectedClueCount()<4?'COLLECT FOUR CLUES ('+collectedClueCount()+'/4)':studyCount()<4?'STUDY FOUR CLUES IN CASE FILE [J] ('+studyCount()+'/4)':validCrossReferenceCount()<2?'PRODUCE TWO DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/2)':state.caseTheory!=='mimic-timeline'?'SUBMIT A SUPPORTED CASE THEORY':!state.witnessInterviewed?'INTERVIEW SILAS VENN':!state.keysFound?'RECOVER THE PATROL TRUCK KEYS':'SEARCH THREE DIFFERENT BUILDINGS';
+        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':collectedClueCount()<6?'COLLECT SIX CLUES ('+collectedClueCount()+'/6)':studyCount()<6?'STUDY SIX CLUES IN CASE FILE [J] ('+studyCount()+'/6)':validCrossReferenceCount()<4?'PRODUCE FOUR DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/4)':state.caseTheory!=='mimic-timeline'?'SUBMIT A SUPPORTED CASE THEORY':!state.witnessInterviewed?'INTERVIEW SILAS VENN':!state.keysFound?'RECOVER THE RELAY OVERRIDE KEY IN THE RADIO RELAY HUT':'SEARCH FIVE DIFFERENT BUILDINGS';
         toast('EXTRACTION LOCKED: '+blocker+'.',3.5);
         state.exitHintCooldown=5;
       }
@@ -4535,8 +4695,8 @@ function drawLighting(){
   const y=player.y-camera.y+shakeY;
   const working=flashlight&&flashlightBattery>0;
   const angle=flashlightAngle();
-  const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
-  drawMaskCone(x,y,angle,flicker?92:510,.245,state.lightning>0?0.16:(working?0.79:0.91),working?30:8);
+  const flicker=(state.flashlightFlickerTimer||0)>0||(working&&state.intensity>.62&&((state.elapsed%7.2)<.045||((state.elapsed%7.2)>1.1&&(state.elapsed%7.2)<1.14)));
+  drawMaskCone(x,y,angle,flicker?84:530,.275,state.lightning>0?0.22:1.0,working?18:1);
   if(state.lightning>0){
     ctx.fillStyle='rgba(191,211,204,'+Math.min(.84,state.lightning*1.15)+')';
     ctx.fillRect(0,0,W,H);
@@ -4584,7 +4744,6 @@ function drawWorld(){
   drawRoad();
   drawReeds();
   for(const t of trees)drawTree(t);
-  drawPatrolCarWorld();
   for(const o of objects){
     if(o.missing)continue;
     if(o.type==='building')drawBuilding(o);
@@ -4600,7 +4759,6 @@ function drawWorld(){
   drawFireflies();
   drawRain();
   drawLighting();
-  drawPatrolSirenWorldGlow();
   drawFalseFigure();
   drawSurvivorGuidance();
   drawMini();
@@ -4701,7 +4859,7 @@ function drawIndoorPresence(){
   const targetAngle=angleTo(player.x,player.y,a.x,a.y);
   const da=Math.abs(Math.atan2(Math.sin(targetAngle-flashlightAngle()),Math.cos(targetAngle-flashlightAngle())));
   const beamOn=flashlight&&flashlightBattery>0&&d<470&&da<.38;
-  const alpha=beamOn?.16:.98;
+  const alpha=beamOn?1:.96;
   ctx.save();ctx.globalAlpha=alpha;
   const lean=Math.sin(a.phase*5)*3;
   ctx.fillStyle='#020403';
@@ -4800,8 +4958,8 @@ function drawLightingInterior(){
   const y=player.y-camera.y+shakeY;
   const working=flashlight&&flashlightBattery>0;
   const angle=flashlightAngle();
-  drawMaskCone(x,y,angle,working?465:1,working?.39:.26,working?0.93:0.985,working?43:7);
-  const flicker=working&&state.intensity>.38&&((state.elapsed%8)<.065||((state.elapsed%8)>1.1&&(state.elapsed%8)<1.16));
+  drawMaskCone(x,y,angle,working?500:1,working?.43:.26,1.0,working?25:1);
+  const flicker=(state.flashlightFlickerTimer||0)>0||(working&&state.intensity>.62&&((state.elapsed%7.2)<.045||((state.elapsed%7.2)>1.1&&(state.elapsed%7.2)<1.14)));
   if(flicker){
     ctx.fillStyle='rgba(0,0,0,.48)';
     ctx.fillRect(0,0,W,H);
@@ -5203,7 +5361,7 @@ function bindEvents(){
   });
   canvas.addEventListener('pointerdown',e=>{
     if(state.prologueStage==='call'){acceptDispatch();return;}
-    if(state.prologueStage==='arrival'){exitPatrolCar();return;}
+    if(state.prologueStage==='arrival'){enterNightSearch();return;}
     if(state.prologueStage==='drive')return;
     if(state.controlMode==='desktop'&&e.button===0){
       pointer.down=true;
@@ -5258,7 +5416,7 @@ function onKeyDown(e){
   }
   if(!state.running)return;
   if(state.prologueStage==='call'&&(key==='e'||key==='enter')){acceptDispatch();return;}
-  if(state.prologueStage==='arrival'&&(key==='e'||key==='enter')){exitPatrolCar();return;}
+  if(state.prologueStage==='arrival'&&(key==='e'||key==='enter')){enterNightSearch();return;}
   if(key==='e')interact();
   if(key==='f')toggleFlashlight();
   if(key==='r'){
