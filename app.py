@@ -1888,7 +1888,7 @@ function updateWhispers(dt){
     if(state.elapsed>20)oneShotWhisper('swamp20','I can see the little light shaking in your hand.', 'center','UNKNOWN CHANNEL');
     if(evidence>=1)oneShotWhisper('firstEvidence','You found it. Now put it back before it notices.', 'left','VOICE IN THE RECORDER');
     if(state.floor==='inside')oneShotWhisper('insideVoice','There is one more person in this room than you can see.', 'right','VOICE FROM INSIDE THE WALL');
-    if(monster&&monster.active&&dist(player.x,player.y,monster.x,monster.y)<360)oneShotWhisper('nearMonster','Don’t point that light at me. I’m the one who called you.', 'center','THE SMILER');
+    if(monster&&monster.active&&!monster.hidden&&dist(player.x,player.y,monster.x,monster.y)<360)oneShotWhisper('nearMonster','Don’t point that light at me. I’m the one who called you.', 'center','THE SMILER');
     state.voiceAmbientTimer-=dt;
     if(state.elapsed>24&&state.voiceAmbientTimer<=0){
       const lines=[
@@ -2281,7 +2281,7 @@ function resetGame(){
   for(let i=0;i<5;i++){
     crawlers.push({x:760+i*410,y:420+(i%3)*450,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false,hiddenUntil:14});
   }
-  monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0,hidden:false,vanishTimer:0,vanishCooldown:6+Math.random()*5,pendingX:0,pendingY:0,reappearGlow:0,blinkCount:0};
+  monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0,hidden:false,vanishTimer:0,vanishCooldown:4.5+Math.random()*3.4,activeTime:0,pendingX:0,pendingY:0,reappearGlow:0,blinkCount:0};
   makeObjects();
   state.elapsed=0;
   state.missionClock=137;
@@ -3325,7 +3325,8 @@ function activateMonster(){
   monster.spotted=false;
   monster.hidden=false;
   monster.vanishTimer=0;
-  monster.vanishCooldown=6+Math.random()*5;
+  monster.vanishCooldown=4.5+Math.random()*3.4;
+  monster.activeTime=0;
   monster.reappearGlow=0;
   sound('scare');
   toast('THE RADIO CUTS OUT. SOMETHING IS MOVING THROUGH THE TREES.',3.3);
@@ -3651,7 +3652,7 @@ function updateHUD(){
   const minutes=Math.floor(state.missionClock/60);
   const seconds=Math.floor(state.missionClock%60);
   $('timeReadout').textContent=String(2+Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0')+' AM';
-  $('status').textContent=monster&&monster.active?'RADIO: SIGNAL LOST':'RADIO: DISPATCH STANDBY';
+  $('status').textContent=monster&&monster.active?(monster.hidden?'RADIO: VISUAL CONTACT LOST':'RADIO: SIGNAL LOST'):'RADIO: DISPATCH STANDBY';
   const completeSurvivors=survivors?survivors.filter(s=>s.found||s.following||s.delivered).length:0;
   if(state.extractionStarted){$('objective').textContent='EXTRACTION DEFENSE: HOLD THE BEACON '+Math.min(30,Math.floor(state.extractionHold))+'/30 SECONDS. DO NOT LEAVE THE ZONE.';}
   else if(collectedClueCount()<6){$('objective').textContent='INVESTIGATE: Collect six clues ('+Math.min(collectedClueCount(),6)+'/6), then study them with J.';}
@@ -4519,19 +4520,23 @@ function updateMonster(dt){
         monster.x=monster.pendingX;
         monster.y=monster.pendingY;
         monster.hidden=false;
-        monster.reappearGlow=.9;
-        monster.attack=Math.max(monster.attack,.55);
-        state.intensity=Math.max(state.intensity,.78);
-        state.screenShake=Math.max(state.screenShake,.16);
+        monster.activeTime=0;
+        monster.reappearGlow=1.65;
+        monster.attack=Math.max(monster.attack,.75);
+        state.intensity=Math.max(state.intensity,.9);
+        state.screenShake=Math.max(state.screenShake,.22);
+        state.apparitionTimer=0;
         sound('radio');
-        for(let i=0;i<7;i++)addParticle({x:monster.x+(Math.random()-.5)*24,y:monster.y+(Math.random()-.5)*42,vx:(Math.random()-.5)*40,vy:-12-Math.random()*28,life:.28+Math.random()*.32,color:choose(['#581218','#8e2229','#c1bbaa']),size:2+Math.random()*2});
+        tone(42,.42,'sawtooth',.065,-30);
+        for(let i=0;i<11;i++)addParticle({x:monster.x+(Math.random()-.5)*28,y:monster.y+(Math.random()-.5)*48,vx:(Math.random()-.5)*48,vy:-14-Math.random()*34,life:.35+Math.random()*.48,color:choose(['#581218','#8e2229','#c1bbaa']),size:2+Math.random()*2.5});
         if(state.options.voiceWhispers&&state.voiceCooldown<=0)triggerWhisper(choose(['You watched the place I left. Not the place I went.','The dark between us is shorter now.','I was standing there before you looked.','You keep turning toward the wrong sound.']),choose(['left','right']),'THE SMILER / SIGNAL RETURNS');
-        if(monster.blinkCount%2===0)toast('THE SMILER REAPPEARED SOMEWHERE ELSE.',2.1);
+        toast(choose(['THE SMILER REAPPEARED SOMEWHERE ELSE.','IT IS BACK. IT DID NOT CROSS THE SPACE BETWEEN.','VISUAL CONTACT RESTORED. THE DISTANCE IS WRONG.']),3.0);
       }
       return;
     }
+    monster.activeTime=(monster.activeTime||0)+dt;
     monster.vanishCooldown=Math.max(0,(monster.vanishCooldown||0)-dt);
-    if(state.elapsed>25&&monster.vanishCooldown<=0&&monster.stun<=0){
+    if(monster.activeTime>=3.5&&monster.vanishCooldown<=0&&monster.stun<=0){
       let tx=monster.x,ty=monster.y,found=false;
       const referenceAngle=player.angle||0;
       for(let attempt=0;attempt<14;attempt++){
@@ -4549,17 +4554,18 @@ function updateMonster(dt){
       monster.pendingX=tx;
       monster.pendingY=ty;
       monster.hidden=true;
-      monster.vanishTimer=.42+Math.random()*.72;
-      monster.vanishCooldown=8.5+Math.random()*9.5;
+      monster.vanishTimer=2.25+Math.random()*1.65;
+      monster.vanishCooldown=9+Math.random()*8;
       monster.blinkCount=(monster.blinkCount||0)+1;
-      state.intensity=Math.max(state.intensity,.72);
-      state.noise=Math.max(state.noise,.22);
-      state.screenShake=Math.max(state.screenShake,.12);
+      state.intensity=Math.max(state.intensity,.88);
+      state.noise=Math.max(state.noise,.28);
+      state.screenShake=Math.max(state.screenShake,.2);
+      state.apparitionTimer=0;
       sound('radio');
-      tone(62,.36,'sawtooth',.07,-44);
+      tone(48,.5,'sawtooth',.075,-38);
       for(let i=0;i<9;i++)addParticle({x:monster.x+(Math.random()-.5)*30,y:monster.y+(Math.random()-.5)*52,vx:(Math.random()-.5)*58,vy:(Math.random()-.5)*50,life:.2+Math.random()*.34,color:choose(['#4e1117','#7c1e24','#bcc0a8']),size:2+Math.random()*3});
       if(state.options.voiceWhispers&&state.voiceCooldown<=0)triggerWhisper(choose(['It left the light. Count to one.','Do not search where it was.','It can move while your eyes are closed.','Listen for where the rain stops.']),choose(['left','right']),'THE SMILER / SIGNAL LOST');
-      if(Math.random()<.45)toast('VISUAL CONTACT LOST. SOMETHING MOVED WITHOUT CROSSING THE SPACE BETWEEN.',2.6);
+      toast(choose(['THE SMILER HAS VANISHED. DO NOT TRUST THE EMPTY SPACE.','VISUAL CONTACT LOST. THE FOREST IS TOO QUIET.','IT DISAPPEARED. LISTEN — NOT EVEN THE FOOTSTEPS REMAIN.']),3.25);
       return;
     }
   }
@@ -4741,7 +4747,7 @@ function updateFearDirector(dt){
     toast('TWO RESCUE SIGNALS CONFIRMED. A THIRD SIGNAL IS INSIDE YOUR RADIO.',4.5);
     state.apparitionCooldown=3.5;
   }
-  if(state.elapsed>30&&state.apparitionCooldown<=0&&monster&&monster.active&&state.floor==='outside'){
+  if(state.elapsed>30&&state.apparitionCooldown<=0&&monster&&monster.active&&!monster.hidden&&state.floor==='outside'){
     const a=player.angle+Math.PI+choose([-1,1])*(.42+Math.random()*.72);
     const d=260+Math.random()*210;
     state.apparitionX=clamp(player.x+Math.cos(a)*d,36,WORLD.w-36);
@@ -4752,7 +4758,7 @@ function updateFearDirector(dt){
     if(state.voiceCooldown<=0)triggerWhisper(choose(['Don’t look at the edge of the light.','It’s been standing behind you for a while.','You saw that. Do not tell dispatch.','It borrowed your partner’s voice.']),choose(['left','right']),'SHADOW AT THE EDGE OF THE BEAM');
     if(Math.random()<.45)sound('radio');
   }
-  if(monster&&monster.active){
+  if(monster&&monster.active&&!monster.hidden){
     const d=dist(player.x,player.y,monster.x,monster.y);
     if(d<225){state.intensity=Math.max(state.intensity,.64);}
     if(d<165&&state.elapsed-(state.horrorEventFlags.lastHeartbeat||0)>4.8){state.horrorEventFlags.lastHeartbeat=state.elapsed;tone(43,.32,'sine',.07,-12);tone(38,.22,'triangle',.05,-7);}
@@ -5234,6 +5240,24 @@ function drawCrawler(c){
     ctx.fill();
   }
 }
+function drawSmilerContactLost(){
+  if(!monster||!monster.active||!monster.hidden||state.floor!=='outside')return;
+  const pulse=.5+.5*Math.sin(state.elapsed*5.8);
+  ctx.save();
+  ctx.fillStyle='rgba(2,3,3,.92)';
+  ctx.fillRect(W*.5-143,Math.max(82,H*.13),286,45);
+  ctx.strokeStyle='rgba(164,38,39,'+(.58+.35*pulse)+')';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(W*.5-143,Math.max(82,H*.13),286,45);
+  ctx.textAlign='center';
+  ctx.font='bold 12px monospace';
+  ctx.fillStyle='#e6d5c8';
+  ctx.fillText('VISUAL CONTACT LOST',W*.5,Math.max(82,H*.13)+17);
+  ctx.font='bold 8px monospace';
+  ctx.fillStyle='#b46a65';
+  ctx.fillText('NO FOOTSTEPS // NO SIGNAL // DO NOT TURN BACK',W*.5,Math.max(82,H*.13)+32);
+  ctx.restore();
+}
 function drawMonster(){
   if(!monster.active||monster.hidden)return;
   const x=monster.x-camera.x+shakeX;
@@ -5480,7 +5504,7 @@ function drawLighting(){
   vignette.addColorStop(1,'rgba(0,0,0,.44)');
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
-  if(monster&&monster.active){
+  if(monster&&monster.active&&!monster.hidden){
     const d=dist(player.x,player.y,monster.x,monster.y);
     if(d<285){
       const panic=.035+.045*(.5+.5*Math.sin(state.elapsed*10));
@@ -5534,6 +5558,7 @@ function drawWorld(){
   drawFalseFigure();
   drawSurvivorGuidance();
   drawMini();
+  drawSmilerContactLost();
   if(state.sceneFade>0){ctx.fillStyle='rgba(0,0,0,'+state.sceneFade+')';ctx.fillRect(0,0,W,H);}
 }
 function drawInteriorBase(room,sx,sy){
@@ -5888,7 +5913,7 @@ function drawLightingInterior(){
     ctx.fillStyle='rgba(0,0,0,.48)';
     ctx.fillRect(0,0,W,H);
   }
-  if(monster&&monster.active){
+  if(monster&&monster.active&&!monster.hidden){
     const d=dist(player.x,player.y,monster.x,monster.y);
     if(d<260){
       ctx.fillStyle='rgba(100,0,5,'+(0.025+.035*(.5+.5*Math.sin(state.elapsed*11)))+')';
