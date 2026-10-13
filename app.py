@@ -9,7 +9,7 @@ HTML = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#050907">
-<title>Florida Shadows | State Trooper Horror Files</title>
+<title>Florida Shadows: The Seventh Arrival</title>
 <style>
 :root {
   color-scheme: dark;
@@ -639,9 +639,63 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 #pausePanel,
 #endingPanel,
 #radioPanel,
-#interviewPanel {
-  z-index: 8;
+#interviewPanel,
+#stationIntakePanel {
+  z-index: 9;
 }
+.station-panel { width:min(1040px,97vw); max-height:95vh; overflow:auto; border-color:#5c6959; background:linear-gradient(155deg,#0c120d,#030504 68%); box-shadow:0 0 70px #000, inset 0 0 40px #090e0a; }
+.station-topline { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:9px 11px; margin-bottom:15px; border:1px solid #475445; background:#070b08; color:#a8b79d; font:10px/1.4 monospace; letter-spacing:1.4px; }
+.station-alert { color:#d58d7b; }
+.station-layout { display:grid; grid-template-columns:minmax(220px,.72fr) minmax(320px,1.28fr); gap:13px; align-items:stretch; }
+.station-card { min-width:0; padding:12px; background:#070b08; border:1px solid #374536; }
+.station-feed { display:flex; align-items:center; justify-content:space-between; padding:7px 8px; background:#182219; border-bottom:1px solid #55644f; color:#d9d7b9; font:9px/1.4 monospace; letter-spacing:1px; }
+.station-lamp { width:7px; height:7px; display:inline-block; border-radius:50%; background:#b3443d; box-shadow:0 0 10px #b3443d; margin-right:5px; }
+.station-portrait { position:relative; height:150px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:radial-gradient(ellipse at 50% 36%,#293028 0,#0b100c 53%,#020302 100%); border:1px solid #283428; margin:10px 0; }
+.station-portrait::before { content:""; position:absolute; width:100%; height:1px; top:0; background:#6f8372; opacity:.7; animation:stationScan 4.2s linear infinite; }
+.station-portrait::after { content:"CAM 04 · LOW-LIGHT CAPTURE"; position:absolute; bottom:7px; left:8px; color:#697a67; font:8px monospace; letter-spacing:1px; }
+.station-face { position:relative; width:67px; height:87px; background:#8b8874; border-radius:42% 42% 34% 34%; box-shadow:0 0 17px #c4c09a22; }
+.station-face::before { content:""; position:absolute; left:-8px; top:11px; width:83px; height:30px; background:#181b17; clip-path:polygon(0 0,100% 0,87% 37%,63% 22%,40% 43%,12% 27%); }
+.station-face::after { content:""; position:absolute; left:11px; top:43px; width:45px; height:5px; background:#24231d; box-shadow:0 12px 0 -1px #6e6b5d; }
+.station-portrait.anomaly .station-face { filter:contrast(1.65) brightness(.62); transform:rotate(-2deg) scaleY(1.04); box-shadow:0 0 18px #a824242e; }
+.station-portrait.anomaly .station-face::after { height:2px; background:#1a0304; box-shadow:0 11px 0 1px #1a0304; }
+.station-name { margin:4px 0 2px; color:#efe5c9; font-size:16px; letter-spacing:1px; }
+.station-role { color:#94a18f; font-size:10px; line-height:1.5; margin-bottom:10px; }
+.station-doc { padding:9px; border:1px dashed #66715a; background:#101710; color:#c6cfbc; font:10px/1.7 monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+.station-doc strong { color:#e2cc8b; }
+.station-status { margin-top:8px; padding:8px; border-left:3px solid #917c4d; background:#100f0a; color:#c7b78a; font-size:10px; line-height:1.5; }
+.station-chatlog { display:flex; flex-direction:column; gap:7px; min-height:180px; max-height:34vh; overflow-y:auto; padding:10px; border:1px solid #293528; background:#020403; }
+.station-line { max-width:96%; align-self:flex-start; padding:7px 9px; border-left:2px solid #667d5d; background:#101811; color:#d3d8c8; font-size:11px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+.station-line.officer { align-self:flex-end; border-left:0; border-right:2px solid #b69d61; background:#17150e; color:#e4d9bb; }
+.station-line.system { max-width:100%; border-left:2px solid #9b3735; background:#100708; color:#d99c94; }
+.station-sender { display:block; margin-bottom:3px; font-size:8px; letter-spacing:1px; color:#9eb28f; }
+.station-line.officer .station-sender { color:#d4bc80; }
+.station-compose { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px; margin:7px 0 10px; }
+#stationChatInput { min-width:0; width:100%; background:#080e09; border:1px solid #455440; color:#f3efdb; padding:9px; text-transform:none; letter-spacing:0; font-size:11px; }
+.station-questions { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin:8px 0; }
+.station-questions button { min-height:43px; padding:7px 5px; font-size:9px; line-height:1.45; letter-spacing:.3px; }
+.station-questions button.checked { border-color:#a7bd86; background:#1b2a1a; color:#dcf0c4; }
+.station-decisions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:11px 0; }
+.station-decisions button { min-height:46px; font-weight:bold; }
+.station-decisions [data-station-decision="detain"] { border-color:#98534c; background:linear-gradient(#45201f,#1e0e0e); color:#f0c3b8; }
+.station-feedback { min-height:56px; padding:10px; border:1px solid #3a4636; background:#080d09; color:#c3cbb8; font-size:11px; line-height:1.65; }
+.station-feedback.good { border-color:#68825c; color:#cbe2b9; }
+.station-feedback.bad { border-color:#9a4741; color:#eab3a7; }
+.station-score { color:#e4d5a8; font:10px monospace; letter-spacing:1px; }
+.station-summary { padding:18px; border:1px solid #4b5947; background:#070b08; line-height:1.8; }
+.station-summary h3 { margin-top:0; color:#e7d9b1; }
+@keyframes stationScan { 0% { transform:translateY(0);opacity:0; } 5% { opacity:.7; } 95% { opacity:.55; } 100% { transform:translateY(149px);opacity:0; } }
+.station-topic-questions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:8px 0 11px; }
+.station-topic-questions button { min-height:37px; padding:7px 6px; font-size:9px; line-height:1.35; letter-spacing:.25px; border-color:#514c3b; color:#d2c59a; background:#15140d; }
+.station-topic-questions button.checked { border-color:#8f403b; color:#e5b5aa; background:#210b0c; }
+.station-incident { margin:8px 0 12px; padding:9px 11px; border:1px solid #70403c; background:#100607; color:#d8a39b; font:10px/1.55 monospace; letter-spacing:.6px; }
+.station-incident.hidden { display:none; }
+#stationIntakePanel.breach-mid .station-topline { border-color:#75403a; box-shadow:0 0 19px #9b282522; }
+#stationIntakePanel.breach-mid .station-lamp { animation:stationLamp 1.1s steps(2,end) infinite; }
+#stationIntakePanel.breach-final .station-portrait { background:radial-gradient(ellipse at 50% 36%,#25090b 0,#080202 57%,#000 100%); border-color:#862d33; }
+#stationIntakePanel.breach-final .station-portrait::after { content:'CAM 04 · DOOR EVENT: NONE'; color:#d57b77; }
+#stationIntakePanel.breach-final .station-chatlog { border-color:#683035; box-shadow:inset 0 0 24px #3c00051c; }
+@keyframes stationLamp { 0%,100%{opacity:1} 48%{opacity:.15} 52%{opacity:.8} }
+@media(max-width:720px) { .station-layout { grid-template-columns:1fr; } .station-portrait { height:100px; } .station-chatlog { min-height:115px; max-height:23vh; } .station-questions,.station-topic-questions { grid-template-columns:1fr; } .station-panel { padding:12px; } .station-name { font-size:13px; } }
 .evidence-board {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -664,6 +718,151 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 .interview-choices { display: grid; grid-template-columns: 1fr; gap: 9px; }
 .interview-choices button { text-align: left; text-transform: none; letter-spacing: .25px; line-height: 1.55; }
 .interview-feedback { min-height: 44px; margin-top: 12px; padding: 12px; background: #0a100b; border: 1px solid #394638; color: #c1cbb9; font-size: 12px; line-height: 1.7; }
+
+#interviewPanel {
+  z-index: 70;
+  background: radial-gradient(ellipse at 24% 40%, rgba(27,17,17,.24), #000 58%, #000 100%);
+  backdrop-filter: blur(2px);
+}
+.witness-frame {
+  width: min(1260px, 98vw);
+  max-height: 94vh;
+  display: grid;
+  grid-template-columns: minmax(270px,.86fr) minmax(360px,1.14fr);
+  gap: 0;
+  overflow: auto;
+  border: 1px solid #61564b;
+  background: #030403;
+  box-shadow: 0 0 0 6px #000b, 0 0 100px #050000, inset 0 0 80px #160608;
+  animation: witnessCameraPush 1.5s cubic-bezier(.2,.7,.18,1) both;
+}
+.witness-camera {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 35%, #1c211b 0, #070907 42%, #000 78%);
+  border-right: 1px solid #44382f;
+}
+.witness-camera::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(190,205,184,.045) 4px, transparent 5px 8px), linear-gradient(90deg, rgba(0,0,0,.4), transparent 22% 78%, rgba(0,0,0,.6));
+  mix-blend-mode: screen;
+}
+.witness-camera::after {
+  content: 'CAM 02 // LOCAL FEED // AUDIO DOES NOT MATCH LIP MOVEMENT';
+  position: absolute;
+  z-index: 5;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  color: #b3b8a0;
+  font: 9px/1.6 Consolas,monospace;
+  letter-spacing: 1.2px;
+  padding: 7px 8px;
+  background: #000b;
+  border-left: 2px solid #8d4840;
+}
+.witness-camera-label {
+  position: absolute;
+  z-index: 5;
+  top: 14px;
+  left: 13px;
+  color: #bc514a;
+  font: bold 10px/1.4 Consolas,monospace;
+  letter-spacing: 1.7px;
+  text-shadow: 0 0 12px #8d181b;
+}
+.silas-close-face {
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  width: min(76%, 310px);
+  height: 66%;
+  transform: translateX(-50%) scale(1.04);
+  transform-origin: 50% 38%;
+  background: radial-gradient(ellipse at 46% 29%, #777665 0, #494b40 22%, #252920 45%, #0b0e0a 72%, #000 100%);
+  clip-path: polygon(23% 0,77% 0,95% 18%,91% 49%,83% 75%,67% 100%,34% 100%,16% 75%,7% 48%,6% 19%);
+  filter: contrast(1.25) brightness(.68);
+  animation: silasSlowZoom 7.7s ease-in-out infinite alternate, silasFaceFlicker 11s steps(1,end) infinite;
+}
+.silas-close-face::before {
+  content: '';
+  position: absolute;
+  left: -7%; right: -7%; top: 10%; height: 21%;
+  background: linear-gradient(180deg,#050605,#171a14 60%,#090a08);
+  clip-path: polygon(0 0,100% 0,89% 65%,72% 35%,55% 76%,39% 28%,15% 66%);
+}
+.silas-eye {
+  position: absolute; top: 35%; width: 18%; height: 4%; background: #c9c3a9;
+  box-shadow: 0 0 11px 3px #b6a98b55;
+}
+.silas-eye.left { left: 21%; transform: rotate(5deg); }
+.silas-eye.right { right: 21%; transform: rotate(-5deg); }
+.silas-mouth {
+  position: absolute; left: 32%; top: 59%; width: 37%; height: 10%;
+  background: #030403; border-top: 1px solid #a18f7b; transform: skewY(-3deg);
+}
+.silas-mouth::after {
+  content: ''; position:absolute; left:14%; right:9%; top:1px; height:5px;
+  background: repeating-linear-gradient(90deg,#c4b8a0 0 5px,#1b1d17 5px 8px); opacity:.7;
+}
+.silas-neck {
+  position: absolute; left: 37%; bottom: 1%; width: 27%; height: 25%;
+  background: linear-gradient(90deg,#070807,#282c22 45%,#0b0c0a); z-index:-1;
+}
+.silas-close-face.unsettled { filter: contrast(1.6) brightness(.52) hue-rotate(-16deg); animation: silasSlowZoom 4.2s ease-in-out infinite alternate, silasFaceFlicker 5.5s steps(1,end) infinite; }
+.witness-caption {
+  position: absolute; z-index: 6; left: 16px; right: 16px; bottom: 67px; text-align: center;
+  padding: 11px 12px; color: #ded6c3; background: #020403e8; border: 1px solid #4d4b3a;
+  font: 11px/1.7 Consolas,monospace; min-height: 48px; text-shadow: 0 0 10px #b7a98b33;
+}
+.witness-dialogue { padding: clamp(18px,3vw,34px); min-width: 0; }
+.witness-dialogue .intro { margin-top: 0; }
+@keyframes witnessCameraPush { from { opacity:0; transform:scale(1.13); filter:blur(8px); } to { opacity:1; transform:scale(1); filter:blur(0); } }
+@keyframes silasSlowZoom { from { transform:translateX(-50%) scale(1.02); } to { transform:translateX(-50%) scale(1.17); } }
+@keyframes silasFaceFlicker { 0%,92%,94%,100% { opacity:1; } 93% { opacity:.35; } 95% { opacity:.84; } }
+.station-zoom-button { width:100%; margin:4px 0 10px; border-color:#8e4b44; color:#f0c2b7; background:linear-gradient(#351819,#100809); font-size:10px; }
+#suspectZoomPanel { z-index: 85; background: radial-gradient(ellipse at 50% 42%, rgba(16,7,8,.35), #000 70%, #000); }
+.suspect-zoom-shell {
+  width:min(1260px,98vw); max-height:94vh; overflow:auto; display:grid;
+  grid-template-columns:minmax(290px,.9fr) minmax(350px,1.1fr);
+  background:#020302; border:1px solid #76504b; box-shadow:0 0 0 6px #000c,0 0 100px #310609;
+  animation:witnessCameraPush 1.1s cubic-bezier(.12,.68,.2,1) both;
+}
+.suspect-camera {
+  min-height:570px; position:relative; overflow:hidden; background:radial-gradient(ellipse at 50% 32%,#2b2b25 0,#11130f 33%,#030403 71%,#000 100%); border-right:1px solid #493a35;
+}
+.suspect-camera::before { content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(206,211,196,.055) 4px,transparent 5px 9px),linear-gradient(90deg,rgba(0,0,0,.55),transparent 25% 75%,rgba(0,0,0,.55)); }
+.suspect-camera-label { position:absolute;z-index:5;top:14px;left:14px;color:#d07b6e;font:bold 10px/1.5 Consolas,monospace;letter-spacing:1.6px; }
+.suspect-camera-status { position:absolute;z-index:5;left:13px;right:13px;bottom:13px;padding:8px;background:#000c;color:#c2b6a2;border-left:2px solid #a53e42;font:9px/1.6 Consolas,monospace;letter-spacing:1px; }
+.suspect-zoom-figure { position:absolute;left:50%;top:12%;width:min(88%,350px);height:75%;transform:translateX(-50%);filter:contrast(1.35) brightness(.68);animation:suspectSlowPush 5.4s ease-in-out infinite alternate; }
+.suspect-zoom-figure .zoom-head { position:absolute;left:25%;top:4%;width:50%;height:48%;border-radius:42% 42% 35% 35%;background:radial-gradient(ellipse at 40% 25%,#888573,#4a4d40 45%,#151811 78%,#030403);clip-path:polygon(17% 0,82% 0,100% 28%,89% 74%,64% 100%,35% 100%,11% 72%,0 27%); }
+.suspect-zoom-figure .zoom-hair { position:absolute;left:20%;top:0;width:60%;height:26%;background:#080a08;clip-path:polygon(0 0,100% 0,90% 70%,74% 45%,57% 82%,39% 45%,12% 78%); }
+.suspect-zoom-figure .zoom-eyes { position:absolute;left:33%;top:24%;width:35%;height:4%;background:#d5c7aa;box-shadow:0 0 8px 3px #b42d31; }
+.suspect-zoom-figure .zoom-mouth { position:absolute;left:37%;top:42%;width:27%;height:7%;background:#030302;border-top:1px solid #aa8e79;clip-path:polygon(0 0,100% 0,87% 100%,18% 70%); }
+.suspect-zoom-figure .zoom-body { position:absolute;left:7%;right:7%;top:44%;bottom:0;background:linear-gradient(90deg,#030403,#182018 30%,#070907 54%,#1a1c17 74%,#030403);clip-path:polygon(30% 0,70% 0,90% 18%,100% 100%,0 100%,11% 18%); }
+.suspect-zoom-figure.anomaly { filter:contrast(1.8) brightness(.42) sepia(.25) hue-rotate(-22deg); animation:suspectSlowPush 2.8s ease-in-out infinite alternate,silasFaceFlicker 4.5s steps(1,end) infinite; }
+@keyframes suspectSlowPush { from { transform:translateX(-50%) scale(1.01); } to { transform:translateX(-50%) scale(1.22); } }
+.suspect-dialogue { min-width:0;padding:clamp(18px,3vw,34px); }
+.suspect-dialogue .interview-question { min-height:92px; }
+.suspect-zoom-choices { display:grid;grid-template-columns:1fr;gap:8px;margin:13px 0; }
+.suspect-zoom-choices button { text-align:left;text-transform:none;letter-spacing:.2px;font-size:11px;line-height:1.5; }
+.suspect-zoom-response { min-height:80px;padding:12px;border:1px solid #533b37;background:#080505;color:#d5c8b9;font:11px/1.7 Consolas,monospace; }
+@media(max-width:760px) {
+  .witness-frame,.suspect-zoom-shell { grid-template-columns:1fr; }
+  .witness-camera,.suspect-camera { min-height:260px;height:30vh; }
+  .silas-close-face { top:4%;height:85%;width:min(46%,220px); }
+  .suspect-zoom-figure { top:3%;height:92%;width:min(48%,230px); }
+  .witness-caption { bottom:49px;font-size:9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .witness-frame,.silas-close-face,.suspect-zoom-shell,.suspect-zoom-figure { animation:none; }
+}
+
 .task-row {
   display: flex;
   gap: 10px;
@@ -1071,7 +1270,7 @@ body.game-active.mobile-mode #minimap {
         <div class="kicker">A pixelated detective horror</div>
         <h1 class="logo">FLORIDA<br><span>SHADOWS</span></h1>
         <div class="subtitle">STATE TROOPER HORROR FILES</div>
-        <p class="intro">A midnight call. A forgotten road. A missing deputy. Something deep in the marsh is copying the voices on your radio.</p>
+        <p class="intro">A missing deputy. A sealed police station. Six visitors on camera and seven sets of footsteps. Something in the marsh has learned the shape of your voice.</p>
         <div class="menu-actions">
           <button id="start">▶ Begin patrol</button>
           <button id="characterBtn">Choose character</button>
@@ -1080,7 +1279,7 @@ body.game-active.mobile-mode #minimap {
           <button id="creditsBtn">Credits</button>
           <button id="disclaimerBtn">Horror & privacy disclaimer</button>
         </div>
-        <div class="pc-hint">VERSION 2.0 · SCREAM JAM 2026 · HEADPHONES RECOMMENDED</div>
+        <div class="pc-hint">THE SEVENTH ARRIVAL · SCREAM JAM 2026 · HEADPHONES RECOMMENDED</div>
       </div>
       <div class="menu-art">
         <canvas id="artCanvas" width="320" height="390"></canvas>
@@ -1124,13 +1323,14 @@ body.game-active.mobile-mode #minimap {
       <div class="rule"><b>02 / FOLLOW THE FOOTPATH</b>Move on foot with WASD or arrow keys. Use the flashlight to reveal only the ground directly ahead.</div>
       <div class="rule"><b>03 / YOU ARE ALONE</b>Follow the trail toward the first clues. Your partner is on the radio, but something else has learned their voice.</div>
       <div class="rule"><b>04 / INVESTIGATE</b>Recover at least six physical clues, study six clues with J, and make four distinct cross-reference reports. Interview Silas Venn before extraction can open.</div>
+      <div class="rule"><b>04B / SCREEN VISITORS</b>Inside the County Police Station, inspect six visitor IDs, question each one, cross-check the official roster, and make at least five correct admit/detain decisions. Review flagged files after studying four clues.</div>
       <div class="rule"><b>05 / RESCUE</b>Find both missing people. They follow after you help them, and their footsteps attract attention.</div>
       <div class="rule"><b>06 / STAY ALIVE</b>The Smiler learns your route. Sprinting, gunshots, opening doors, and studying evidence can draw its attention.</div>
       <div class="rule"><b>07 / FIGHT SMART</b>Shots only interrupt the Smiler. Ammunition and batteries are limited; smaller marsh crawlers can be killed.</div>
       <div class="rule"><b>08 / SEARCH BUILDINGS</b>Press E at doors. Search five different buildings, and check rooms again: items may vanish when you look away.</div>
       <div class="rule"><b>09 / ESCAPE</b>Rescue both survivors, recover and study six clues, generate four distinct cross-reference reports, defend the theory, recover the relay override key, search five different buildings, save Silas Venn’s statement, then survive the 30-second extraction defense.</div>
     </div>
-    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Review reports of items that disappear from the scene. Interview Silas Venn in Cypress Farmhouse with care: his testimony changes depending on the questions and the evidence you have studied. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a saved witness statement, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
+    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Inside the County Police Station, chat with six visitors, inspect their ID cards, compare their explanations with the roster, and decide who should be admitted or detained. At least five decisions must be correct; flagged files can be re-audited after studying four clues. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a corroborated witness statement, a completed intake audit, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1175,14 +1375,98 @@ body.game-active.mobile-mode #minimap {
   </div>
 </div>
 <div id="interviewPanel" class="overlay hidden">
-  <div class="panel">
-    <div class="kicker">Recorded statement · Cypress Farmhouse</div>
-    <h2 class="section-title">Interview: Silas Venn</h2>
-    <p class="intro">The witness keeps watching the dark hallway instead of looking at you. Your approach changes what he is willing to tell you.</p>
-    <div id="interviewQuestion" class="interview-question"></div>
-    <div id="interviewChoices" class="interview-choices"></div>
-    <div id="interviewFeedback" class="interview-feedback">Record his answers carefully. Contradictions can be useful.</div>
-    <div class="page-buttons"><button id="interviewContinue" class="hidden">Continue interview</button><button id="endInterview" class="hidden">Save statement</button><button id="leaveInterview">End interview</button></div>
+  <div class="witness-frame">
+    <section class="witness-camera">
+      <div class="witness-camera-label">LIVE CLOSE-UP / ROOM 02<br>DO NOT LOOK AT THE GLASS</div>
+      <div id="silasCloseFace" class="silas-close-face"><div class="silas-neck"></div><i class="silas-eye left"></i><i class="silas-eye right"></i><i class="silas-mouth"></i></div>
+      <div id="silasZoomCaption" class="witness-caption">Silas is listening to something in the wall behind you.</div>
+    </section>
+    <section class="witness-dialogue">
+      <div class="kicker">Recorded statement · Cypress Farmhouse</div>
+      <h2 class="section-title">ONE-ON-ONE / SILAS VENN</h2>
+      <p class="intro">The camera keeps pushing closer even though the chair has not moved. Ask carefully. Every answer changes the reliability of the statement.</p>
+      <div id="interviewQuestion" class="interview-question"></div>
+      <div id="interviewChoices" class="interview-choices"></div>
+      <div id="interviewFeedback" class="interview-feedback">Record his answers carefully. Contradictions can be useful.</div>
+      <div class="page-buttons"><button id="interviewContinue" class="hidden">Continue interview</button><button id="endInterview" class="hidden">Save statement</button><button id="leaveInterview">End interview</button></div>
+    </section>
+  </div>
+</div>
+<div id="stationIntakePanel" class="overlay hidden" aria-label="County police station intake">
+  <div class="panel station-panel">
+    <div class="kicker">County police station · visitor verification</div>
+    <h2 class="section-title">Night Intake / Identity Control</h2>
+    <p class="intro">Six visitors arrived after the station's external cameras went dark. Examine every credential, question each visitor, cross-check the roster, then decide whether to admit or detain them. A wrong decision changes what follows you outside.</p>
+    <div class="station-topline"><span><span class="station-lamp"></span>CAMERA NETWORK 04 / AUDIO LIVE</span><span id="stationProgress" class="station-score">VISITOR 1 / 6</span><span id="stationThreat" class="station-alert">THREAT: CONTAINED</span></div>
+    <div id="stationIncidentBanner" class="station-incident hidden" role="status"></div>
+    <div id="stationSummary" class="station-summary hidden"></div>
+    <div id="stationCaseView" class="station-layout">
+      <section class="station-card">
+        <div class="station-feed"><span id="stationFeedTitle">INTAKE WINDOW B</span><span id="stationFeedStatus">REC ●</span></div>
+        <div id="stationPortrait" class="station-portrait"><div class="station-face"></div></div>
+        <h3 id="stationSuspectName" class="station-name">VISITOR</h3>
+        <div id="stationSuspectRole" class="station-role">ID CHECK REQUIRED</div>
+        <button id="stationZoomInterview" type="button" class="station-zoom-button">ONE-ON-ONE / CAMERA CLOSE-UP</button>
+        <div id="stationIdCard" class="station-doc"><strong>DOCUMENT SCAN</strong>
+ID number: UNKNOWN
+Photo match: UNCONFIRMED
+Authorization: NOT CHECKED</div>
+        <div id="stationRegistryCard" class="station-doc" style="margin-top:8px"><strong>ROSTER RESPONSE</strong>
+Awaiting database query.</div>
+        <div id="stationSuspectStatus" class="station-status">No decision recorded. Ask all three questions before admitting or detaining a visitor.</div>
+      </section>
+      <section class="station-card">
+        <div class="station-feed"><span>INTERVIEW CHANNEL / GLASS 1-WAY</span><span>DO NOT TURN AROUND</span></div>
+        <div id="stationChatLog" class="station-chatlog" aria-live="polite"></div>
+        <form id="stationComposer" class="station-compose" autocomplete="off">
+          <input id="stationChatInput" maxlength="180" placeholder="Ask the visitor a question…" aria-label="Chat with the suspect" autocomplete="off" spellcheck="false">
+          <button type="submit">SEND</button>
+        </form>
+        <div class="station-questions">
+          <button type="button" data-station-ask="identity">INSPECT ID / PHOTO</button>
+          <button type="button" data-station-ask="purpose">ASK PURPOSE / ALIBI</button>
+          <button type="button" data-station-ask="records">CROSS-CHECK ROSTER</button>
+        </div>
+        <div class="station-topic-questions">
+          <button type="button" data-station-topic="camera">ASK ABOUT CAMERA 04</button>
+          <button type="button" data-station-topic="extra">ASK ABOUT THE EXTRA ARRIVAL</button>
+          <button type="button" data-station-topic="silas">ASK ABOUT SILAS / THE HOUSE</button>
+          <button type="button" data-station-topic="door">ASK HOW THEY ENTERED</button>
+        </div>
+        <div id="stationFeedback" class="station-feedback">The cameras show the visitor entering, but none show the door opening.</div>
+        <div id="stationDecisionButtons" class="station-decisions">
+          <button type="button" data-station-decision="admit">ADMIT VISITOR</button>
+          <button type="button" data-station-decision="detain">DETAIN FOR REVIEW</button>
+        </div>
+        <div class="page-buttons"><button type="button" id="stationNextVisitor" class="hidden">Record decision · Next visitor</button><button type="button" id="stationReviewFiles" class="hidden">Review flagged files</button><button type="button" id="stationClose">Leave intake desk</button></div>
+      </section>
+    </div>
+  </div>
+</div>
+<div id="suspectZoomPanel" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="suspectZoomName">
+  <div class="suspect-zoom-shell">
+    <section class="suspect-camera">
+      <div class="suspect-camera-label">CAM 04 AUTO-ZOOM / FRAME HOLD<br>DO NOT TRUST THE FEED</div>
+      <div id="suspectZoomFigure" class="suspect-zoom-figure"><div class="zoom-body"></div><div class="zoom-head"></div><div class="zoom-hair"></div><div class="zoom-eyes"></div><div class="zoom-mouth"></div></div>
+      <div id="suspectZoomCameraStatus" class="suspect-camera-status">AUDIO OPEN · VIDEO TIMESTAMP UNSTABLE</div>
+    </section>
+    <section class="suspect-dialogue">
+      <div class="kicker">Private interview · County Police Station</div>
+      <h2 id="suspectZoomName" class="section-title">ONE-ON-ONE INTERVIEW</h2>
+      <div id="suspectZoomRole" class="intro">The visitor waits for your question.</div>
+      <div id="suspectZoomLine" class="interview-question">Look at the visitor, not the reflection behind them.</div>
+      <div class="kicker">CHOOSE YOUR NEXT QUESTION</div>
+      <div id="suspectZoomChoices" class="suspect-zoom-choices">
+        <button type="button" data-suspect-choice="identity">Why does your photograph look different?</button>
+        <button type="button" data-suspect-choice="purpose">Where were you at 02:17?</button>
+        <button type="button" data-suspect-choice="records">I'll read the roster to you.</button>
+        <button type="button" data-suspect-choice="camera">What did Camera 04 record?</button>
+        <button type="button" data-suspect-choice="extra">Who was the extra arrival?</button>
+        <button type="button" data-suspect-choice="silas">What do you know about Silas?</button>
+      </div>
+      <div id="suspectZoomResponse" class="suspect-zoom-response" aria-live="polite">The microphone is live. Their first answer will be added to the station record.</div>
+      <div class="page-buttons"><button id="closeSuspectZoom" type="button">RETURN TO INTAKE DESK</button></div>
+    </section>
   </div>
 </div>
 <div id="inventoryPanel" class="overlay hidden">
@@ -1305,7 +1589,7 @@ const state={
   apparitionY:0,
   horrorEventFlags:{},
   storyScareQueue:[],
-  indoorPresence:{timer:0,cooldown:7,x:0,y:0,phase:0},
+  indoorPresence:{timer:0,cooldown:7,x:0,y:0,phase:0,arming:0,appearances:0},
   deathFade:0,
   victoryFade:0,
   discovered:0,
@@ -1313,6 +1597,22 @@ const state={
   keysFound:false,
   witnessInterviewed:false,
   witnessTrust:0,
+  stationStage:'idle',
+  stationQueue:[],
+  stationQueuePosition:0,
+  stationRetryMode:false,
+  stationDecisions:{},
+  stationChecks:{},
+  stationChats:{},
+  stationTopics:{},
+  stationManifestEvents:{},
+  stationFeedback:'',
+  stationComplete:false,
+  stationThreat:0,
+  stationCorrect:0,
+  stationProcessed:0,
+  stationIncidentLogged:false,
+  stationAuditTrail:[],
   extractionStarted:false,
   extractionHold:0,
   extractionWave1:false,
@@ -1357,6 +1657,10 @@ let treeGrid=new Map();
 let roadDetails=[];
 let groundCanvas=null;
 let interiorBaseCache={room:null,canvas:null};
+let indoorEchoHistory=[];
+let indoorEcho={active:false,timer:0,cooldown:13,x:0,y:0,angle:0,phase:0,roomId:'',roomAge:0};
+let indoorEchoSampleTimer=0;
+let indoorEchoRoomId='';
 let lastMiniDraw=-999;
 let lastMiniFloor=null;
 let lastMiniRoom=null;
@@ -1433,9 +1737,11 @@ function setScreen(name){
     pause:'pausePanel',
     ending:'endingPanel',
     radio:'radioPanel',
-    interview:'interviewPanel'
+    interview:'interviewPanel',
+    stationIntake:'stationIntakePanel'
   };
   for(const id of Object.values(mapping))$(id).classList.add('hidden');
+  const suspectZoom=$('suspectZoomPanel');if(suspectZoom)suspectZoom.classList.add('hidden');
   if(mapping[name])$(mapping[name]).classList.remove('hidden');
   if(name==='menu'||name==='character'||name==='controls'||name==='how'||name==='credits'){
     state.running=false;
@@ -1840,7 +2146,7 @@ function makeObjects(){
     {id:'prints',x:1425,y:970,type:'evidence',name:'Oversized footprints',detail:'The prints lead into the black water. None lead back.',found:false,icon:'⌁'},
     {id:'badge',x:1990,y:1450,type:'evidence',name:'Deputy Harlow’s badge',detail:'The metal is warm. Someone recently held it.',found:false,icon:'★'},
     {id:'shack',x:375,y:390,type:'building',name:'Checkpoint shack',detail:'A roadside patrol hut with a jammed window.',room:'checkpoint',w:145,h:112},
-    {id:'station',x:930,y:735,type:'building',name:'Ranger station',detail:'A ranger station with a working generator.',room:'station',w:170,h:132},
+    {id:'station',x:930,y:735,type:'building',name:'County Police Station',detail:'The night intake desk is still processing visitors although the station was evacuated.',room:'station',w:170,h:132},
     {id:'gas',x:1480,y:470,type:'building',name:'Swamp gas stop',detail:'A shut-down gas stop with an office in back.',room:'gas',w:164,h:120},
     {id:'cabin',x:1690,y:1300,type:'building',name:'Leaning cabin',detail:'A cabin with fresh light underneath the door.',room:'cabin',w:170,h:132},
     {id:'tower',x:2390,y:1740,type:'building',name:'Radio relay hut',detail:'The emergency relay is still receiving something.',room:'tower',w:178,h:136,style:'relay'},
@@ -1865,7 +2171,7 @@ function makeObjects(){
 function makeRoom(name){
   const rooms={
     checkpoint:{title:'CHECKPOINT SHACK',w:700,h:480,spawn:{x:350,y:392},exit:{x:350,y:435},color:'#453f30',props:[{x:205,y:150,w:110,h:52,t:'desk'},{x:500,y:150,w:80,h:75,t:'cabinet'},{x:440,y:310,w:120,h:40,t:'bed'}],items:[{x:220,y:175,type:'note',name:'Incident memo',detail:'“Do not answer a voice if it uses your badge number.”',found:false},{x:505,y:270,type:'loot',name:'Small ammo stash',loot:'ammo',found:false}]},
-    station:{title:'RANGER STATION',w:820,h:570,spawn:{x:410,y:474},exit:{x:410,y:526},color:'#3b4032',props:[{x:150,y:140,w:150,h:56,t:'desk'},{x:400,y:130,w:90,h:80,t:'shelves'},{x:660,y:160,w:70,h:140,t:'cabinet'},{x:220,y:350,w:145,h:55,t:'table'},{x:570,y:390,w:110,h:45,t:'bed'}],items:[{x:160,y:170,type:'note',name:'Missing person report',detail:'Three hikers disappeared near the drainage ditch.',found:false},{x:660,y:300,type:'loot',name:'Medical supplies',loot:'medkit',found:false},{x:416,y:180,type:'note',name:'Generator log',detail:'The generator starts when the relay is powered.',found:false}]},
+    station:{title:'COUNTY POLICE STATION — INTAKE',w:1000,h:700,spawn:{x:500,y:610},exit:{x:500,y:666},color:'#20251f',props:[{x:250,y:185,w:240,h:64,t:'desk'},{x:550,y:180,w:100,h:74,t:'console'},{x:780,y:170,w:88,h:126,t:'cabinet'},{x:180,y:365,w:150,h:46,t:'table'},{x:475,y:390,w:190,h:48,t:'table'},{x:810,y:420,w:110,h:55,t:'shelves'},{x:690,y:560,w:155,h:40,t:'bed'}],items:[{id:'station-intake-terminal',x:250,y:232,type:'intakeDesk',name:'Visitor screening terminal',detail:'Inspect credentials, ask questions, cross-check the roster, and record a decision.',found:false},{id:'station-report',x:550,y:220,type:'note',name:'After-hours intake memo',detail:'“Six visitors are expected. The exterior camera log records seven arrivals. Do not accept a badge merely because it bears the correct seal.”',found:false},{id:'station-medkit',x:780,y:320,type:'loot',name:'Evidence-room medical supplies',loot:'medkit',found:false},{id:'station-tape',x:475,y:420,type:'note',name:'Intercom maintenance tape',detail:'The microphone records the intake clerk whispering when the booth is empty. The file timestamp is tomorrow.',found:false}]},
     gas:{title:'SWAMP GAS STOP',w:760,h:500,spawn:{x:380,y:412},exit:{x:380,y:458},color:'#3d3b2d',props:[{x:145,y:130,w:100,h:150,t:'shelves'},{x:300,y:130,w:100,h:150,t:'shelves'},{x:560,y:120,w:130,h:70,t:'desk'},{x:520,y:320,w:115,h:45,t:'table'}],items:[{x:560,y:155,type:'note',name:'Receipt with a warning',detail:'“Do not follow the headlights past mile marker 9.”',found:false},{x:320,y:310,type:'loot',name:'Battery pack',loot:'battery',found:false}]},
     cabin:{title:'LEANING CABIN',w:760,h:520,spawn:{x:380,y:432},exit:{x:380,y:478},color:'#41372d',props:[{x:180,y:140,w:120,h:75,t:'bed'},{x:540,y:145,w:100,h:100,t:'cabinet'},{x:350,y:160,w:100,h:50,t:'desk'},{x:530,y:330,w:130,h:46,t:'table'}],items:[{x:350,y:190,type:'note',name:'Handwritten warning',detail:'It stands perfectly still until you use the flashlight.',found:false},{x:550,y:270,type:'loot',name:'Dead flashlight cell',loot:'battery',found:false}]},
     tower:{title:'RADIO RELAY HUT',w:800,h:560,spawn:{x:400,y:472},exit:{x:400,y:520},color:'#30392f',props:[{x:170,y:130,w:110,h:70,t:'desk'},{x:400,y:140,w:200,h:100,t:'console'},{x:650,y:170,w:75,h:120,t:'cabinet'},{x:380,y:340,w:180,h:50,t:'table'}],items:[{x:400,y:190,type:'note',name:'Final dispatch tape',detail:'The voice on the recording says your next line before you speak it.',found:false},{x:650,y:300,type:'loot',name:'Emergency medical pack',loot:'medkit',found:false},{x:250,y:400,type:'loot',name:'Relay override key',loot:'keys',found:false}]}
@@ -1906,6 +2212,7 @@ function makeRoom(name){
   rooms.farmhouse.props=[{x:190,y:155,w:120,h:75,t:'bed'},{x:420,y:150,w:120,h:55,t:'desk'},{x:690,y:160,w:95,h:115,t:'cabinet'},{x:230,y:370,w:150,h:50,t:'table'},{x:670,y:380,w:120,h:50,t:'bed'}];
   rooms.farmhouse.items=[{id:'farmhouse-medkit',x:420,y:180,type:'loot',name:'Farmhouse emergency kit',loot:'medkit',found:false},{id:'farmhouse-ammo',x:690,y:300,type:'loot',name:'Farmhouse spare ammo',loot:'ammo',found:false},{id:'silas-venn',x:500,y:300,type:'witness',name:'Silas Venn — witness',found:state.witnessInterviewed}];
   const result=structuredClone(rooms[name]||rooms.checkpoint);
+  result.id=name;
   for(const item of result.items){
     if(!item.id)item.id=name+'-'+String(item.name||'item').toLowerCase().replace(/[^a-z0-9]+/g,'-');
     const savedState=state.roomItemStates&&state.roomItemStates[item.id];
@@ -1913,6 +2220,7 @@ function makeRoom(name){
     else if(state.missingIds.includes(item.id))item.missing=true;
   }
   if(name==='farmhouse')for(const item of result.items)if(item.type==='witness')item.found=state.witnessInterviewed&&state.witnessTrust>=2;
+  if(name==='station')for(const item of result.items)if(item.type==='intakeDesk')item.found=false;
   return result;
 }
 function resetGame(){
@@ -1926,6 +2234,22 @@ function resetGame(){
   caseRecords=[];
   state.witnessInterviewed=false;
   state.witnessTrust=0;
+  state.stationStage='idle';
+  state.stationQueue=[];
+  state.stationQueuePosition=0;
+  state.stationRetryMode=false;
+  state.stationDecisions={};
+  state.stationChecks={};
+  state.stationChats={};
+  state.stationTopics={};
+  state.stationManifestEvents={};
+  state.stationFeedback='';
+  state.stationComplete=false;
+  state.stationThreat=0;
+  state.stationCorrect=0;
+  state.stationProcessed=0;
+  state.stationIncidentLogged=false;
+  state.stationAuditTrail=[];
   state.extractionStarted=false;
   state.extractionHold=0;
   state.extractionWave1=false;
@@ -1957,7 +2281,7 @@ function resetGame(){
   for(let i=0;i<5;i++){
     crawlers.push({x:760+i*410,y:420+(i%3)*450,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false,hiddenUntil:14});
   }
-  monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0};
+  monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0,hidden:false,vanishTimer:0,vanishCooldown:6+Math.random()*5,pendingX:0,pendingY:0,reappearGlow:0,blinkCount:0};
   makeObjects();
   state.elapsed=0;
   state.missionClock=137;
@@ -1976,7 +2300,8 @@ function resetGame(){
   state.apparitionY=0;
   state.horrorEventFlags={};
   state.storyScareQueue=[];
-  state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0};
+  state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0,arming:0,appearances:0};
+  indoorEchoHistory=[];indoorEcho={active:false,timer:0,cooldown:11+Math.random()*5,x:0,y:0,angle:0,phase:Math.random()*9,roomId:'',roomAge:0};indoorEchoSampleTimer=0;indoorEchoRoomId='';
   state.deathFade=0;
   state.victoryFade=0;
   state.discovered=0;
@@ -2018,7 +2343,7 @@ function resetGame(){
   state.threatTier=0;
   state.flashlightFlickerTimer=0;
   state.storyScareQueue=[];
-  state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0};
+  state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0,arming:0,appearances:0};
   $('personalScare').classList.remove('active','variant-personnel','variant-contact','variant-duplicate','variant-address');
   $('personalScare').setAttribute('aria-hidden','true');
   state.gameOver=false;
@@ -2147,7 +2472,7 @@ function partnerReplyFor(message){
   if(/\b(where|location|position|map)\b/.test(text))return 'Your signal is moving even when the map says you’re standing still. Follow the evidence markers and don’t trust the minimap blindly.';
   if(/\b(backup|police|dispatch|unit)\b/.test(text))return 'Dispatch says you are still the only unit assigned to this call. I’m checking the roster again. Please don’t answer any other voice using our call signs.';
   if(/\b(smiler|monster|creature|thing|figure|someone|person)\b/.test(text))return 'Don’t approach it. Keep distance and use the light only when you need to. If it stops moving, that does not mean it is gone.';
-  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'No one is coming to collect you. Follow the footpath, stay near the flashlight beam, and watch for a shape that copies your movement.';
+  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'There are no vehicles on this assignment. Follow the footpath, stay near the flashlight beam, and watch for a shape that copies your movement.';
   if(/\b(evidence|clue|file|case)\b/.test(text))return 'Copy. Log everything you find, but don’t read the personnel details over the radio. The file system has been showing records that do not exist.';
   if(/\b(hello|hey|hi|you there|copy)\b/.test(text))return 'I’m here. Radio is clear on my end, although I keep hearing your microphone open when you are not speaking.';
   if(/\b(trust|fake|real|you)\b/.test(text))return 'Listen carefully: I will never ask you for your real name, address, or personal details. If a message asks for that, it is not me.';
@@ -2829,7 +3154,7 @@ function nearestInteriorObject(){
   let nearest=null;
   let best=88;
   for(const item of state.room.items){
-    if(item.found||item.missing)continue;
+    if((item.found&&item.type!=='intakeDesk')||item.missing)continue;
     const d=dist(player.x,player.y,item.x,item.y);
     if(d<best){best=d;nearest=item;}
   }
@@ -2869,6 +3194,10 @@ function interact(){
   }
   if(target.type==='witness'){
     beginWitnessInterview(target);
+    return;
+  }
+  if(target.type==='intakeDesk'){
+    openStationIntake();
     return;
   }
   if(target.type==='building'){
@@ -2929,7 +3258,8 @@ function enterBuilding(target){
   state.lastBuildingExit={x:target.x,y:target.y+target.h/2+16};
   state.floor='inside';
   state.room=makeRoom(target.room);
-  state.indoorPresence={timer:0,cooldown:6+Math.random()*4,x:clamp(player.x+choose([-1,1])*Math.min(280,state.room.w*.34),80,state.room.w-80),y:clamp(player.y-180,80,state.room.h-80),phase:Math.random()*9};
+  state.indoorPresence={timer:0,cooldown:6+Math.random()*4,x:clamp(player.x+choose([-1,1])*Math.min(280,state.room.w*.34),80,state.room.w-80),y:clamp(player.y-180,80,state.room.h-80),phase:Math.random()*9,arming:0,appearances:0};
+  indoorEchoHistory=[];indoorEcho={active:false,timer:0,cooldown:8+Math.random()*5,x:0,y:0,angle:0,phase:Math.random()*9,roomId:target.room,roomAge:0};indoorEchoSampleTimer=.2;indoorEchoRoomId=target.room;
   if(target.room==='farmhouse'){state.indoorPresence.timer=1.2;state.indoorPresence.cooldown=8;state.intensity=1;state.screenShake=Math.max(state.screenShake,.28);voiceNoise(choose(['left','right']),.19);toast('THE UPSTAIRS FLOOR CREAKS. YOU ARE STILL ON THE GROUND FLOOR.',3.2);}
   player.x=state.room.spawn.x;
   player.y=state.room.spawn.y;
@@ -2965,7 +3295,7 @@ function leaveBuilding(){
     state.lastBuildingExit=null;
   }else{
     if(exitName==='CHECKPOINT SHACK'){player.x=375;player.y=470;}
-    if(exitName==='RANGER STATION'){player.x=930;player.y=815;}
+    if(exitName==='COUNTY POLICE STATION — INTAKE'||exitName==='COUNTY POLICE STATION'){player.x=930;player.y=815;}
     if(exitName==='SWAMP GAS STOP'){player.x=1480;player.y=545;}
     if(exitName==='LEANING CABIN'){player.x=1690;player.y=1380;}
     if(exitName==='RADIO RELAY HUT'){player.x=2390;player.y=1820;}
@@ -2993,6 +3323,10 @@ function activateMonster(){
   monster.x=clamp(monster.x,100,WORLD.w-100);
   monster.y=clamp(monster.y,100,WORLD.h-100);
   monster.spotted=false;
+  monster.hidden=false;
+  monster.vanishTimer=0;
+  monster.vanishCooldown=6+Math.random()*5;
+  monster.reappearGlow=0;
   sound('scare');
   toast('THE RADIO CUTS OUT. SOMETHING IS MOVING THROUGH THE TREES.',3.3);
   state.screenShake=.4;
@@ -3096,7 +3430,7 @@ function validCrossReferenceCount(){
   return state.caseComparisons.filter(report=>!String(report.id).startsWith('review-')&&!String(report.id).startsWith('general-')).length;
 }
 function investigationReady(){
-  return collectedClueCount()>=6&&studyCount()>=6&&validCrossReferenceCount()>=4&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed&&state.witnessTrust>=2;
+  return collectedClueCount()>=6&&studyCount()>=6&&validCrossReferenceCount()>=4&&state.caseTheory==='mimic-timeline'&&state.witnessInterviewed&&state.witnessTrust>=2&&state.stationComplete;
 }
 function currentTasks(){
   const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
@@ -3108,6 +3442,7 @@ function currentTasks(){
     {done:validCrossReferenceCount()>=4,text:'ANALYSIS: Produce four distinct cross-reference reports ('+validCrossReferenceCount()+'/4).'},
     {done:state.caseTheory==='mimic-timeline',text:'CASE THEORY: Explain the radio and timeline contradiction correctly.'},
     {done:state.witnessInterviewed&&state.witnessTrust>=2,text:state.witnessInterviewed&&state.witnessTrust<2?'WITNESS: Statement unreliable. Study six clues and interview Silas again.':'WITNESS: Obtain a corroborated statement from Silas Venn.'},
+    {done:state.stationComplete,text:'POLICE STATION: Screen six visitors and correctly identify at least five. Current verified decisions: '+stationScore()+'/6.'},
     {done:rescued>=2,text:'RESCUE: Find both missing people ('+rescued+'/2).'},
     {done:state.won,text:'EXTRACTION: Leave with the survivors and a defensible case.'},
     {done:state.keysFound,text:'SUPPLY: Recover the relay override key inside the Radio Relay Hut.'},
@@ -3280,7 +3615,7 @@ function updateSurvivorLocator(){
   }
   if(rescued>=2&&!investigationReady()){
     main.textContent='SURVIVORS SECURED · CASE INCOMPLETE';
-    sub.textContent='Recover and study six clues, produce four distinct cross-reference reports, recover the relay override key, search five buildings, save Silas Venn’s statement, then survive the extraction defense.';
+    sub.textContent='Recover and study six clues, produce four distinct cross-reference reports, screen six visitors at the County Police Station (five correct), recover the relay key, search five buildings, save Silas’s statement, and survive extraction.';
     return;
   }
   if(rescued>=2&&(!state.keysFound||state.exploredRoomIds.length<5)){
@@ -3325,6 +3660,7 @@ function updateHUD(){
   else if(state.caseTheory!=='mimic-timeline'){$('objective').textContent='CASE THEORY: Submit a supported explanation in your case file [J].';}
   else if(!state.witnessInterviewed){$('objective').textContent='WITNESS: Interview Silas Venn inside Cypress Farmhouse.';}
   else if(state.witnessTrust<2){$('objective').textContent='WITNESS: Silas’s statement is unreliable. Study six clues, return to him, and earn a corroborated statement.';}
+  else if(!state.stationComplete){$('objective').textContent='INTAKE: Screen six visitors inside the County Police Station. Verify IDs and the duty roster.';}
   else if(!state.keysFound){$('objective').textContent='SUPPLY: Recover the relay override key inside the Radio Relay Hut.';}
   else if(state.exploredRoomIds.length<5){$('objective').textContent='EXPLORATION: Search five different buildings ['+state.exploredRoomIds.length+'/5].';}
   else if(completeSurvivors<2){$('objective').textContent='RESCUE: Find the missing people '+completeSurvivors+'/2. Follow green markers.';}
@@ -3451,8 +3787,8 @@ function finishGame(success){
   state.screen='ending';
   $('hud').style.display='none';
   document.body.classList.remove('game-active');
-  $('endingTitle').textContent=success?'CASE FILE: SURVIVORS RECOVERED':'OFFICER LOST IN THE MARSH';
-  $('endingText').textContent=success?'You got the survivors out and brought back the evidence. Dispatch never explains the extra voice on the recording. On the final playback, it sounds exactly like you—and it is already answering the rescue team.':'Your radio keeps transmitting after your pulse stops. The rescue team finds the flashlight still on. Your footprints end inside a locked room.';
+  $('endingTitle').textContent=success?'INCIDENT CLOSED // SIGNAL STILL ACTIVE':'OFFICER LOST IN THE MARSH';
+  $('endingText').textContent=success?'You got both survivors out. During debrief, dispatch confirms that three people reached the perimeter. Your bodycam recorded four. The station has been sealed for eleven years, but Camera 04 logged you behind the intake glass at 02:17 tomorrow. Your partner sends one final message: “I am still outside. Who did we bring home?” The message is timestamped six minutes before you began the patrol.':'Your radio keeps transmitting after your pulse stops. The rescue team finds the flashlight still on. Your footprints end inside a locked room. On the recovered tape, someone inside the room asks the team to let you out. They are using your voice, but the last word is spoken before the question begins.';
   $('endingStats').innerHTML='TIME IN FIELD: '+Math.floor(state.elapsed/60)+' MINUTES<br>EVIDENCE RECOVERED: '+collectedClueCount()+'<br>CLUES STUDIED: '+studyCount()+'<br>CROSS-REFERENCES: '+validCrossReferenceCount()+'<br>RELAY KEY: '+(state.keysFound?'RECOVERED':'MISSING')+'<br>WITNESS STATEMENT: '+(state.witnessInterviewed?(state.witnessTrust>=2?'CORROBORATED':'UNRELIABLE'):'MISSING')+'<br>SURVIVORS EXTRACTED: '+survivors.filter(s=>s.delivered).length+'/2<br>CRAWLERS NEUTRALIZED: '+state.kills+'<br>SHOTS FIRED: '+state.shots+'<br>BUILDINGS SEARCHED: '+state.exploredRoomIds.length+'<br>EXTRACTION HOLD: '+Math.floor(state.extractionHold)+'/30 SECONDS';
   setScreen('ending');
   if(success)tone(460,.4,'sine',.1,180);else sound('scare');
@@ -3467,7 +3803,7 @@ function closeOverlay(){
   state.paused=false;
   state.running=true;
   state.screen='game';
-  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel','interviewPanel'])$(id).classList.add('hidden');
+  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel','interviewPanel','stationIntakePanel','suspectZoomPanel'])$(id).classList.add('hidden');
   $('hud').style.display='block';
   document.body.classList.add('game-active');
   state.lastFrame=performance.now();
@@ -3483,6 +3819,369 @@ function openObjectives(){
   if(!state.running)return;
   updateObjectives();
   enterScreen('objectives');
+}
+const stationSuspects=[
+  {name:'Aaron Pike',role:'County Deputy · Unit 06',badge:'FSP-0614',truth:'admit',intro:'The visitor holds out both hands before you ask. “I am Deputy Aaron Pike. North culvert assignment. I heard the dispatch call twice.” His uniform is soaked, but the floor under him stays dry.',identity:'The county seal, photograph, fingerprint prompt, and serial FSP-0614 match the personnel card. The hologram moves normally under the lamp.',purpose:'“Unit 06 was sent to the north culvert at 21:40. I called in from the shoulder. Someone answered in my own voice, half a second before I keyed the mic.”',records:'The duty roster confirms Aaron Pike, Unit 06, checked out at 21:40. The serial is valid. His unit has been marked MISSING since 02:17, but his identity is genuine.',openReply:'He glances at the observation window. “If there is somebody behind you, do not ask them to show their badge.”'},
+  {name:'Lena Ward',role:'Claims County Deputy · Unit 06',badge:'FSP-0614',truth:'detain',intro:'A woman in a patrol jacket sits very still. “You know the procedure. Let me through.” The nameplate says WARD; the badge is already facing outward.',identity:'The card photo shows plain clothes, while the visitor wears a deputy patch. Badge FSP-0614 is identical to Aaron Pike’s. The printed name and the attached serial do not belong together.',purpose:'“I am Deputy Pike. I already told the other officer. You have exactly the same face he had.” She uses the wrong call sign for Unit 06.',records:'The roster says FSP-0614 belongs to Aaron Pike. Lena Ward has a civilian visitor permit only, and no law-enforcement appointment. The same visitor was denied entry eleven years ago under a different name.',openReply:'Her eyes move to the blank monitor. “It is okay. The camera always gets my name wrong.”'},
+  {name:'Tomas Reed',role:'Licensed Electrical Contractor',badge:'CO-208',truth:'admit',intro:'A tired contractor rests a canvas tool bag beside the chair. “The generator ticket says I should report to the relay cabin. I need a signature for the call-out fee.”',identity:'Contractor permit CO-208 is active, photo and signature match, and the tamper strip is unbroken. The expiration time is tomorrow at 06:00.',purpose:'“I was sent to check the relay generator. Dispatch told me not to switch the radio off, even if I heard my own voice coming back.”',records:'Work order CO-208 was issued at 01:52. The maintenance log confirms the assignment. There is no duplicate credential or active warrant.',openReply:'He looks exhausted. “My tools keep ringing like a phone when nobody touches them. I did not bring a phone.”'},
+  {name:'Dr. Irena Holt',role:'Claims County Clinic · Night Nurse',badge:'MED-773',truth:'detain',intro:'A pale woman in a nurse’s jacket stands on the wrong side of the waiting-room line. She does not blink when the overhead bulb fails.',identity:'The clinic credential reads IRENA HOLT, license MED-773. The face in the badge photograph looks directly at the camera; the visitor’s face is turned away in the same frame no matter how the card is tilted.',purpose:'“I came for the body you are keeping in Interview Room Two. It is awake again. You need to give it back before it remembers the rest of your name.”',records:'MED-773 was revoked in 2017. The license holder is listed deceased. No after-hours clinic transfer was authorized tonight, and the visitor pass was printed by a terminal that has been disconnected for three days.',openReply:'“There was a nurse here before me,” she whispers. “She said I could borrow her face until morning.”'},
+  {name:'Owen Dyer',role:'County Records Clerk',badge:'COUNTY-017',truth:'admit',intro:'A thin clerk pushes a paper cup forward. No steam rises from it. “Records room. Overnight shift. Your visitor log has one extra line, and I was told to find out which one.”',identity:'County staff badge COUNTY-017 matches the photo, signature, and fingerprint record. The card has old lamination and a correctly stamped staff authorization.',purpose:'“I reconcile the after-hours visitor register. Six names were on the sheet when I left. The camera log says seven people came inside, but I only remember hearing six knocks.”',records:'Owen Dyer is scheduled from 22:00 to 04:00. His badge was used once at the staff entrance. No duplicate identity has been reported; his access pattern is consistent.',openReply:'He lowers his voice. “If the printer gives you a blank badge, do not throw it away. Something is using the blank side as a door.”'},
+  {name:'DUPLICATE OFFICER',role:'Claims Same Active Patrol Identity',badge:'FSP-0007',truth:'detain',intro:'The final visitor looks exactly like you in the body-camera still. They wear your uniform and carry a flashlight that points the wrong way. “I have been guarding the inside door since before you started your shift.”',identity:'The personnel number FSP-0007 and photo match your active file exactly. The image timestamp is six minutes in the future. On the card, the figure’s shadow falls toward the light source.',purpose:'“You told me to wait behind you. You said you would come back for my body when the interview was over.”',records:'Only one FSP-0007 is authorized. Dispatch has your current unit in the swamp and never issued a second officer. The intake camera logs this visitor as entering from INSIDE the locked wall.',openReply:'The visitor moves their mouth after the voice ends. “You are the copy tonight. I am the one who came in first.”'}
+];
+function stationCurrentIndex(){return state.stationQueue[state.stationQueuePosition]}
+function stationCurrentName(index){return index===5?specs[state.selectedCharacter].name:stationSuspects[index].name}
+function stationScore(){return Object.entries(state.stationDecisions).reduce((total,[key,value])=>total+(stationSuspects[Number(key)]&&stationSuspects[Number(key)].truth===value?1:0),0)}
+function stationQuestionCount(index){const checks=state.stationChecks[index]||{};return ['identity','purpose','records'].filter(k=>checks[k]).length}
+function stationIsCorrect(index){return state.stationDecisions[index]&&stationSuspects[index]&&state.stationDecisions[index]===stationSuspects[index].truth}
+function stationAppendChat(index,sender,text,kind=''){
+  if(!state.stationChats[index])state.stationChats[index]=[];
+  state.stationChats[index].push({sender,text,kind});
+  if(state.stationChats[index].length>36)state.stationChats[index].splice(0,6);
+  const log=$('stationChatLog');
+  if(Number(stationCurrentIndex())===Number(index)){
+    const line=document.createElement('div');
+    line.className='station-line '+(kind||'');
+    const senderNode=document.createElement('span');senderNode.className='station-sender';senderNode.textContent=sender;
+    const textNode=document.createElement('span');textNode.textContent=text;
+    line.appendChild(senderNode);line.appendChild(textNode);log.appendChild(line);log.scrollTop=log.scrollHeight;
+  }
+}
+function openStationIntake(){
+  if(state.floor!=='inside'||!state.room||state.room.id!=='station'){
+    toast('THE INTAKE SYSTEM CAN ONLY BE USED INSIDE THE COUNTY POLICE STATION.',2.5);return;
+  }
+  if(state.stationStage==='idle'){
+    state.stationStage='run';state.stationQueue=[0,1,2,3,4,5];state.stationQueuePosition=0;state.stationRetryMode=false;
+  }
+  audioStart();sound('radio');
+  renderStationIntake();
+  enterScreen('stationIntake');
+}
+function stationMakeSummary(){
+  const score=stationScore();
+  const processed=Object.keys(state.stationDecisions).length;
+  const wrong=stationSuspects.map((s,i)=>i).filter(i=>state.stationDecisions[i]&& !stationIsCorrect(i));
+  const auditHtml=state.stationAuditTrail.slice(-12).map(row=>'<div>'+escapeHTML(row.name)+' — '+escapeHTML(row.decision.toUpperCase())+' / '+(row.correct?'MATCH':'MISMATCH')+(row.review?' · REVIEW':'')+'</div>').join('');
+  const title=state.stationStage==='complete'?'INTAKE LEDGER ACCEPTED':'AUDIT REQUIRED';
+  let body='';
+  if(state.stationStage==='complete'){
+    body='<h3>'+title+'</h3><div class="station-score">VERIFIED DECISIONS: '+score+'/6 · VISITORS SCREENED: '+processed+'/6</div><p>The intake ledger has been sealed. The camera monitor shows an empty chair behind you, but its microphone keeps recording a second officer breathing.</p><p><b>CASE UNLOCKED:</b> The evidence board now includes the station’s duplicate-arrival report. You may close intake and return to the investigation.</p><p style="color:#c17b74">SYSTEM NOTICE: VISITOR 06 IS STILL INSIDE THE BUILDING.</p><div class="station-doc"><strong>PERMANENT AUDIT TRAIL</strong>\n'+auditHtml+'</div>';
+    $('stationReviewFiles').classList.add('hidden');$('stationNextVisitor').classList.add('hidden');
+    $('stationCaseView').classList.add('hidden');$('stationSummary').classList.remove('hidden');$('stationSummary').innerHTML=body;
+    $('stationProgress').textContent='LEDGER SEALED';$('stationThreat').textContent='THREAT: UNRESOLVED';
+    return;
+  }
+  if(state.stationStage==='reviewNeeded'){
+    body='<h3>'+title+'</h3><div class="station-score">CORRECT DECISIONS: '+score+'/6 · AT LEAST 5 REQUIRED, DUPLICATE OFFICER MUST BE DETAINED</div><p>You recorded '+processed+' visitor decisions. '+wrong.length+' file(s) conflict with the available identity records. The intake system will not certify this report.</p><p>Study at least four physical clues in the case file [J] before reopening flagged files. You must inspect each file again; the previous answers will remain part of the audit log.</p><p class="station-alert">The monitor behind the clerk now shows '+escapeHTML(specs[state.selectedCharacter].name)+' standing in the corridor. Your character is still at the desk.</p><div class="station-doc"><strong>PERMANENT AUDIT TRAIL</strong>\n'+auditHtml+'</div>';
+    $('stationReviewFiles').classList.remove('hidden');$('stationReviewFiles').disabled=studyCount()<4||wrong.length===0;
+    $('stationNextVisitor').classList.add('hidden');$('stationCaseView').classList.add('hidden');$('stationSummary').classList.remove('hidden');$('stationSummary').innerHTML=body;
+    $('stationProgress').textContent='AUDIT / '+wrong.length+' FLAGGED';$('stationThreat').textContent='THREAT: '+(state.stationThreat>2?'BREACH LIKELY':'UNSTABLE');
+    return;
+  }
+  $('stationSummary').classList.add('hidden');$('stationCaseView').classList.remove('hidden');
+}
+function renderStationIntake(){
+  stationMakeSummary();
+  if(state.stationStage==='complete'||state.stationStage==='reviewNeeded')return;
+  const index=stationCurrentIndex();
+  if(index===undefined){finishStationBatch();return;}
+  const suspect=stationSuspects[index];
+  const checks=state.stationChecks[index]||(state.stationChecks[index]={identity:false,purpose:false,records:false});
+  const answered=Object.prototype.hasOwnProperty.call(state.stationDecisions,index);
+  $('stationProgress').textContent=(state.stationRetryMode?'AUDIT ':'VISITOR ')+(state.stationQueuePosition+1)+' / '+state.stationQueue.length+' · FILE '+String(index+1).padStart(2,'0');
+  $('stationThreat').textContent='THREAT: '+(state.stationThreat>=3?'BREACH LIKELY':state.stationThreat>=1?'UNSTABLE':'CONTAINED');
+  $('stationFeedTitle').textContent=index===5?'CAM 04 · INNER WALL':index>=3?'CAM 04 · SIGNAL DELAY':'INTAKE WINDOW B';
+  $('stationFeedStatus').textContent=index===5?'REC ● / NO DOOR EVENT':index>=3?'REC ● / SYNC LOST':'REC ●';
+  $('stationIntakePanel').classList.toggle('breach-mid',index>=3||state.stationThreat>=2);
+  $('stationIntakePanel').classList.toggle('breach-final',index===5||state.stationThreat>=4);
+  $('stationSuspectName').textContent=stationCurrentName(index);
+  $('stationSuspectRole').textContent=suspect.role;
+  $('stationZoomInterview').disabled=answered;
+  $('stationZoomInterview').textContent=answered?'INTERVIEW FILE CLOSED':'ONE-ON-ONE / CAMERA CLOSE-UP';
+  $('stationPortrait').classList.toggle('anomaly',(state.stationChecks[index]&&state.stationChecks[index].records&&suspect.truth==='detain')||index===5||(state.stationThreat>=4&&index>=3));
+  $('stationIdCard').innerHTML='<strong>DOCUMENT SCAN</strong>\nName: '+(checks.identity?escapeHTML(stationCurrentName(index)):'████████')+'\nID number: '+(checks.identity?escapeHTML(suspect.badge):'NOT INSPECTED')+'\nPhoto match: '+(checks.identity?'SEE INSPECTION NOTES':'UNCONFIRMED')+'\nAuthorization: '+(checks.records?'ROSTER CHECKED':'NOT CHECKED');
+  $('stationRegistryCard').innerHTML='<strong>ROSTER RESPONSE</strong>\n'+(checks.records?escapeHTML(suspect.records):'Awaiting database query.');
+  const count=stationQuestionCount(index);
+  $('stationSuspectStatus').textContent=answered?'DECISION RECORDED: '+state.stationDecisions[index].toUpperCase()+'. '+(stationIsCorrect(index)?'The decision matches the records.':'The recorded decision conflicts with the evidence.'):'INSPECTIONS COMPLETE: '+count+'/3. You must inspect the ID, question the visitor, and cross-check the roster before deciding.';
+  for(const button of document.querySelectorAll('[data-station-ask]')){
+    const kind=button.dataset.stationAsk;
+    button.classList.toggle('checked',!!checks[kind]);
+    button.disabled=answered;
+  }
+  for(const button of document.querySelectorAll('[data-station-decision]'))button.disabled=count<3||answered;
+  $('stationNextVisitor').classList.toggle('hidden',!answered);
+  $('stationDecisionButtons').classList.toggle('hidden',answered);
+  $('stationReviewFiles').classList.add('hidden');
+  $('stationFeedback').className='station-feedback'+(answered?(stationIsCorrect(index)?' good':' bad'):'');
+  $('stationFeedback').textContent=state.stationFeedback||'No decision recorded. The visitor is waiting.';
+  const topics=state.stationTopics[index]||(state.stationTopics[index]={});
+  for(const button of document.querySelectorAll('[data-station-topic]')){button.classList.toggle('checked',!!topics[button.dataset.stationTopic]);button.disabled=answered;}
+  const incident=$('stationIncidentBanner');
+  if(index>=5){incident.classList.remove('hidden');incident.textContent='UNAUTHORIZED FEED: The last visitor appears on camera behind the officer. The room behind the officer is empty.';}
+  else if(index>=3||state.stationThreat>=2){incident.classList.remove('hidden');incident.textContent='SIGNAL DRIFT: Camera 04 is recording '+(index+1)+' visitor(s). The audio track contains an extra set of footsteps.';}
+  else{incident.classList.add('hidden');incident.textContent='';}
+  const log=$('stationChatLog');
+  log.innerHTML='';
+  const entries=state.stationChats[index]||[];
+  if(!entries.length){
+    state.stationChats[index]=[{sender:stationCurrentName(index),text:suspect.intro,kind:''}];
+  }
+  if(index>=3&&!state.stationManifestEvents['camera-rewrite']){
+    state.stationManifestEvents['camera-rewrite']=true;
+    state.stationThreat=Math.max(state.stationThreat,2);
+    state.stationChats[index].push({sender:'CAMERA 04',text:'TIMESTAMP REWRITTEN: The visitor entered at 02:17. The same frame shows them leaving at 02:16.',kind:'system'});
+    if(state.options.voiceWhispers)triggerWhisper('You cannot leave before you arrive.','behind','CAMERA 04');
+  }
+  if(index===5&&!state.stationManifestEvents['duplicate-officer']){
+    state.stationManifestEvents['duplicate-officer']=true;
+    state.stationThreat=5;
+    state.stationChats[index].push({sender:'CAMERA 04',text:'UNAUTHORIZED FEED: The same officer is visible behind the glass. The seat in front of you is empty.',kind:'system'});
+    state.disappearanceLog.push('At the police station, the camera recorded the active officer in two locations at once.');
+    if(state.options.voiceWhispers)triggerWhisper('Do not admit yourself.','center','CAMERA 04');
+  }
+  for(const entry of state.stationChats[index]){
+    const line=document.createElement('div');line.className='station-line '+(entry.kind||'');
+    const sender=document.createElement('span');sender.className='station-sender';sender.textContent=entry.sender;
+    const message=document.createElement('span');message.textContent=entry.text;
+    line.appendChild(sender);line.appendChild(message);log.appendChild(line);
+  }
+  log.scrollTop=log.scrollHeight;
+  $('stationChatInput').disabled=answered;
+}
+function openSuspectZoom(){
+  if(state.screen!=='stationIntake')return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect||state.stationDecisions[index])return;
+  $('suspectZoomName').textContent=stationCurrentName(index);
+  $('suspectZoomRole').textContent=suspect.role+' · FILE '+String(index+1).padStart(2,'0')+' / SIX';
+  $('suspectZoomLine').textContent=suspect.intro;
+  $('suspectZoomResponse').textContent='The suspect is close enough that the camera microphone records their breathing separately from the station room tone. Choose a question.';
+  $('suspectZoomCameraStatus').textContent='CAM 04 AUTO-ZOOM · '+(state.stationThreat>=3?'FOCUS LOST / FACE TRACKING':'AUDIO OPEN / FRAME HOLD');
+  const figure=$('suspectZoomFigure');
+  figure.classList.toggle('anomaly',suspect.truth==='detain'||index>=3||state.stationThreat>=3);
+  figure.style.setProperty('--zoom-seed',String(index+1));
+  $('suspectZoomPanel').classList.remove('hidden');
+  $('suspectZoomChoices').querySelectorAll('button').forEach(button=>button.disabled=false);
+  $('closeSuspectZoom').focus({preventScroll:true});
+  sound('radio');
+  state.intensity=Math.max(state.intensity,.42);
+}
+function handleSuspectZoomChoice(action){
+  if(state.screen!=='stationIntake'||$('suspectZoomPanel').classList.contains('hidden'))return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect||state.stationDecisions[index])return;
+  const actions={identity:()=>stationInspect('identity',true),purpose:()=>stationInspect('purpose',true),records:()=>stationInspect('records',true),camera:()=>stationAskTopic('camera',true),extra:()=>stationAskTopic('extra',true),silas:()=>stationAskTopic('silas',true)};
+  if(!actions[action])return;
+  actions[action]();
+  const entries=state.stationChats[index]||[];
+  const last=entries[entries.length-1];
+  $('suspectZoomResponse').textContent=last?last.text:'The room microphone records a second breath after the suspect stops speaking.';
+  $('suspectZoomCameraStatus').textContent='CAM 04 · QUESTION LOGGED · '+(state.stationThreat>=4?'SUBJECT TRACKING LOST':'FRAME '+String(17+Math.floor(state.elapsed*3)).padStart(4,'0'));
+  $('suspectZoomLine').textContent=state.stationThreat>=4?'Their expression does not change, but the reflection behind them turns toward the camera.':(last?last.text:suspect.openReply);
+  const figure=$('suspectZoomFigure');
+  figure.classList.remove('hit');
+  void figure.offsetWidth;
+  figure.classList.add('hit');
+  figure.classList.toggle('anomaly',suspect.truth==='detain'||index>=3||state.stationThreat>=3);
+  if(state.stationDecisions[index])$('suspectZoomChoices').querySelectorAll('button').forEach(button=>button.disabled=true);
+}
+function closeSuspectZoom(){
+  $('suspectZoomPanel').classList.add('hidden');
+  if(state.screen==='stationIntake')$('stationChatInput').focus({preventScroll:true});
+}
+function stationTopicReply(index,topic){
+  const replies={
+    camera:[
+      'Camera 04 went dark at 02:17. A second feed appeared from inside the wall. I heard the camera motor turn, but that model has no motor.',
+      'The camera sees me exactly as I am. Why does it keep showing an empty chair when I am sitting in it?',
+      'I heard a shutter click. That camera has no shutter. The picture it printed was taken from behind the glass.',
+      'The monitor showed me walking through this room three hours before I arrived. I told my supervisor. He said the timestamp was tomorrow.',
+      'Six names are on the visitor sheet. The camera says seven. The seventh frame has your badge, but your seat is empty.',
+      'Look at the camera feed. I am the one at the desk. You are the one standing in the corridor. It has always been that way.'
+    ],
+    extra:[
+      'I was not the seventh visitor. I was number six. Do not let the system make me number seven.',
+      'There are always seven. Six are permitted to leave. The seventh is the one who keeps the door shut.',
+      'Someone left with my face and my tools. I stayed because my shadow was still on the floor.',
+      'The seventh patient has no pulse, but the intercom keeps asking them to identify themselves.',
+      'Six names. Seven knocks. Every time the clerk counts, someone else is standing in the doorway.',
+      'You have not counted yourself. You keep counting the people who arrive, not the one who was already here.'
+    ],
+    silas:[
+      'Silas told me not to use the side door. He said it only opens from the other side, even when you are outside.',
+      'Silas told me your shift ended yesterday. He said the officer on duty today would look just like you.',
+      'Silas gave me the generator key. It was warm, like someone had been holding it inside their mouth.',
+      'Silas is above this room. I can hear him walking. I can also see him standing beside you.',
+      'Silas said one of you would ask about him. He did not say which one was real.',
+      'I interviewed Silas. He said he had never seen you before. He was lying to me, or he is lying to you.'
+    ],
+    door:[
+      'I came through the front door, but I never heard it open. I remember the waiting room, then I was already seated.',
+      'The side door was locked. Something on the other side said my name and the lock opened toward the wall.',
+      'The contractor entrance opened onto the evidence room. The corridor was missing while I walked through it.',
+      'There is no door behind you. I watched somebody step through that wall, and the wall closed around their coat.',
+      'The visitor door was bricked over in 1994. The night guard still checks it every hour.',
+      'You opened the door from this side before my badge scanned. I came in after you. I am sure of that.'
+    ]
+  };
+  return (replies[topic]||replies.camera)[index]||'The visitor stares at the camera instead of answering. The microphone records your question twice.';
+}
+function stationAskTopic(topic,fromTyped=false){
+  if(state.screen!=='stationIntake')return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect||state.stationDecisions[index])return;
+  const topics=state.stationTopics[index]||(state.stationTopics[index]={});
+  const labels={camera:'Ask about Camera 04',extra:'Ask about the extra arrival',silas:'Ask about Silas and the house',door:'Ask how the visitor entered'};
+  if(!fromTyped)stationAppendChat(index,'OFFICER',labels[topic]+'.','officer');
+  const reply=stationTopicReply(index,topic);
+  stationAppendChat(index,stationCurrentName(index),topics[topic]?'You asked this already. The visitor repeats the answer with one word changed: '+reply:reply,topics[topic]?'system':'');
+  if(!topics[topic]){
+    topics[topic]=true;
+    if(topic==='camera'||topic==='extra'){
+      state.disappearanceLog.push('Station interview: '+stationCurrentName(index)+' described an extra camera arrival. Statement '+(index+1)+' was time-stamped twice.');
+    }
+    if(index>=3||topic==='extra'||topic==='camera'){
+      state.stationThreat=Math.min(5,state.stationThreat+((index>=4||topic==='extra')?1:0));
+      state.noise=Math.max(state.noise,.28);
+      state.intensity=Math.min(1,state.intensity+.035);
+    }
+  }
+  state.stationFeedback='FOLLOW-UP RECORDED: '+labels[topic].toUpperCase()+'. Compare the answer with the physical evidence before making your decision.';
+  if(topic==='camera'&&index>=3&&state.options.voiceWhispers)triggerWhisper('Camera four has been looking from the inside.','behind','CAMERA 04 AUDIO');
+  if(topic==='extra'&&index===5&&state.options.voiceWhispers)triggerWhisper('There was no first officer. There was only you.','center','DUPLICATE IDENTITY');
+  sound('radio');
+  renderStationIntake();
+}
+function stationInspect(kind,fromTyped=false){
+  if(!state.running&&state.screen!=='stationIntake')return;
+  if(state.screen!=='stationIntake')return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect||state.stationDecisions[index])return;
+  const checks=state.stationChecks[index]||(state.stationChecks[index]={identity:false,purpose:false,records:false});
+  const prompts={identity:'Let me inspect your ID, photograph, and credential number.',purpose:'Tell me exactly why you came to this station tonight.',records:'Cross-checking your details with the official duty roster.'};
+  if(!fromTyped)stationAppendChat(index,'OFFICER',prompts[kind],'officer');
+  stationAppendChat(index,stationCurrentName(index),suspect[kind]||suspect.openReply,'');
+  checks[kind]=true;
+  state.stationFeedback=kind==='records'?'Roster response received. Compare it with the badge and the statement before deciding.':kind==='identity'?'Document scan updated. Look for mismatched numbers, photographs, dates, and authorization.':'Statement recorded. Compare the visitor’s claim with the records.';
+  sound('radio');
+  renderStationIntake();
+}
+function sendStationChat(){
+  const input=$('stationChatInput');
+  if(!input||state.screen!=='stationIntake')return;
+  const message=input.value.trim();
+  if(!message)return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect||state.stationDecisions[index])return;
+  input.value='';stationAppendChat(index,'OFFICER',message,'officer');
+  const text=message.toLowerCase();
+  let topic='';
+  if(/camera|monitor|footage|video feed|security screen/.test(text))topic='camera';
+  else if(/seventh|extra visitor|extra arrival|six people|seven people|seven knocks|visitor count/.test(text))topic='extra';
+  else if(/silas|farmhouse|the house|missing deputy|witness/.test(text))topic='silas';
+  else if(/which door|side door|front door|how did you enter|how did you get in|came through|entered the building|locked door/.test(text))topic='door';
+  if(topic){stationAskTopic(topic,true);return;}
+  let kind='';
+  if(/badge|id card|photo|photograph|license|identity|name|serial/.test(text))kind='identity';
+  else if(/record|roster|database|verify|verification|unit number|shift|dispatch log|permit/.test(text))kind='records';
+  else if(/where|why|reason|purpose|doing|arrive|arrived|alibi|came here|here tonight|what happened/.test(text))kind='purpose';
+  if(kind){
+    stationInspect(kind,true);
+    return;
+  }
+  const disturbing=/mirror|human|real|dead|reflection|shadow|copy|behind me|wall|voice|camera/.test(text);
+  const response=disturbing?suspect.openReply:(suspect.truth==='detain'?'The visitor smiles without moving their cheeks. “You already wrote the answer down. You just have not looked at the paper yet.”':'The visitor considers the question. “Check the roster. Please do not make me repeat the entire night.”');
+  stationAppendChat(index,stationCurrentName(index),response,disturbing?'system':'');
+  if(disturbing){state.stationThreat=Math.min(5,state.stationThreat+1);state.noise=Math.max(state.noise,.3);state.intensity=Math.min(1,state.intensity+.06);}
+  renderStationIntake();
+}
+function stationRecordDecision(decision){
+  if(state.screen!=='stationIntake')return;
+  const index=stationCurrentIndex();
+  const suspect=stationSuspects[index];
+  if(index===undefined||!suspect)return;
+  if(stationQuestionCount(index)<3){
+    toast('DECISION BLOCKED: INSPECT THE ID, ASK THE VISITOR, AND CROSS-CHECK THE ROSTER FIRST.',3.1);return;
+  }
+  state.stationDecisions[index]=decision;
+  state.stationProcessed=Object.keys(state.stationDecisions).length;
+  const correct=suspect.truth===decision;
+  state.stationAuditTrail.push({index,name:stationCurrentName(index),decision,correct,review:state.stationRetryMode});
+  if(correct){
+    state.stationFeedback='DECISION ACCEPTED. '+(decision==='detain'?'The visitor is escorted to the holding room. The intake camera records an empty chair where they were sitting.':'The visitor is admitted under verified credentials. The security door opens one second before the badge is scanned.');
+    state.stationCorrect=stationScore();
+    stationAppendChat(index,'INTAKE SYSTEM',decision==='detain'?'DETENTION AUTHORIZED. HOLDING ROOM 2 LOCKED.':'ENTRY AUTHORIZED. ACCESS LOG SIGNED.', 'system');
+  }else{
+    state.stationThreat=Math.min(5,state.stationThreat+1);
+    state.stationFeedback='DECISION DOES NOT MATCH THE RECORD. The security system accepts your command, but another interior door unlocks somewhere behind the desk.';
+    state.noise=Math.max(state.noise,.5);state.intensity=Math.min(1,state.intensity+.16);state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,.85);
+    stationAppendChat(index,'INTAKE SYSTEM','DECISION DISCREPANCY LOGGED. SECOND SIGNATURE DETECTED ON THE SAME FILE.','system');
+    if(state.options.voiceWhispers&&state.stationThreat>=2)triggerWhisper('Thank you for letting me inside. I was getting tired of knocking.','behind','VOICE FROM HOLDING ROOM');
+  }
+  state.stationChats[index]=state.stationChats[index]||[];
+  const entries=state.stationChats[index];
+  const resultLine='FINAL DECISION: '+decision.toUpperCase()+' — '+(correct?'MATCH':'MISMATCH');
+  stationAppendChat(index,'AUDIT LOGGER',resultLine,'system');
+  sound(correct?'radio':'scare');
+  renderStationIntake();
+}
+function stationNextVisitor(){
+  if(state.screen!=='stationIntake')return;
+  const index=stationCurrentIndex();
+  if(index===undefined||!Object.prototype.hasOwnProperty.call(state.stationDecisions,index))return;
+  state.stationQueuePosition++;
+  state.stationFeedback='';
+  if(state.stationQueuePosition>=state.stationQueue.length){finishStationBatch();return;}
+  const next=stationCurrentIndex();
+  if(!state.stationChats[next])state.stationChats[next]=[{sender:stationCurrentName(next),text:stationSuspects[next].intro,kind:''}];
+  renderStationIntake();
+}
+function finishStationBatch(){
+  const score=stationScore();
+  state.stationCorrect=score;
+  state.stationProcessed=Object.keys(state.stationDecisions).length;
+  if(score>=5&&state.stationDecisions[5]==='detain'){
+    state.stationComplete=true;state.stationStage='complete';state.stationFeedback='';
+    if(!state.stationIncidentLogged){
+      state.stationIncidentLogged=true;
+      const item={id:'station-intake-ledger',name:'County intake audit ledger',detail:'The six visitor files were screened against identity documents and the official roster.',analysis:'At least five decisions match the credential evidence. One visitor was linked to a duplicate badge and a camera feed timestamped in the future. The final intake record is signed by an unidentified second officer.',kind:'intake',studied:true};
+      const existing=caseRecords.find(r=>r.id===item.id);if(existing)Object.assign(existing,item);else caseRecords.push(item);
+      state.disappearanceLog.push('The intake terminal printed a seventh visitor entry after the ledger was sealed. The name field contains the active officer’s signature.');
+    }
+    state.noise=Math.max(state.noise,.45);state.intensity=1;state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,1.25);
+    tone(68,.65,'sawtooth',.07,-20);
+    if(state.options.voiceWhispers)triggerWhisper('You checked six people. The camera counted seven.','center','INTAKE CAMERA 04');
+    toast('INTAKE LEDGER SEALED. FIVE OR MORE DECISIONS VERIFIED. THE SEVENTH ARRIVAL IS STILL UNACCOUNTED FOR.',4.6);
+    updateObjectives();updateHUD();
+  }else{
+    state.stationStage='reviewNeeded';
+    state.stationQueue=stationSuspects.map((s,i)=>i).filter(i=>state.stationDecisions[i]&&!stationIsCorrect(i));
+    state.stationQueuePosition=0;
+    state.stationRetryMode=false;
+    state.stationFeedback='';
+    state.stationThreat=Math.min(5,state.stationThreat+1);
+    toast('INTAKE AUDIT FAILED. STUDY FOUR PHYSICAL CLUES, REOPEN FLAGGED FILES, AND DETAIN THE DUPLICATE OFFICER.',4.1);
+  }
+  renderStationIntake();
+}
+function reviewStationFiles(){
+  if(state.screen!=='stationIntake'||state.stationStage!=='reviewNeeded')return;
+  if(studyCount()<4){toast('AUDIT LOCKED: STUDY FOUR PHYSICAL CLUES FIRST ('+studyCount()+'/4).',3);return;}
+  const wrong=stationSuspects.map((s,i)=>i).filter(i=>state.stationDecisions[i]&&!stationIsCorrect(i));
+  if(!wrong.length){finishStationBatch();return;}
+  state.stationQueue=wrong;
+  state.stationQueuePosition=0;
+  state.stationRetryMode=true;
+  state.stationStage='review';
+  state.stationFeedback='AUDIT MODE: compare each flagged visitor against newly studied physical evidence. Your previous decision is still in the permanent log.';
+  for(const index of wrong){state.stationChecks[index]={identity:false,purpose:false,records:false};delete state.stationDecisions[index];}
+  const index=wrong[0];state.stationChats[index]=[{sender:'AUDIT SYSTEM',text:'REVIEW REQUIRED. This file was flagged by the first decision. Examine the visitor again; the night-shift recording has changed.',kind:'system'}];
+  renderStationIntake();
 }
 function beginWitnessInterview(target){
   if(state.witnessInterviewed&&state.witnessTrust>=2){toast('SILAS HAS ALREADY GIVEN A CORROBORATED STATEMENT. REVIEW THE CASE FILE [J].',3);return;}
@@ -3520,6 +4219,16 @@ function renderWitnessInterview(){
     ]
   ];
   const step=state.interviewStep;
+  const closeFace=$('silasCloseFace');
+  if(closeFace)closeFace.classList.toggle('unsettled',state.witnessTrust<0||state.interviewAwaitingContinue&&state.witnessTrust<1||step>=2);
+  const closeCaption=$('silasZoomCaption');
+  if(closeCaption){
+    if(state.interviewAwaitingContinue)closeCaption.textContent=state.interviewChoiceFeedback;
+    else if(step===0)closeCaption.textContent='SILAS IS LOOKING PAST YOUR SHOULDER. THE CAMERA SHOWS AN EMPTY DOORWAY.';
+    else if(step===1)closeCaption.textContent='THE STATIC HAS STOPPED. SILAS STILL FLINCHES AT THE SOUND THAT IS NO LONGER PLAYING.';
+    else if(step===2)closeCaption.textContent='HE HAS NOT MOVED HIS EYES ONCE. THE REFLECTION IN THE WINDOW IS BLINKING.';
+    else closeCaption.textContent='RECORDING COMPLETE. A SECOND BREATH CONTINUES AFTER SILAS STOPS.';
+  }
   const question=$('interviewQuestion');
   const buttons=$('interviewChoices');
   const feedback=$('interviewFeedback');
@@ -3802,6 +4511,58 @@ function updateMonster(dt){
   monster.stun=Math.max(0,monster.stun-dt);
   monster.attack=Math.max(0,monster.attack-dt);
   monster.warpCooldown=Math.max(0,monster.warpCooldown-dt);
+  monster.reappearGlow=Math.max(0,(monster.reappearGlow||0)-dt);
+  if(state.floor==='outside'){
+    if(monster.hidden){
+      monster.vanishTimer-=dt;
+      if(monster.vanishTimer<=0){
+        monster.x=monster.pendingX;
+        monster.y=monster.pendingY;
+        monster.hidden=false;
+        monster.reappearGlow=.9;
+        monster.attack=Math.max(monster.attack,.55);
+        state.intensity=Math.max(state.intensity,.78);
+        state.screenShake=Math.max(state.screenShake,.16);
+        sound('radio');
+        for(let i=0;i<7;i++)addParticle({x:monster.x+(Math.random()-.5)*24,y:monster.y+(Math.random()-.5)*42,vx:(Math.random()-.5)*40,vy:-12-Math.random()*28,life:.28+Math.random()*.32,color:choose(['#581218','#8e2229','#c1bbaa']),size:2+Math.random()*2});
+        if(state.options.voiceWhispers&&state.voiceCooldown<=0)triggerWhisper(choose(['You watched the place I left. Not the place I went.','The dark between us is shorter now.','I was standing there before you looked.','You keep turning toward the wrong sound.']),choose(['left','right']),'THE SMILER / SIGNAL RETURNS');
+        if(monster.blinkCount%2===0)toast('THE SMILER REAPPEARED SOMEWHERE ELSE.',2.1);
+      }
+      return;
+    }
+    monster.vanishCooldown=Math.max(0,(monster.vanishCooldown||0)-dt);
+    if(state.elapsed>25&&monster.vanishCooldown<=0&&monster.stun<=0){
+      let tx=monster.x,ty=monster.y,found=false;
+      const referenceAngle=player.angle||0;
+      for(let attempt=0;attempt<14;attempt++){
+        const angle=Math.random()*Math.PI*2+(attempt%3===0?referenceAngle*.15:0);
+        const radius=205+Math.random()*315;
+        const candidateX=clamp(player.x+Math.cos(angle)*radius,65,WORLD.w-65);
+        const candidateY=clamp(player.y+Math.sin(angle)*radius,65,WORLD.h-65);
+        if(!blockedAt(candidateX,candidateY,monster.r+3)&&dist(player.x,player.y,candidateX,candidateY)>175){tx=candidateX;ty=candidateY;found=true;break;}
+      }
+      if(!found){
+        const angle=player.angle+Math.PI+(Math.random()-.5)*1.8;
+        tx=clamp(player.x+Math.cos(angle)*255,65,WORLD.w-65);
+        ty=clamp(player.y+Math.sin(angle)*255,65,WORLD.h-65);
+      }
+      monster.pendingX=tx;
+      monster.pendingY=ty;
+      monster.hidden=true;
+      monster.vanishTimer=.42+Math.random()*.72;
+      monster.vanishCooldown=8.5+Math.random()*9.5;
+      monster.blinkCount=(monster.blinkCount||0)+1;
+      state.intensity=Math.max(state.intensity,.72);
+      state.noise=Math.max(state.noise,.22);
+      state.screenShake=Math.max(state.screenShake,.12);
+      sound('radio');
+      tone(62,.36,'sawtooth',.07,-44);
+      for(let i=0;i<9;i++)addParticle({x:monster.x+(Math.random()-.5)*30,y:monster.y+(Math.random()-.5)*52,vx:(Math.random()-.5)*58,vy:(Math.random()-.5)*50,life:.2+Math.random()*.34,color:choose(['#4e1117','#7c1e24','#bcc0a8']),size:2+Math.random()*3});
+      if(state.options.voiceWhispers&&state.voiceCooldown<=0)triggerWhisper(choose(['It left the light. Count to one.','Do not search where it was.','It can move while your eyes are closed.','Listen for where the rain stops.']),choose(['left','right']),'THE SMILER / SIGNAL LOST');
+      if(Math.random()<.45)toast('VISUAL CONTACT LOST. SOMETHING MOVED WITHOUT CROSSING THE SPACE BETWEEN.',2.6);
+      return;
+    }
+  }
   const d=dist(player.x,player.y,monster.x,monster.y);
   if(d<390)monster.spotted=true;
   if(state.floor==='inside'){
@@ -3831,16 +4592,8 @@ function updateMonster(dt){
   const huntRamp=Math.min(58,state.elapsed*.105+state.missingCount*4.1+evidence*3.4+rescuedPressure*7+(state.threatTier||0)*5);
   let speed=(d<280?126:state.noise>.3?108:78)+Math.min(44,evidence*3.5+rescuedPressure*9+state.elapsed/68)+huntRamp;
   if(slowedByLight)speed*=.58;
-  if(d>780&&state.noise<.2){
-    monster.lastMove+=dt;
-    if(monster.lastMove>7&&monster.warpCooldown<=0){
-      const angle=angleTo(player.x,player.y,monster.x,monster.y);
-      monster.x=clamp(player.x+Math.cos(angle)*620,80,WORLD.w-80);
-      monster.y=clamp(player.y+Math.sin(angle)*620,80,WORLD.h-80);
-      monster.lastMove=0;
-      monster.warpCooldown=7;
-    }
-  }
+  if(d>780&&state.noise<.2)monster.lastMove+=dt;
+  else monster.lastMove=0;
   const a=angleTo(monster.x,monster.y,player.x,player.y);
   monster.x+=Math.cos(a)*speed*dt;
   monster.y+=Math.sin(a)*speed*dt;
@@ -3878,7 +4631,7 @@ function updateBullets(dt){
         break;
       }
     }
-    if(monster.active&&b.life>0&&dist(b.x,b.y,monster.x,monster.y)<monster.r+5){
+    if(monster.active&&!monster.hidden&&b.life>0&&dist(b.x,b.y,monster.x,monster.y)<monster.r+5){
       monster.stun=Math.max(monster.stun,1.4);
       b.life=0;
       spawnSparks(monster.x,monster.y);
@@ -3939,19 +4692,32 @@ function updateFearDirector(dt){
   if(state.floor==='inside'&&state.room&&monster&&monster.active&&presence){
     presence.phase+=dt;
     presence.timer=Math.max(0,presence.timer-dt);
-    presence.cooldown-=dt;
-    if(presence.timer<=0&&presence.cooldown<=0){
-      const a=angleTo(player.x,player.y,state.room.w/2,state.room.h/2)+choose([-1,1])*(1.25+Math.random()*.65);
-      const d=200+Math.random()*120;
-      presence.x=clamp(player.x+Math.cos(a)*d,62,state.room.w-62);
-      presence.y=clamp(player.y+Math.sin(a)*d,62,state.room.h-62);
-      if(dist(player.x,player.y,presence.x,presence.y)<155){presence.x=player.x<state.room.w/2?state.room.w-95:95;presence.y=player.y<state.room.h/2?state.room.h-95:95;}
-      presence.timer=1.15+Math.random()*.9;
-      presence.cooldown=12+Math.random()*10;
-      presence.phase=Math.random()*12;
-      state.intensity=Math.max(state.intensity,.76);
-      voiceNoise(choose(['left','right']),.16);
-      if(state.options.voiceWhispers)speakWhisper(choose(['It moved when you looked away.','Do not count the shadows.','There was a person in that corner.']),choose(['left','right']));
+    presence.cooldown=Math.max(-4,presence.cooldown-dt);
+    if(presence.arming>0){
+      presence.arming=Math.max(0,presence.arming-dt);
+      if(presence.arming===0){
+        let px=player.x,py=player.y,placed=false;
+        for(let attempt=0;attempt<12;attempt++){
+          const angle=Math.random()*Math.PI*2;
+          const radius=175+Math.random()*185;
+          const tx=clamp(player.x+Math.cos(angle)*radius,52,state.room.w-52);
+          const ty=clamp(player.y+Math.sin(angle)*radius,52,state.room.h-52);
+          if(dist(player.x,player.y,tx,ty)>150){px=tx;py=ty;placed=true;break;}
+        }
+        if(!placed){px=player.x<state.room.w/2?state.room.w-72:72;py=player.y<state.room.h/2?state.room.h-72:72;}
+        presence.x=px;presence.y=py;presence.timer=1.1+Math.random()*1.15;presence.phase=Math.random()*15;presence.appearances=(presence.appearances||0)+1;
+        state.intensity=Math.max(state.intensity,.82);state.screenShake=Math.max(state.screenShake,.13);state.noise=Math.max(state.noise,.18);
+        sound('radio');voiceNoise(choose(['left','right']),.18);
+        if(state.options.voiceWhispers)speakWhisper(choose(['It moved when you looked away.','I am standing somewhere else now.','Do not count the shadows.','You saw me leave. You did not see me arrive.','I can wait in every corner at once.']),choose(['left','right']));
+        if(presence.appearances%2===0)toast('THE SMILER IS IN A DIFFERENT PART OF THE ROOM.',2.1);
+      }
+    }else if(presence.timer<=0&&presence.cooldown<=0){
+      presence.cooldown=12+Math.random()*13;
+      presence.arming=.45+Math.random()*.9;
+      state.intensity=Math.max(state.intensity,.67);
+      sound('radio');tone(54,.24,'triangle',.055,-24);
+      voiceNoise(choose(['left','right']),.13);
+      if(Math.random()<.38)toast('THE FOOTSTEPS STOP. THE ROOM HAS GONE QUIET.',2.0);
     }
   }
 
@@ -3988,8 +4754,9 @@ function updateFearDirector(dt){
   }
   if(monster&&monster.active){
     const d=dist(player.x,player.y,monster.x,monster.y);
-    if(d<175){state.intensity=Math.max(state.intensity,.6);}
-    if(d<105&&state.voiceCooldown<=0)triggerWhisper(choose(['Don’t blink.','I’m close enough to hear your heartbeat.','Your light is getting tired.']),choose(['left','right']),'THE SMILER');
+    if(d<225){state.intensity=Math.max(state.intensity,.64);}
+    if(d<165&&state.elapsed-(state.horrorEventFlags.lastHeartbeat||0)>4.8){state.horrorEventFlags.lastHeartbeat=state.elapsed;tone(43,.32,'sine',.07,-12);tone(38,.22,'triangle',.05,-7);}
+    if(d<105&&state.voiceCooldown<=0)triggerWhisper(choose(['Don’t blink.','I’m close enough to hear your heartbeat.','Your light is getting tired.','It can see the inside of your eyelids.']),choose(['left','right']),'THE SMILER');
   }
 }
 function drawFalseFigure(){
@@ -4066,6 +4833,7 @@ function update(dt){
   updatePartnerChat();
   if(state.horrorBeat===0&&state.elapsed>6.5){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you at the tree line.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.78;state.screenShake=.19;triggerWhisper('Do not use your own voice to answer dispatch.','right','UNKNOWN OFFICER');}
   if(state.horrorBeat===1&&state.elapsed>15.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED. IT IS CLOSER THAN THE MAP SAYS.',3.4);}
+  if(state.elapsed>27&&!state.horrorEventFlags.thirdFootstep){state.horrorEventFlags.thirdFootstep=true;sound('door');voiceNoise('behind',.13);toast('FOOTSTEPS: LEFT, RIGHT, LEFT, RIGHT… THEN A THIRD STEP BESIDE YOURS.',3.2);if(state.options.voiceWhispers)triggerWhisper('Do not slow down to count them.','behind','FOOTSTEPS / CHANNEL UNKNOWN');}
   growlTimer-=dt;
   shootTimer=Math.max(0,shootTimer-dt);
   reloadTimer=Math.max(0,reloadTimer-dt);
@@ -4091,6 +4859,8 @@ function update(dt){
     player.hidden=onReed&&!keys.shift&&state.noise<.2;
   }else player.hidden=false;
   movePlayer(dt);
+  updateIndoorEcho(dt);
+  updateHauntingDirector(dt);
   updateSurvivors(dt);
   state.exitHintCooldown=Math.max(0,(state.exitHintCooldown||0)-dt);
   updateVanishingItems(dt);
@@ -4146,7 +4916,7 @@ function update(dt){
       if(rescuedAtExit>=2&&investigationReady()&&state.keysFound&&state.exploredRoomIds.length>=5){
         if(state.exitHintCooldown<=0){toast('CASEWORK COMPLETE. PRESS E TO START THE 30-SECOND EXTRACTION DEFENSE.',3.0);state.exitHintCooldown=5;}
       }else if(state.exitHintCooldown<=0){
-        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':collectedClueCount()<6?'COLLECT SIX CLUES ('+collectedClueCount()+'/6)':studyCount()<6?'STUDY SIX CLUES IN CASE FILE [J] ('+studyCount()+'/6)':validCrossReferenceCount()<4?'PRODUCE FOUR DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/4)':state.caseTheory!=='mimic-timeline'?'SUBMIT A SUPPORTED CASE THEORY':!state.witnessInterviewed?'INTERVIEW SILAS VENN':!state.keysFound?'RECOVER THE RELAY OVERRIDE KEY IN THE RADIO RELAY HUT':'SEARCH FIVE DIFFERENT BUILDINGS';
+        const blocker=rescuedAtExit<2?'RESCUE BOTH PEOPLE ('+rescuedAtExit+'/2)':collectedClueCount()<6?'COLLECT SIX CLUES ('+collectedClueCount()+'/6)':studyCount()<6?'STUDY SIX CLUES IN CASE FILE [J] ('+studyCount()+'/6)':validCrossReferenceCount()<4?'PRODUCE FOUR DISTINCT CROSS-REFERENCE REPORTS ('+validCrossReferenceCount()+'/4)':state.caseTheory!=='mimic-timeline'?'SUBMIT A SUPPORTED CASE THEORY':!state.witnessInterviewed?'INTERVIEW SILAS VENN':state.witnessTrust<2?'GET A CORROBORATED WITNESS STATEMENT':!state.stationComplete?'SCREEN SIX VISITORS AT THE COUNTY POLICE STATION (FIVE CORRECT)':!state.keysFound?'RECOVER THE RELAY OVERRIDE KEY IN THE RADIO RELAY HUT':'SEARCH FIVE DIFFERENT BUILDINGS';
         toast('EXTRACTION LOCKED: '+blocker+'.',3.5);
         state.exitHintCooldown=5;
       }
@@ -4465,13 +5235,14 @@ function drawCrawler(c){
   }
 }
 function drawMonster(){
-  if(!monster.active)return;
+  if(!monster.active||monster.hidden)return;
   const x=monster.x-camera.x+shakeX;
   const y=monster.y-camera.y+shakeY;
   if(x<-140||y<-150||x>W+140||y>H+150)return;
   const bob=monster.frozenByLight?0:Math.sin(monster.phase*3.7)*3;
   const twitch=monster.frozenByLight?0:Math.sin(monster.phase*15)*1.8;
   const lurch=monster.stun>0||monster.frozenByLight?0:Math.sin(monster.phase*8)*2;
+  if(monster.reappearGlow>0){ctx.save();ctx.globalCompositeOperation='screen';const pulse=monster.reappearGlow/.9;const ring=ctx.createRadialGradient(x,y,3,x,y,56*pulse+8);ring.addColorStop(0,'rgba(146,20,29,'+(.16*pulse)+')');ring.addColorStop(.45,'rgba(98,8,17,'+(.10*pulse)+')');ring.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=ring;ctx.fillRect(x-62,y-70,124,140);ctx.restore();}
   ctx.save();
   ctx.globalAlpha=monster.stun>0?.72:1;
   ctx.fillStyle='rgba(0,0,0,.6)';
@@ -4730,6 +5501,7 @@ function drawWorld(){
     drawInterior();
     drawSurvivors();
     drawIndoorPresence();
+    drawIndoorEcho();
     drawPlayer();
     drawBulletEffects();
     drawIndoorDust();
@@ -4807,7 +5579,14 @@ function drawInterior(){
     const x=item.x+sx;
     const y=item.y+sy;
     const pulse=Math.sin(state.elapsed*4)>0;
-    if(item.type==='note'){
+    if(item.type==='intakeDesk'){
+      px(x-22,y-12,44,20,'#151b15');
+      px(x-18,y-9,36,12,'#3d503a');
+      px(x-13,y-7,26,8,'#92ad77');
+      px(x-5,y-5,10,4,'#172316');
+      px(x-25,y-15,50,2,pulse?'#d2c077':'#59684b');
+      ctx.fillStyle='#c7d2b6';ctx.font='bold 7px monospace';ctx.textAlign='center';ctx.fillText('INTAKE',x,y+19);
+    }else if(item.type==='note'){
       px(x-8,y-6,16,12,'#a59a70');
       px(x-5,y-3,10,2,'#514c38');
       px(x-5,y,8,2,'#6c6143');
@@ -4847,6 +5626,151 @@ function drawInterior(){
   ctx.font='11px monospace';
   ctx.fillText(room.title,W/2,30);
   drawRainAtWindows(sx,sy,room);
+}
+function updateIndoorEcho(dt){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp')return;
+  if(state.floor!=='inside'||!state.room||!player){
+    indoorEcho.active=false;
+    indoorEchoHistory=[];
+    indoorEchoSampleTimer=0;
+    indoorEchoRoomId='';
+    return;
+  }
+  const roomId=state.room.id;
+  if(indoorEchoRoomId!==roomId){
+    indoorEchoRoomId=roomId;
+    indoorEchoHistory=[];
+    indoorEcho.roomAge=0;
+    indoorEcho.cooldown=8+Math.random()*6;
+    indoorEcho.active=false;
+    indoorEchoSampleTimer=0;
+  }
+  indoorEcho.roomAge+=dt;
+  indoorEcho.phase+=dt;
+  indoorEcho.cooldown=Math.max(0,indoorEcho.cooldown-dt);
+  indoorEchoSampleTimer-=dt;
+  if(indoorEchoSampleTimer<=0){
+    indoorEchoHistory.push({x:player.x,y:player.y,angle:player.angle||0,at:state.elapsed,roomId});
+    indoorEchoSampleTimer=.28;
+    while(indoorEchoHistory.length&&state.elapsed-indoorEchoHistory[0].at>13)indoorEchoHistory.shift();
+  }
+  if(indoorEcho.active){
+    indoorEcho.timer-=dt;
+    if(indoorEcho.timer<=0){
+      indoorEcho.active=false;
+      indoorEcho.cooldown=18+Math.random()*14;
+    }
+    return;
+  }
+  const eventKey='afterimage-'+roomId;
+  if(indoorEcho.roomAge<9||indoorEcho.cooldown>0||state.horrorEventFlags[eventKey]||indoorEchoHistory.length<5)return;
+  const candidates=indoorEchoHistory.filter(p=>p.roomId===roomId&&state.elapsed-p.at>2.6&&state.elapsed-p.at<7.3&&dist(player.x,player.y,p.x,p.y)>145&&dist(player.x,player.y,p.x,p.y)<440);
+  let point=candidates.length?choose(candidates):null;
+  if(!point){
+    const side=player.x<state.room.w/2?1:-1;
+    point={x:clamp(player.x+side*225,48,state.room.w-48),y:clamp(player.y+(player.y<state.room.h/2?125:-125),48,state.room.h-48),angle:player.angle||0};
+  }
+  indoorEcho={active:true,timer:2.45,cooldown:19+Math.random()*12,x:point.x,y:point.y,angle:point.angle||0,phase:Math.random()*20,roomId,roomAge:indoorEcho.roomAge};
+  state.horrorEventFlags[eventKey]=true;
+  state.intensity=Math.max(state.intensity,.8);
+  state.screenShake=Math.max(state.screenShake,.1);
+  sound('door');
+  voiceNoise(choose(['left','right']),.14);
+  if(state.options.voiceWhispers){
+    const line=choose(['You left yourself in this room.','That is where you were standing a moment ago.','Do not walk toward the person wearing your uniform.','It learned your walk before it learned your name.']);
+    triggerWhisper(line,choose(['left','right']),'BODYCAM PLAYBACK');
+  }
+  if(Math.random()<.35)toast('BODYCAM FRAME DELAY: YOUR LAST POSITION IS STILL MOVING.',2.6);
+}
+function drawIndoorEcho(){
+  if(!indoorEcho.active||indoorEcho.timer<=0||state.floor!=='inside'||!state.room||indoorEcho.roomId!==state.room.id||!player)return;
+  const sx=indoorEcho.x-camera.x+shakeX;
+  const sy=indoorEcho.y-camera.y+shakeY;
+  if(sx<-70||sy<-90||sx>W+70||sy>H+90)return;
+  const d=dist(player.x,player.y,indoorEcho.x,indoorEcho.y);
+  const beamAngle=angleTo(player.x,player.y,indoorEcho.x,indoorEcho.y);
+  const delta=Math.abs(Math.atan2(Math.sin(beamAngle-flashlightAngle()),Math.cos(beamAngle-flashlightAngle())));
+  const beamOn=flashlight&&flashlightBattery>0&&d<545&&delta<.36;
+  if(!beamOn)return;
+  const focused=delta<.16;
+  const fade=Math.min(1,indoorEcho.timer*1.3);
+  ctx.save();
+  ctx.translate(Math.round(sx),Math.round(sy));
+  ctx.rotate(indoorEcho.angle||0);
+  ctx.globalAlpha=fade*(focused?.42:.93);
+  ctx.fillStyle='#010201';
+  ctx.fillRect(-11,-10,22,22);
+  ctx.fillRect(-8,-19,16,10);
+  ctx.fillRect(-7,-30,14,13);
+  ctx.fillRect(-13,-8,5,20);
+  ctx.fillRect(8,-8,5,20);
+  ctx.fillRect(-8,11,6,15);
+  ctx.fillRect(3,11,6,15);
+  ctx.fillStyle='#121711';
+  ctx.fillRect(-8,-7,16,15);
+  ctx.fillStyle='#353b2e';
+  ctx.fillRect(-8,-7,3,2);
+  ctx.fillRect(5,-7,3,2);
+  ctx.fillStyle='#050605';
+  ctx.fillRect(-4,-29,3,3);
+  ctx.fillRect(2,-29,3,3);
+  if(!focused&&Math.sin(indoorEcho.phase*12)>.05){
+    ctx.fillStyle='#d9d2b8';
+    ctx.shadowColor='#d1d7ba';ctx.shadowBlur=8;
+    ctx.fillRect(-4,-27,2,2);ctx.fillRect(3,-27,2,2);
+    ctx.shadowBlur=0;
+  }
+  ctx.fillStyle='rgba(1,2,1,.92)';
+  ctx.fillRect(-50,31,100,12);
+  ctx.fillStyle=focused?'#777d6c':'#d2cbb0';
+  ctx.font='bold 7px monospace';ctx.textAlign='center';
+  ctx.fillText(focused?'FRAME LOST':'YOU / SIX SECONDS AGO',0,39);
+  ctx.restore();
+}
+function updateHauntingDirector(dt){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp')return;
+  const flags=state.horrorEventFlags;
+  if(state.stationComplete&&!flags.stationPartnerMimic){
+    flags.stationPartnerMimic=true;
+    state.intensity=Math.max(state.intensity,.92);
+    state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,.45);
+    sound('radio');
+    tone(61,.72,'triangle',.07,-27);
+    toast('SECURE CHANNEL: AN UNREAD MESSAGE ARRIVED WHILE YOUR RADIO WAS DISCONNECTED.',3.6);
+    setTimeout(()=>{
+      if(state.running&&!state.gameOver&&state.prologueStage==='swamp')addPartnerMessage('I can see you standing at the station intake desk. Please tell me you are not still inside.','incoming');
+    },850);
+    setTimeout(()=>{
+      if(state.running&&!state.gameOver&&state.prologueStage==='swamp')addPartnerMessage('I did not send that last message. I am looking at your live feed. You are outside. Keep walking.','incoming');
+    },2450);
+    if(state.options.voiceWhispers)triggerWhisper('You checked six visitors. The seventh was already holding the camera.','center','CAMERA 04');
+  }
+  if(state.exploredRoomIds.length>=3&&!flags.threeRoomMemory){
+    flags.threeRoomMemory=true;
+    state.intensity=Math.max(state.intensity,.76);
+    state.apparitionCooldown=Math.min(state.apparitionCooldown,2.2);
+    sound('door');
+    toast('THREE BUILDINGS SEARCHED. YOUR BODYCAM FOOTAGE SHOWS YOU ENTERING EACH ONE TWICE.',4.0);
+    if(state.options.voiceWhispers)triggerWhisper('You are not discovering these rooms. You are remembering them.','right','BODYCAM TRANSCRIPT');
+    caseRecords.push({id:'echoed-building-route',name:'Impossible bodycam route',detail:'The bodycam appears to record two entries into each of three different buildings, though only one visit is logged.',analysis:'This is not a timestamp issue. The second version of the officer arrives before the first version leaves.',kind:'anomaly',studied:true});
+  }
+  if(collectedClueCount()>=4&&!flags.fourClueCountervoice){
+    flags.fourClueCountervoice=true;
+    state.intensity=Math.max(state.intensity,.8);
+    state.noise=Math.max(state.noise,.35);
+    sound('radio');
+    setTimeout(()=>{
+      if(state.running&&!state.gameOver&&state.prologueStage==='swamp')addPartnerMessage('Your fourth evidence record just updated. There is a new line underneath it: “PARTNER COUNT: 0”. Do you see that?','incoming');
+    },620);
+    if(state.options.voiceWhispers)triggerWhisper('Evidence does not prove what happened. It proves what is still happening.','left','UNKNOWN CASE REVIEWER');
+  }
+  if(state.keysFound&&!flags.relayVoiceAnswered){
+    flags.relayVoiceAnswered=true;
+    sound('radio');
+    state.screenShake=Math.max(state.screenShake,.13);
+    toast('THE RELAY KEY IS WARM. THE KEYRING HAS TWO SHADOWS.',3.3);
+    if(state.options.voiceWhispers)triggerWhisper('Put the key down. I can open the door from my side.','behind','RELAY CHANNEL / NO SENDER');
+  }
 }
 function drawIndoorPresence(){
   if(state.floor!=='inside'||!state.room||!monster||!monster.active)return;
@@ -5101,7 +6025,7 @@ function drawMini(){
   mctx.fillStyle='#b8dfa0';mctx.font='bold 7px monospace';mctx.textAlign='left';mctx.textBaseline='top';mctx.fillText('M/E = SURVIVOR',5,4);
   mctx.fillStyle='#fff0bc';
   mctx.fillRect(player.x/WORLD.w*mw-2,player.y/WORLD.h*mh-2,5,5);
-  if(monster&&monster.active){
+  if(monster&&monster.active&&!monster.hidden){
     mctx.fillStyle='#e4413d';
     mctx.fillRect(monster.x/WORLD.w*mw-2,monster.y/WORLD.h*mh-2,5,5);
   }
@@ -5316,6 +6240,24 @@ function bindEvents(){
   });
   $('interviewContinue').addEventListener('click',continueWitnessInterview);
   $('endInterview').addEventListener('click',finishWitnessInterview);
+  $('stationComposer').addEventListener('submit',e=>{e.preventDefault();sendStationChat();});
+  $('stationZoomInterview').addEventListener('click',openSuspectZoom);
+  $('closeSuspectZoom').addEventListener('click',closeSuspectZoom);
+  $('suspectZoomPanel').addEventListener('click',e=>{
+    const choice=e.target.closest('[data-suspect-choice]');
+    if(choice)handleSuspectZoomChoice(choice.dataset.suspectChoice);
+  });
+  $('stationIntakePanel').addEventListener('click',e=>{
+    const ask=e.target.closest('[data-station-ask]');
+    const topic=e.target.closest('[data-station-topic]');
+    const decision=e.target.closest('[data-station-decision]');
+    if(ask)stationInspect(ask.dataset.stationAsk);
+    if(topic)stationAskTopic(topic.dataset.stationTopic);
+    if(decision)stationRecordDecision(decision.dataset.stationDecision);
+  });
+  $('stationNextVisitor').addEventListener('click',stationNextVisitor);
+  $('stationReviewFiles').addEventListener('click',reviewStationFiles);
+  $('stationClose').addEventListener('click',closeOverlay);
   $('leaveInterview').addEventListener('click',()=>{
     toast('INTERVIEW INTERRUPTED. SILAS MAY NOT WAIT FOR ANOTHER CHANCE.',2.8);
     closeOverlay();
@@ -5403,6 +6345,11 @@ function onKeyDown(e){
     if(e.key==='Escape'){e.preventDefault();e.target.blur();}
     return;
   }
+  if(e.target&&e.target.id==='stationChatInput'){
+    if(e.key==='Enter'){e.preventDefault();sendStationChat();}
+    if(e.key==='Escape'){e.preventDefault();e.target.blur();}
+    return;
+  }
   const key=e.key.toLowerCase();
   keys[key]=true;
   if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(key))e.preventDefault();
@@ -5478,7 +6425,7 @@ def index():
 
 @app.get('/health')
 def health():
-    return jsonify(status='ok', game='Florida Shadows — State Trooper Horror Files', version='2.0')
+    return jsonify(status='ok', game='Florida Shadows: The Seventh Arrival', version='Nightmare Edition')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', '5000'))
