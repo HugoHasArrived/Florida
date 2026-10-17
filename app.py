@@ -468,6 +468,31 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
   font-size: 9px;
   letter-spacing: 1px;
 }
+.memorial-home {
+  margin-top: 17px;
+  padding: 13px 15px 12px;
+  border: 1px solid #827554;
+  border-left: 3px solid #c9b783;
+  background: linear-gradient(120deg, rgba(45,39,26,.8), rgba(12,16,12,.96) 72%);
+  color: #d2c9b1;
+  box-shadow: inset 0 0 22px rgba(184,159,102,.045);
+}
+.memorial-home-head { display:flex; gap:10px; align-items:center; margin-bottom:6px; }
+.memorial-mark { display:grid; place-items:center; flex:0 0 32px; width:32px; height:32px; border:1px solid #8f805d; color:#ead9ab; font-size:18px; background:#171a13; }
+.memorial-home-title { color:#e6d5ac; display:block; font-size:10px; letter-spacing:2.2px; }
+.memorial-home-date { display:block; color:#a79b7c; font-size:9px; margin-top:4px; letter-spacing:.5px; }
+.memorial-icons { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
+.memorial-icons span { padding:4px 7px; color:#d8c99e; background:#171b13; border:1px solid #484533; font-size:9px; letter-spacing:.6px; }
+.memorial-home p { margin:8px 0 0; font-size:11px; line-height:1.7; color:#c3c8b9; }
+.memorial-home .memorial-signoff { display:block; margin-top:8px; color:#e0d1a9; font-size:10px; letter-spacing:.4px; }
+.memorial-panel { width:min(760px,96vw); border-color:#8b7d5b; background:linear-gradient(145deg,rgba(21,23,17,.99),rgba(5,7,6,.99)); }
+.memorial-panel .section-title { color:#efe3c5; letter-spacing:.5px; }
+.memorial-letter { margin:18px 0; padding:20px clamp(16px,4vw,30px); border-top:1px solid #827554; border-bottom:1px solid #827554; background:linear-gradient(120deg,rgba(49,44,30,.47),rgba(8,11,8,.75)); color:#d3cbb8; font-size:13px; line-height:1.95; }
+.memorial-photo-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:16px 0; }
+.memorial-photo { min-height:86px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; padding:10px 5px; border:1px solid #59533e; background:#0b0f0a; color:#cabb95; text-align:center; font-size:10px; letter-spacing:1px; }
+.memorial-photo strong { font-size:25px; line-height:1; font-weight:normal; color:#e0d0a6; }
+.memorial-note { color:#a9ad9d; font-size:10px; line-height:1.7; }
+@media(max-width:760px) { .memorial-photo-row { gap:5px; } .memorial-photo { min-height:73px; font-size:8px; } .memorial-photo strong { font-size:20px; } .memorial-home p { font-size:10px; } }
 .section-title {
   margin: 7px 0 12px;
   color: #e8e2ce;
@@ -1322,6 +1347,12 @@ body.hunting #survivorLocator{opacity:0}
           <button id="creditsBtn">Credits</button>
           <button id="disclaimerBtn">Horror & privacy disclaimer</button>
         </div>
+        <section class="memorial-home" aria-label="In loving memory of Yumi's grandfather">
+          <div class="memorial-home-head"><span class="memorial-mark" aria-hidden="true">✦</span><div><strong class="memorial-home-title">IN LOVING MEMORY</strong><small class="memorial-home-date">Yumi’s grandfather · October 16, 2026</small></div></div>
+          <div class="memorial-icons" aria-label="His loves"><span>✈ PLANES</span><span>▰ CARS</span><span>▣ PHOTOGRAPHY</span></div>
+          <p>He was a great man who lived a long, full life. His passing came suddenly in the early morning, but the things he loved and the memories he leaves behind will continue to matter. May the journeys he admired, the photographs he treasured, and the stories he shared bring comfort to everyone who loves him.</p>
+          <span class="memorial-signoff">With heartfelt sympathy to Yumi and her family. May he rest in peace.</span>
+        </section>
         <div class="pc-hint">THE SEVENTH ARRIVAL · SCREAM JAM 2026 · HEADPHONES RECOMMENDED</div>
       </div>
       <div class="menu-art">
@@ -1363,16 +1394,17 @@ body.hunting #survivorLocator{opacity:0}
     <h2 class="section-title">Survive the night shift</h2>
     <div class="rule-list">
       <div class="rule"><b>01 / ANSWER THE CALL</b>Begin on foot at the edge of the woods. Press E or tap to accept dispatch.</div>
-      <div class="rule"><b>02 / FOLLOW THE FOOTPATH</b>Move on foot with WASD or arrow keys. Use the flashlight to reveal only the ground directly ahead.</div>
+      <div class="rule"><b>02 / FOLLOW THE FOOTPATH</b>Move on foot with WASD or arrow keys. Muddy footpaths are kept clear of tree trunks and are drawn on your minimap. Use the flashlight to reveal only the ground directly ahead.</div>
       <div class="rule"><b>03 / YOU ARE ALONE</b>Follow the trail toward the first clues. Your partner is on the radio, but something else has learned their voice.</div>
       <div class="rule"><b>04 / INVESTIGATE</b>Recover at least six physical clues, study six clues with J, and make four distinct cross-reference reports. Interview Silas Venn before extraction can open.</div>
       <div class="rule"><b>04B / SCREEN VISITORS</b>Inside the County Police Station, inspect six visitor IDs, question each one, cross-check the official roster, and make at least five correct admit/detain decisions. Review flagged files after studying four clues.</div>
       <div class="rule"><b>05 / RESCUE</b>Find both missing people. They follow after you help them, and their footsteps attract attention.</div>
       <div class="rule"><b>06 / STAY ALIVE</b>The Smiler learns your habits. Sprinting and constant light make it predict your route. During a hunt, hide only briefly, then break line of sight. A false dispatch may offer a tempting green signal.</div>
-      <div class="rule"><b>07 / RUN, HIDE, SCREAM</b>Use C near cover to hide and stay still. G makes a loud scream that can stagger nearby enemies but attracts the Smiler. The Smiler can begin three marked hunt phases; survive by sprinting in bursts, hiding briefly, and using buildings to break sight. H requests a short radio pulse that marks nearby threats, stuns crawlers briefly, and restores a little flashlight battery.</div>
+      <div class="rule"><b>07 / RUN, HIDE, SCREAM</b>Use C near cover to hide and stay still. G makes a loud scream that can stagger nearby enemies but attracts the Smiler. The Smiler can begin five marked hunt phases; survive by sprinting in bursts, hiding briefly, and using buildings to break sight. H requests a short radio pulse that marks nearby threats, stuns crawlers briefly, and restores a little flashlight battery.</div>
       <div class="rule"><b>08 / BREAK THE SIGNAL</b>Optional: destroy the black signal seals in the County Police Station, Pine Rest Motel, and St. Mercy Chapel. They weaken the mimic network and unlock a true-ending variation.</div>
       <div class="rule"><b>09 / SEARCH BUILDINGS</b>Press E at doors. Search five different buildings, and check rooms again: items may vanish when you look away. Important mission keys remain recoverable.</div>
-      <div class="rule"><b>10 / ESCAPE</b>Rescue both survivors, recover and study six clues, generate four distinct cross-reference reports, defend the theory, recover the relay override key, search five different buildings, save Silas Venn’s statement, then survive the 30-second extraction defense.</div>
+      <div class="rule"><b>10 / ESCAPE</b>Rescue both survivors, recover and study six clues, generate four distinct cross-reference reports, defend the theory, recover the relay override key, search five buildings, save Silas Venn’s statement, then survive the 30-second extraction defense.</div>
+      <div class="rule"><b>11 / A MOMENT OF REMEMBRANCE</b>Optional: inside the County Police Station, look for the framed tribute along the east side of the room. Press E to read it. This quiet memorial is separate from the investigation objectives.</div>
     </div>
     <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Inside the County Police Station, chat with six visitors, inspect their ID cards, compare their explanations with the roster, and decide who should be admitted or detained. At least five decisions must be correct; flagged files can be re-audited after studying four clues. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a corroborated witness statement, a completed intake audit, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
@@ -1390,6 +1422,24 @@ body.hunting #survivorLocator{opacity:0}
     <div class="credits-lines"><b>TO EVERYONE WHO PLAYS</b><br>Thank you for stepping into the swamp, investigating the case, and helping bring this horror story to life. Keep exploring, keep creating, and never ignore strange sounds on the radio.</div>
     <div class="info-card credits-quote">“Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.”</div>
     <div class="page-buttons"><button id="backCredits">Return to menu</button></div>
+  </div>
+</div>
+<div id="memorialPanel" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="grandfatherMemorialTitle">
+  <div class="panel memorial-panel">
+    <div class="kicker">A quiet corner of the County Police Station</div>
+    <h2 id="grandfatherMemorialTitle" class="section-title">In Loving Memory</h2>
+    <div class="memorial-photo-row" aria-label="A small tribute to his favourite things">
+      <div class="memorial-photo"><strong>✈</strong><span>THE PLANES HE LOVED</span></div>
+      <div class="memorial-photo"><strong>▰</strong><span>THE CARS HE ADMIRED</span></div>
+      <div class="memorial-photo"><strong>▣</strong><span>THE MOMENTS HE SAVED</span></div>
+    </div>
+    <div class="memorial-letter">
+      <p>Dedicated to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026.</p>
+      <p>He loved planes, cars, and photographs—the journeys they represented, the details worth noticing, and the moments worth keeping. He lived a long life and was a great man. A sudden goodbye cannot take away the years he lived, the memories he made, or the love that remains.</p>
+      <p>May every photograph bring back a story, every passing plane remind those who loved him of the wonder he saw in the world, and every memory make the loss a little gentler with time. May he rest in peace.</p>
+    </div>
+    <p class="memorial-note">This is a quiet tribute offered with respect and sympathy to Yumi and her family. It is not evidence in the case, and nothing here is meant to turn their loss into a scare.</p>
+    <div class="page-buttons"><button id="closeMemorial">Leave the memory in peace</button></div>
   </div>
 </div>
 <div id="objectivePanel" class="overlay hidden">
@@ -1739,10 +1789,12 @@ const state={
   radioSilenceUntil:0,
   nextRadioIncidentAt:42,
   falseSignal:{active:false,x:0,y:0,timer:0,triggered:false},
+  trailPhantom:{active:false,x:0,y:0,timer:0,cooldown:15,total:0,phase:0,kind:'edge'},
   realityPulseTimer:0,
   realityPulseCooldown:0,
   realityPulseCount:0,
-  lastRealityRoom:''
+  lastRealityRoom:'',
+  memorialTributeViewed:false
 };
 let W=innerWidth;
 let H=innerHeight;
@@ -1839,6 +1891,7 @@ function setScreen(name){
     how:'howPanel',
     credits:'creditsPanel',
     objectives:'objectivePanel',
+    memorial:'memorialPanel',
     inventory:'inventoryPanel',
     pause:'pausePanel',
     ending:'endingPanel',
@@ -2134,10 +2187,12 @@ function initializeAssets(){
   for(let x=35;x<WORLD.w;x+=63){
     for(let y=35;y<WORLD.h;y+=67){
       const n=seeded(x,y);
-      const onRoad=nearRoad(x,y);
-      const nearBuilding=buildingAt(x,y,110);
-      if(n>.57&&!onRoad&&!nearBuilding){
-        trees.push({x:x+(n*31),y:y+seeded(y,x)*29,s:.62+seeded(x+4,y+7)*.92,shade:Math.floor(seeded(x+7,y+3)*3),phase:seeded(y,x)*6.28,solid:true});
+      const tx=x+(n*31),ty=y+seeded(y,x)*29;
+      const onRoad=nearRoad(tx,ty);
+      const nearBuilding=buildingAt(tx,ty,110);
+      const onFootpath=nearFootpath(tx,ty,61);
+      if(n>.57&&!onRoad&&!nearBuilding&&!onFootpath){
+        trees.push({x:tx,y:ty,s:.62+seeded(x+4,y+7)*.92,shade:Math.floor(seeded(x+7,y+3)*3),phase:seeded(y,x)*6.28,solid:true});
       }
       if(n<.09&&!onRoad){
         wetPatches.push({x:x+10,y:y+14,w:18+seeded(x+2,y)*42,h:5+seeded(x,y+8)*10});
@@ -2186,6 +2241,34 @@ function roadNetworks(){
     [{x:2520,y:1800},{x:2790,y:1740},{x:3050,y:1840}]
   ];
 }
+const FOOTPATHS=[
+  [{x:250,y:300},{x:270,y:275},{x:355,y:270},{x:460,y:328},{x:520,y:405},{x:560,y:520},{x:690,y:605},{x:820,y:690},{x:930,y:735}],
+  [{x:520,y:405},{x:480,y:440},{x:420,y:470},{x:375,y:470}],
+  [{x:690,y:605},{x:720,y:900}],
+  [{x:930,y:735},{x:980,y:530},{x:1040,y:360},{x:1210,y:445},{x:1480,y:470}],
+  [{x:930,y:735},{x:1110,y:660}],
+  [{x:560,y:520},{x:480,y:700},{x:720,y:900}],
+  [{x:850,y:790},{x:1150,y:945},{x:1425,y:970},{x:1540,y:1100},{x:1690,y:1300},{x:1990,y:1450}],
+  [{x:1150,y:945},{x:1100,y:1350},{x:980,y:1840},{x:1290,y:1920},{x:1370,y:2110}],
+  [{x:1990,y:1450},{x:2240,y:1620},{x:2390,y:1740},{x:2580,y:1960},{x:2920,y:2300}],
+  [{x:2240,y:1620},{x:2180,y:1870}],
+  [{x:2240,y:1620},{x:2270,y:1180},{x:2510,y:1190},{x:2700,y:1080}],
+  [{x:2700,y:1080},{x:2760,y:1350},{x:2820,y:1570},{x:2790,y:1740}],
+  [{x:2580,y:1960},{x:2790,y:1740},{x:3050,y:1840}],
+  [{x:690,y:605},{x:850,y:790},{x:930,y:735}],
+  [{x:1540,y:1100},{x:1710,y:980},{x:1850,y:760},{x:2130,y:710},{x:2410,y:780}]
+];
+function footpathDistance(x,y){
+  let result=Infinity;
+  for(const points of FOOTPATHS){
+    for(let i=0;i<points.length-1;i++){
+      const d=pointSegmentDistance(x,y,points[i],points[i+1]);
+      if(d<result)result=d;
+    }
+  }
+  return result;
+}
+function nearFootpath(x,y,width=58){return footpathDistance(x,y)<width;}
 function pointSegmentDistance(px,py,a,b){
   const dx=b.x-a.x;
   const dy=b.y-a.y;
@@ -2285,7 +2368,7 @@ function makeObjects(){
 function makeRoom(name){
   const rooms={
     checkpoint:{title:'CHECKPOINT SHACK',w:700,h:480,spawn:{x:350,y:392},exit:{x:350,y:435},color:'#453f30',props:[{x:205,y:150,w:110,h:52,t:'desk'},{x:500,y:150,w:80,h:75,t:'cabinet'},{x:440,y:310,w:120,h:40,t:'bed'}],items:[{x:220,y:175,type:'note',name:'Incident memo',detail:'“Do not answer a voice if it uses your badge number.”',found:false},{x:505,y:270,type:'loot',name:'Small ammo stash',loot:'ammo',found:false}]},
-    station:{title:'COUNTY POLICE STATION — INTAKE',w:1000,h:700,spawn:{x:500,y:610},exit:{x:500,y:666},color:'#20251f',props:[{x:250,y:185,w:240,h:64,t:'desk'},{x:550,y:180,w:100,h:74,t:'console'},{x:780,y:170,w:88,h:126,t:'cabinet'},{x:180,y:365,w:150,h:46,t:'table'},{x:475,y:390,w:190,h:48,t:'table'},{x:810,y:420,w:110,h:55,t:'shelves'},{x:690,y:560,w:155,h:40,t:'bed'}],items:[{id:'station-intake-terminal',x:250,y:232,type:'intakeDesk',name:'Visitor screening terminal',detail:'Inspect credentials, ask questions, cross-check the roster, and record a decision.',found:false},{id:'station-report',x:550,y:220,type:'note',name:'After-hours intake memo',detail:'“Six visitors are expected. The exterior camera log records seven arrivals. Do not accept a badge merely because it bears the correct seal.”',found:false},{id:'station-medkit',x:780,y:320,type:'loot',name:'Evidence-room medical supplies',loot:'medkit',found:false},{id:'station-tape',x:475,y:420,type:'note',name:'Intercom maintenance tape',detail:'The microphone records the intake clerk whispering when the booth is empty. The file timestamp is tomorrow.',found:false}]},
+    station:{title:'COUNTY POLICE STATION — INTAKE',w:1000,h:700,spawn:{x:500,y:610},exit:{x:500,y:666},color:'#20251f',props:[{x:250,y:185,w:240,h:64,t:'desk'},{x:550,y:180,w:100,h:74,t:'console'},{x:780,y:170,w:88,h:126,t:'cabinet'},{x:180,y:365,w:150,h:46,t:'table'},{x:475,y:390,w:190,h:48,t:'table'},{x:810,y:420,w:110,h:55,t:'shelves'},{x:690,y:560,w:155,h:40,t:'bed'}],items:[{id:'station-intake-terminal',x:250,y:232,type:'intakeDesk',name:'Visitor screening terminal',detail:'Inspect credentials, ask questions, cross-check the roster, and record a decision.',found:false},{id:'station-report',x:550,y:220,type:'note',name:'After-hours intake memo',detail:'“Six visitors are expected. The exterior camera log records seven arrivals. Do not accept a badge merely because it bears the correct seal.”',found:false},{id:'station-medkit',x:780,y:320,type:'loot',name:'Evidence-room medical supplies',loot:'medkit',found:false},{id:'station-tape',x:475,y:420,type:'note',name:'Intercom maintenance tape',detail:'The microphone records the intake clerk whispering when the booth is empty. The file timestamp is tomorrow.',found:false},{id:'station-grandfather-tribute',x:900,y:300,type:'memorial',name:'Framed remembrance — Yumi’s grandfather',detail:'A small, warm-lit frame honours Yumi’s grandfather and his love of planes, cars, and photography.',found:false}]},
     gas:{title:'SWAMP GAS STOP',w:760,h:500,spawn:{x:380,y:412},exit:{x:380,y:458},color:'#3d3b2d',props:[{x:145,y:130,w:100,h:150,t:'shelves'},{x:300,y:130,w:100,h:150,t:'shelves'},{x:560,y:120,w:130,h:70,t:'desk'},{x:520,y:320,w:115,h:45,t:'table'}],items:[{x:560,y:155,type:'note',name:'Receipt with a warning',detail:'“Do not follow the headlights past mile marker 9.”',found:false},{x:320,y:310,type:'loot',name:'Battery pack',loot:'battery',found:false}]},
     cabin:{title:'LEANING CABIN',w:760,h:520,spawn:{x:380,y:432},exit:{x:380,y:478},color:'#41372d',props:[{x:180,y:140,w:120,h:75,t:'bed'},{x:540,y:145,w:100,h:100,t:'cabinet'},{x:350,y:160,w:100,h:50,t:'desk'},{x:530,y:330,w:130,h:46,t:'table'}],items:[{x:350,y:190,type:'note',name:'Handwritten warning',detail:'It stands perfectly still until you use the flashlight.',found:false},{x:550,y:270,type:'loot',name:'Dead flashlight cell',loot:'battery',found:false}]},
     tower:{title:'RADIO RELAY HUT',w:800,h:560,spawn:{x:400,y:472},exit:{x:400,y:520},color:'#30392f',props:[{x:170,y:130,w:110,h:70,t:'desk'},{x:400,y:140,w:200,h:100,t:'console'},{x:650,y:170,w:75,h:120,t:'cabinet'},{x:380,y:340,w:180,h:50,t:'table'}],items:[{x:400,y:190,type:'note',name:'Final dispatch tape',detail:'The voice on the recording says your next line before you speak it.',found:false},{x:650,y:300,type:'loot',name:'Emergency medical pack',loot:'medkit',found:false},{x:250,y:400,type:'loot',name:'Relay override key',loot:'keys',found:false}]}
@@ -2411,6 +2494,7 @@ function resetGame(){
   state.huntActive=false;state.huntTimer=0;state.huntWarning=0;state.huntsTriggered=0;state.huntsSurvived=0;state.nextHuntAt=43+Math.random()*17;state.huntKind='';
   state.radioIncidentCount=0;state.radioIncidentActive=false;state.radioIncidentTimer=0;state.radioSilenceUntil=0;state.nextRadioIncidentAt=42+Math.random()*13;
   state.falseSignal={active:false,x:0,y:0,timer:0,triggered:false};
+  state.trailPhantom={active:false,x:0,y:0,timer:0,cooldown:14+Math.random()*13,total:0,phase:Math.random()*9,kind:'edge'};
   state.realityPulseTimer=0;state.realityPulseCooldown=0;state.realityPulseCount=0;state.lastRealityRoom='';
   $('radioBreachPanel').classList.add('hidden');$('huntBanner').classList.remove('active');$('realityPulse').classList.remove('active');document.body.classList.remove('hunting');
   state.paused=false;
@@ -3341,6 +3425,11 @@ function interact(){
     if(evidence>=6&&!state.horrorEventFlags.sixthClueWhisper){state.horrorEventFlags.sixthClueWhisper=true;state.flashlightFlickerTimer=2.3;triggerWhisper('That was the last clue. I was hoping you would never find it.','center','VOICE INSIDE THE FILE');toast('THE SIXTH CLUE HAS YOUR HANDWRITING ON IT.',3.8);}
     return;
   }
+  if(target.type==='memorial'){
+    state.memorialTributeViewed=true;
+    enterScreen('memorial');
+    return;
+  }
   if(target.type==='sideTask'){
     collectSideTask(target);
     return;
@@ -3773,6 +3862,11 @@ function updateSurvivorLocator(){
   const sub=$('survivorLocatorSub');
   if(!box||!main||!sub)return;
   if(!state.running||state.prologueStage!=='swamp'||state.gameOver){box.classList.remove('visible');return;}
+  const navTarget=state.floor==='outside'?currentOutdoorTarget():null;
+  if(navTarget&&navTarget.navKind!=='survivor'&&navTarget.navKind!=='exit'){
+    box.classList.remove('visible');
+    return;
+  }
   box.classList.add('visible');
   if(state.floor==='inside'){
     main.textContent='SURVIVOR SIGNAL: OUTSIDE';
@@ -4100,7 +4194,7 @@ function closeOverlay(){
   state.paused=false;
   state.running=true;
   state.screen='game';
-  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel','interviewPanel','stationIntakePanel','suspectZoomPanel'])$(id).classList.add('hidden');
+  for(const id of ['objectivePanel','inventoryPanel','pausePanel','radioPanel','interviewPanel','stationIntakePanel','suspectZoomPanel','memorialPanel'])$(id).classList.add('hidden');
   $('hud').style.display='block';
   document.body.classList.add('game-active');
   state.lastFrame=performance.now();
@@ -4700,14 +4794,15 @@ function movePlayer(dt){
   player.y=clamp(player.y,22,WORLD.h-22);
 }
 function blockedAt(x,y,r){
-  const minX=Math.floor((x-r-15)/128),maxX=Math.floor((x+r+15)/128);
-  const minY=Math.floor((y-r-15)/128),maxY=Math.floor((y+r+15)/128);
+  const onTrail=nearFootpath(x,y,56);
+  const minX=Math.floor((x-r-13)/128),maxX=Math.floor((x+r+13)/128);
+  const minY=Math.floor((y-r-13)/128),maxY=Math.floor((y+r+13)/128);
   for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++){
     const bucket=treeGrid.get(gx+','+gy);
     if(!bucket)continue;
     for(const t of bucket){
-      if(Math.abs(t.x-x)>r+12||Math.abs(t.y-y)>r+15)continue;
-      if(dist(x,y,t.x,t.y)<r+9*t.s)return true;
+      if(Math.abs(t.x-x)>r+10||Math.abs(t.y-y)>r+12)continue;
+      if(!onTrail&&dist(x,y,t.x,t.y)<r+6.7*t.s)return true;
     }
   }
   for(const o of objects){
@@ -4871,7 +4966,7 @@ function updateMonster(dt){
       monster.pendingY=ty;
       monster.hidden=true;
       monster.vanishTimer=state.huntActive?1.4+Math.random()*.95:2.25+Math.random()*1.65;
-      monster.vanishCooldown=state.huntActive?5.5+Math.random()*4.5:9+Math.random()*8;
+      monster.vanishCooldown=state.huntActive?4.2+Math.random()*3.4:6.5+Math.random()*5.8;
       monster.blinkCount=(monster.blinkCount||0)+1;
       state.intensity=Math.max(state.intensity,.88);
       state.noise=Math.max(state.noise,.28);
@@ -4920,7 +5015,7 @@ function updateMonster(dt){
   const huntRamp=Math.min(58,state.elapsed*.105+state.missingCount*4.1+evidence*3.4+rescuedPressure*7+(state.threatTier||0)*5);
   let speed=(d<280?126:state.noise>.3?108:78)+Math.min(44,evidence*3.5+rescuedPressure*9+state.elapsed/68)+huntRamp;
   if(state.anchorsDisabled&&state.elapsed<(state.monsterSuppressedUntil||0))speed*=.72;
-  if(state.huntActive&&state.huntWarning<=0){speed*=1.34;if(state.adaptiveHorror.sprintExposure>5)speed*=1.13;if(!player.moving&&!player.hidden)speed*=1.22;}
+  if(state.huntActive&&state.huntWarning<=0){speed*=1.39+Math.max(0,state.huntsTriggered-2)*.035;if(state.adaptiveHorror.sprintExposure>5)speed*=1.16;if(!player.moving&&!player.hidden)speed*=1.25;}
   if(state.finalManifestStarted&&state.extractionStarted&&state.extractionHold>=27&&state.extractionHold<30)speed*=1.18;
   if(state.adaptiveHorror.flashlightExposure>34&&!monster.frozenByLight)speed*=1.08;
   if(slowedByLight)speed*=state.huntActive?.78:.48;
@@ -5009,8 +5104,67 @@ function updateWeather(dt){
   }
   for(const f of fireflies)f.phase+=dt*f.speed;
 }
+function updateTrailPhantom(dt){
+  if(!state.trailPhantom)state.trailPhantom={active:false,x:0,y:0,timer:0,cooldown:18,total:0,phase:0,kind:'edge'};
+  const p=state.trailPhantom;
+  p.phase+=dt;
+  if(p.active){
+    p.timer=Math.max(0,p.timer-dt);
+    if(p.timer<=0){
+      p.active=false;
+      p.cooldown=13+Math.random()*16;
+      if(Math.random()<.4){sound('radio');voiceNoise(choose(['left','right']),.055);}
+      if(p.total%3===0&&state.options.voiceWhispers&&state.voiceCooldown<=0)triggerWhisper('You saw the part I wanted you to see.','behind','TREELINE / LAST FRAME');
+    }
+    return;
+  }
+  p.cooldown=Math.max(0,p.cooldown-dt);
+  if(p.cooldown>0||state.elapsed<24||!monster||!monster.active||state.huntActive||state.radioIncidentActive||state.personalScareTimer>0||state.floor!=='outside'||p.total>=10)return;
+  if(Math.random()>dt*.23)return;
+  let found=false,tx=player.x,ty=player.y;
+  for(let i=0;i<24;i++){
+    let a;
+    if(Math.random()<.62)a=(player.angle||0)+Math.PI+(Math.random()-.5)*1.75;
+    else a=Math.random()*Math.PI*2;
+    const radius=145+Math.random()*150;
+    const cx=clamp(player.x+Math.cos(a)*radius,62,WORLD.w-62);
+    const cy=clamp(player.y+Math.sin(a)*radius,62,WORLD.h-62);
+    const trail=footpathDistance(cx,cy);
+    if(!blockedAt(cx,cy,13)&&dist(player.x,player.y,cx,cy)>118&&trail>22&&trail<145){tx=cx;ty=cy;found=true;break;}
+  }
+  if(!found)return;
+  p.active=true;p.x=tx;p.y=ty;p.timer=1.2+Math.random()*1.65;p.total++;p.kind=Math.random()<.48?'copy':'watcher';p.phase=Math.random()*12;
+  state.intensity=Math.max(state.intensity,.68);state.noise=Math.max(state.noise,.22);
+  state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,.28+Math.random()*.43);
+  voiceNoise(choose(['left','right']),.045);
+  if(Math.random()<.45)sound('step');
+  if(state.options.voiceWhispers&&state.voiceCooldown<=0&&Math.random()<.55)triggerWhisper(choose(['It stands where the path stops.','There are too many trees to count, and one of them is breathing.','You found the trail. It found the trail first.','It is not in the woods. It is between the trees you remember.','The figure at the path edge is standing on the wrong side of the rain.']),choose(['left','right']),'FIELD CAMERA / FRAME MISSING');
+  if(p.total%3===0)toast('A FIGURE IS STANDING BESIDE THE FOOTPATH. DO NOT ASSUME IT IS THE SMILER.',2.8);
+}
+function drawTrailPhantom(){
+  const p=state.trailPhantom;
+  if(!p||!p.active||state.floor!=='outside'||state.prologueStage!=='swamp')return;
+  const x=p.x-camera.x+shakeX,y=p.y-camera.y+shakeY;
+  if(x<-75||y<-110||x>W+75||y>H+110)return;
+  const d=dist(player.x,player.y,p.x,p.y);
+  const flick=Math.sin(state.elapsed*31+p.phase*7);
+  const fade=Math.min(1,p.timer*4.5);
+  ctx.save();ctx.globalAlpha=fade*(d<200?.9:.72);
+  ctx.translate(Math.round(x),Math.round(y));
+  const lean=Math.sin(p.phase*3.7)*4;
+  ctx.fillStyle='#010201';
+  ctx.beginPath();ctx.moveTo(-8,-59);ctx.lineTo(8,-62);ctx.lineTo(13,-45);ctx.lineTo(8,-20);ctx.lineTo(17,14);ctx.lineTo(8,15);ctx.lineTo(1,-4);ctx.lineTo(-5,18);ctx.lineTo(-17,25);ctx.lineTo(-13,-12);ctx.lineTo(-18,-40);ctx.closePath();ctx.fill();
+  px(-8+lean,-69,16,19,'#010201');px(-11+lean,-62,22,12,'#020302');
+  px(-17+lean,-39,5,34,'#010201');px(12+lean,-41,5,36,'#010201');
+  px(-11,-2,6,31,'#010201');px(4,0,6,32,'#010201');
+  if(flick>.12){ctx.fillStyle='#dad0b4';ctx.fillRect(-5,-56,3,2);ctx.fillRect(3,-56,3,2);}
+  if(flick<-.72){ctx.fillStyle='rgba(165,22,30,.75)';ctx.fillRect(-6,-56,3,2);ctx.fillRect(3,-56,3,2);}
+  if(p.kind==='copy'&&flick>.45){ctx.fillStyle='#050605';ctx.fillRect(-7,-31,14,2);ctx.fillRect(-4,-28,8,2);}
+  ctx.restore();
+}
 function updateFearDirector(dt){
   if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp')return;
+  updateTrailPhantom(dt);
   state.apparitionTimer=Math.max(0,state.apparitionTimer-dt);
   if(Array.isArray(state.storyScareQueue)&&state.storyScareQueue.length){
     const queued=state.storyScareQueue[0];
@@ -5161,12 +5315,12 @@ function updateVanishingItems(dt){
   updateObjectives();
 }
 function beginAdaptiveHunt(kind){
-  if(state.huntActive||state.huntsTriggered>=3||state.elapsed<25)return false;
+  if(state.huntActive||state.huntsTriggered>=5||state.elapsed<25)return false;
   state.huntsTriggered++;
   state.huntActive=true;
   state.huntKind=kind||'THE SMILER FOUND YOUR ROUTE';
-  state.huntTimer=18.5+Math.random()*5.5;
-  state.huntWarning=2.65;
+  state.huntTimer=18.5+Math.random()*5.5+Math.max(0,state.huntsTriggered-3)*1.7;
+  state.huntWarning=Math.max(1.75,2.65-Math.max(0,state.huntsTriggered-2)*.18);
   state.intensity=1;
   state.noise=Math.max(state.noise,.68);
   state.flashlightFlickerTimer=Math.max(state.flashlightFlickerTimer||0,1.2+Math.random()*.9);
@@ -5315,11 +5469,12 @@ function updateAdaptiveHorror(dt){
     $('huntBanner').classList.remove('active');
     const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
     const clueCount=collectedClueCount();
-    const eligible=state.elapsed>=state.nextHuntAt&&monster&&monster.active&&state.huntsTriggered<3;
+    const eligible=state.elapsed>=state.nextHuntAt&&monster&&monster.active&&state.huntsTriggered<5;
     if(eligible){
       const n=state.huntsTriggered;
-      const ready=n===0||(n===1&&(clueCount>=3||a.sprintExposure>11||state.missingCount>=1))||(n===2&&(rescued>=1||state.stationComplete||studyCount()>=4));
-      if(ready)beginAdaptiveHunt(n===0?'FIRST CONTACT':n===1?'THE LEARNED ROUTE':'THE LAST SEARCH');
+      const ready=n===0||(n===1&&(clueCount>=3||a.sprintExposure>11||state.missingCount>=1))||(n===2&&(rescued>=1||state.stationComplete||studyCount()>=4))||(n===3&&(clueCount>=5||state.elapsed>=180||state.missingCount>=2))||(n===4&&(rescued>=1&&clueCount>=5||state.elapsed>=250));
+      const huntNames=['FIRST CONTACT','THE LEARNED ROUTE','THE LAST SEARCH','NO SAFE ROOM','THE THING THAT WAITS'];
+      if(ready)beginAdaptiveHunt(huntNames[n]||'THE THING THAT WAITS');
     }
   }
   if(!state.horrorEventFlags.nextPhantomAudioAt)state.horrorEventFlags.nextPhantomAudioAt=state.elapsed+16+Math.random()*12;
@@ -5592,6 +5747,41 @@ function drawGround(){
   const sh=Math.min(H,WORLD.h-sy);
   if(sw>0&&sh>0)ctx.drawImage(groundCanvas,sx,sy,sw,sh,shakeX,shakeY,sw,sh);
 }
+function drawFootpaths(){
+  ctx.save();
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  for(const route of FOOTPATHS){
+    const first=route[0];
+    ctx.beginPath();
+    ctx.moveTo(first.x-camera.x+shakeX,first.y-camera.y+shakeY);
+    for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x-camera.x+shakeX,route[i].y-camera.y+shakeY);
+    ctx.lineWidth=41;ctx.strokeStyle='#0b100a';ctx.stroke();
+    ctx.lineWidth=32;ctx.strokeStyle='#252719';ctx.stroke();
+    ctx.lineWidth=23;ctx.strokeStyle='#45412d';ctx.stroke();
+    ctx.lineWidth=1.9;ctx.setLineDash([4,13]);ctx.strokeStyle='rgba(190,181,123,.56)';ctx.stroke();ctx.setLineDash([]);
+  }
+  for(let i=0;i<FOOTPATHS.length;i++){
+    const route=FOOTPATHS[i];
+    for(let j=0;j<route.length-1;j++){
+      const a=route[j],b=route[j+1];
+      const length=Math.hypot(b.x-a.x,b.y-a.y);
+      const steps=Math.floor(length/88);
+      for(let k=1;k<steps;k++){
+        const wx=a.x+(b.x-a.x)*k/steps;
+        const wy=a.y+(b.y-a.y)*k/steps;
+        const sx=wx-camera.x+shakeX,sy=wy-camera.y+shakeY;
+        if(sx<-10||sy<-10||sx>W+10||sy>H+10)continue;
+        const pulse=.55+.12*Math.sin(i*5+j*3+k);
+        ctx.globalAlpha=pulse;
+        px(sx-2,sy-1,4,2,'#5a563a');
+        if(k%2===0)px(sx+4,sy+3,2,1,'#777052');
+      }
+    }
+  }
+  ctx.restore();
+}
+
 function drawRoad(){
   ctx.save();
   ctx.lineCap='round';
@@ -6206,6 +6396,7 @@ function drawWorld(){
   }
   drawGround();
   drawPuddles();
+  drawFootpaths();
   drawRoad();
   drawReeds();
   for(const t of trees)drawTree(t);
@@ -6230,6 +6421,7 @@ function drawWorld(){
   drawThreatMarkers();
   drawFalseFigure();
   drawSurvivorGuidance();
+  drawTrailPhantom();
   drawMini();
   drawRealityText();
   drawSmilerContactLost();
@@ -6299,6 +6491,17 @@ function drawInterior(){
       px(x-5,y-3,10,2,'#514c38');
       px(x-5,y,8,2,'#6c6143');
       if(pulse)px(x-10,y-8,20,2,'#d1b96f');
+    }else if(item.type==='memorial'){
+      const halo=.42+.22*Math.sin(state.elapsed*1.15);
+      ctx.save();ctx.globalCompositeOperation='screen';
+      const memorialGlow=ctx.createRadialGradient(x,y,2,x,y,42);
+      memorialGlow.addColorStop(0,'rgba(213,190,126,'+halo+')');memorialGlow.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=memorialGlow;ctx.fillRect(x-44,y-44,88,88);ctx.restore();
+      px(x-23,y-27,46,48,'#2a281f');px(x-20,y-24,40,42,'#a18b5e');px(x-17,y-21,34,36,'#111811');
+      px(x-14,y-18,12,11,'#7f8b78');px(x-12,y-16,8,2,'#c4b88e');px(x-8,y-14,2,6,'#c4b88e');px(x-15,y-12,14,2,'#c4b88e');
+      px(x+3,y-18,12,11,'#464a3c');px(x+5,y-15,8,4,'#b3a477');px(x+4,y-10,3,3,'#080a08');px(x+12,y-10,3,3,'#080a08');
+      px(x-14,y-3,28,2,'#655b3e');px(x-13,y+1,26,2,'#8f8057');px(x-9,y+5,18,2,'#cabb91');
+      ctx.fillStyle='#e6d4a8';ctx.font='bold 7px monospace';ctx.textAlign='center';ctx.fillText('REMEMBER',x,y+31);
     }else if(item.type==='witness'){
       px(x-8,y-14,16,14,'#080b08');
       px(x-6,y-22,12,10,'#8b8064');
@@ -6752,62 +6955,82 @@ function drawLightingInterior(){
   ctx.fillStyle=vignette;
   ctx.fillRect(0,0,W,H);
 }
+function currentOutdoorTarget(){
+  if(collectedClueCount()<6){
+    const clues=objects.filter(o=>o.type==='evidence'&&!o.found&&!o.missing).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+    if(clues.length)return {...clues[0],navKind:'clue',navLabel:'EVIDENCE · '+clues[0].name.toUpperCase()};
+    const buildings=objects.filter(o=>o.type==='building'&&!state.exploredRoomIds.includes(o.room)).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+    if(buildings.length)return {...buildings[0],navKind:'building',navLabel:'SEARCH FOR CLUES · '+buildings[0].name.toUpperCase()};
+  }
+  if(studyCount()<6)return {navKind:'casefile',navLabel:'OPEN CASE FILE [J] · STUDY '+(6-studyCount())+' MORE CLUE(S)'};
+  if(validCrossReferenceCount()<4)return {navKind:'casefile',navLabel:'CASE FILE [J] · MAKE '+(4-validCrossReferenceCount())+' MORE DISTINCT COMPARISON(S)'};
+  if(state.caseTheory!=='mimic-timeline')return {navKind:'casefile',navLabel:'CASE FILE [J] · SUBMIT A SUPPORTED THEORY'};
+  if(!state.witnessInterviewed||state.witnessTrust<2){const b=objects.find(o=>o.id==='farmhouse');return b?{...b,navKind:'building',navLabel:state.witnessInterviewed?'RETURN TO SILAS VENN':'INTERVIEW SILAS VENN'}:null;}
+  if(!state.stationComplete){const b=objects.find(o=>o.id==='station');return b?{...b,navKind:'building',navLabel:'SCREEN SIX STATION VISITORS'}:null;}
+  if(!state.keysFound){const b=objects.find(o=>o.id==='tower');return b?{...b,navKind:'building',navLabel:'FIND THE RELAY OVERRIDE KEY'}:null;}
+  if(state.exploredRoomIds.length<5){const bs=objects.filter(o=>o.type==='building'&&!state.exploredRoomIds.includes(o.room)).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));if(bs.length)return {...bs[0],navKind:'building',navLabel:'SEARCH BUILDING · '+bs[0].name.toUpperCase()};}
+  const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
+  if(missing.length)return {...missing[0],navKind:'survivor',navLabel:'SOS · '+missing[0].name.toUpperCase()};
+  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
+  const exit=objects.find(o=>o.type==='exit');
+  if(rescued>=2&&exit)return {...exit,navKind:'exit',navLabel:'EXTRACTION BEACON'};
+  return null;
+}
 function drawSurvivorGuidance(){
   if(state.prologueStage!=='swamp'||state.floor!=='outside'||!state.running)return;
-  const missing=survivors.filter(s=>!s.found&&!s.following&&!s.delivered).sort((a,b)=>dist(player.x,player.y,a.x,a.y)-dist(player.x,player.y,b.x,b.y));
-  const rescued=survivors.filter(s=>s.found||s.following||s.delivered).length;
-  const isExit=missing.length===0&&rescued>=2&&investigationReady();
-  if(!missing.length&&!isExit)return;
-  const target=isExit?objects.find(o=>o.type==='exit'):missing[0];
+  const target=currentOutdoorTarget();
   if(!target)return;
+  if(target.navKind==='casefile'){
+    ctx.save();
+    ctx.fillStyle='rgba(4,7,5,.94)';ctx.fillRect(W*.5-170,54,340,28);
+    ctx.strokeStyle='rgba(221,193,115,.88)';ctx.lineWidth=1.4;ctx.strokeRect(W*.5-170,54,340,28);
+    ctx.fillStyle='#f0d998';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(target.navLabel,W*.5,68);
+    ctx.restore();
+    return;
+  }
   const d=dist(player.x,player.y,target.x,target.y);
-  const sx=target.x-camera.x;
-  const sy=target.y-camera.y;
+  const sx=target.x-camera.x+shakeX;
+  const sy=target.y-camera.y+shakeY;
   const onScreen=sx>22&&sy>22&&sx<W-22&&sy<H-22;
-  const hue=isExit?'rgba(255,221,139,':'rgba(179,255,143,';
-  const solid=isExit?'#ffe7a3':'#d8ffc0';
-  const label=isExit?'EXTRACTION':'SOS · '+target.name.toUpperCase();
+  const isExit=target.navKind==='exit';
+  const isSurvivor=target.navKind==='survivor';
+  const hue=isExit?'rgba(255,221,139,':isSurvivor?'rgba(179,255,143,':target.navKind==='clue'?'rgba(255,207,106,':'rgba(151,207,222,';
+  const solid=isExit?'#ffe7a3':isSurvivor?'#d8ffc0':target.navKind==='clue'?'#ffe0a0':'#c0edfa';
+  const label=target.navLabel||target.name.toUpperCase();
   if(onScreen){
     const pulse=.5+.5*Math.sin(state.elapsed*(isExit?5:4.2));
     const bx=sx,by=sy-25;
-    ctx.save();
-    ctx.globalCompositeOperation='lighter';
+    ctx.save();ctx.globalCompositeOperation='lighter';
     const glow=ctx.createRadialGradient(bx,by,2,bx,by,30+15*pulse);
-    glow.addColorStop(0,hue+'.55)');
-    glow.addColorStop(.35,hue+'.20)');
-    glow.addColorStop(1,hue+'0)');
-    ctx.fillStyle=glow;ctx.fillRect(bx-48,by-48,96,96);
-    ctx.restore();
-    ctx.strokeStyle=hue+(.65+.3*pulse)+')';ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(bx,by,8+4*pulse,0,Math.PI*2);ctx.stroke();
+    glow.addColorStop(0,hue+'.55)');glow.addColorStop(.35,hue+'.20)');glow.addColorStop(1,hue+'0)');
+    ctx.fillStyle=glow;ctx.fillRect(bx-48,by-48,96,96);ctx.restore();
+    ctx.strokeStyle=hue+(.65+.3*pulse)+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(bx,by,8+4*pulse,0,Math.PI*2);ctx.stroke();
     ctx.fillStyle=solid;ctx.beginPath();ctx.moveTo(bx,by-5);ctx.lineTo(bx+5,by);ctx.lineTo(bx,by+5);ctx.lineTo(bx-5,by);ctx.closePath();ctx.fill();
     ctx.strokeStyle=hue+'.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,by+10);ctx.lineTo(sx,sy-13);ctx.stroke();
-    ctx.fillStyle='rgba(3,10,5,.92)';ctx.fillRect(sx-66,sy-51,132,15);
-    ctx.strokeStyle=isExit?'#d3b45e':'#87ba72';ctx.strokeRect(sx-66,sy-51,132,15);
-    ctx.fillStyle=solid;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(label,sx,sy-40);
-    const caption=isExit?'STEP INTO BEACON TO ESCAPE':d<150?'E / SEARCH TO RESCUE':Math.round(d)+'m TO SURVIVOR';
-    ctx.fillStyle=isExit?'#ffe9b0':'#d5f2b7';ctx.font='bold 10px monospace';ctx.fillText(caption,sx,sy-62);
+    const labelW=Math.min(W-24,Math.max(132,Math.min(300,label.length*6.1)));
+    ctx.fillStyle='rgba(3,10,5,.94)';ctx.fillRect(sx-labelW/2,sy-51,labelW,15);
+    ctx.strokeStyle=isExit?'#d3b45e':isSurvivor?'#87ba72':target.navKind==='clue'?'#d8a84e':'#75aeba';ctx.strokeRect(sx-labelW/2,sy-51,labelW,15);
+    ctx.fillStyle=solid;ctx.font='bold 8px monospace';ctx.textAlign='center';ctx.fillText(label.length>42?label.slice(0,40)+'…':label,sx,sy-40);
+    const caption=isExit?'STEP INTO BEACON TO ESCAPE':isSurvivor?(d<150?'E / SEARCH TO RESCUE':Math.round(d)+'m TO SURVIVOR'):target.navKind==='clue'?(d<115?'E / SEARCH FOR EVIDENCE':Math.round(d)+'m · FOLLOW THE TRAIL'):d<145?'E / SEARCH BUILDING':Math.round(d)+'m · FOLLOW THE TRAIL';
+    ctx.fillStyle=solid;ctx.font='bold 10px monospace';ctx.fillText(caption,sx,sy-62);
   }else{
-    const pxp=clamp(player.x-camera.x,0,W);
-    const pyp=clamp(player.y-camera.y,0,H);
-    const vx=sx-pxp;
-    const vy=sy-pyp;
-    const angle=Math.atan2(vy,vx);
+    const pxp=clamp(player.x-camera.x,0,W),pyp=clamp(player.y-camera.y,0,H);
+    const vx=sx-pxp,vy=sy-pyp,angle=Math.atan2(vy,vx);
     const marginX=Math.min(52,W*.13),marginTop=155,marginBottom=H-150;
     const scaleX=vx>0?(W-marginX-pxp)/vx:vx<0?(marginX-pxp)/vx:Infinity;
     const scaleY=vy>0?(marginBottom-pyp)/vy:vy<0?(marginTop-pyp)/vy:Infinity;
-    let scale=Math.min(scaleX>0?scaleX:Infinity,scaleY>0?scaleY:Infinity);
-    if(!Number.isFinite(scale))scale=1;
-    const ax=clamp(pxp+vx*scale,marginX,W-marginX);
-    const ay=clamp(pyp+vy*scale,marginTop,marginBottom);
-    ctx.save();ctx.translate(ax,ay);ctx.rotate(angle+Math.PI/2);
-    ctx.fillStyle=solid;ctx.strokeStyle='#122211';ctx.lineWidth=3;
+    let scale=Math.min(scaleX>0?scaleX:Infinity,scaleY>0?scaleY:Infinity);if(!Number.isFinite(scale))scale=1;
+    const ax=clamp(pxp+vx*scale,marginX,W-marginX),ay=clamp(pyp+vy*scale,marginTop,marginBottom);
+    ctx.save();ctx.translate(ax,ay);ctx.rotate(angle+Math.PI/2);ctx.fillStyle=solid;ctx.strokeStyle='#122211';ctx.lineWidth=3;
     ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(10,10);ctx.lineTo(0,5);ctx.lineTo(-10,10);ctx.closePath();ctx.stroke();ctx.fill();ctx.restore();
-    ctx.fillStyle='rgba(3,10,5,.92)';ctx.fillRect(ax-55,ay+14,110,16);
-    ctx.strokeStyle=isExit?'#d3b45e':'#87ba72';ctx.strokeRect(ax-55,ay+14,110,16);
-    ctx.fillStyle=solid;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText((isExit?'EXIT':'FIND '+target.name.toUpperCase())+' · '+Math.round(d)+'m',ax,ay+25);
+    const short=label.length>24?label.slice(0,22)+'…':label;
+    ctx.font='bold 8px monospace';const boxW=Math.min(W-20,Math.max(110,short.length*5.4+14));
+    ctx.fillStyle='rgba(3,10,5,.94)';ctx.fillRect(ax-boxW/2,ay+14,boxW,16);
+    ctx.strokeStyle=isExit?'#d3b45e':isSurvivor?'#87ba72':target.navKind==='clue'?'#d8a84e':'#75aeba';ctx.strokeRect(ax-boxW/2,ay+14,boxW,16);
+    ctx.fillStyle=solid;ctx.textAlign='center';ctx.fillText(short+' · '+Math.round(d)+'m',ax,ay+25);
   }
 }
+
 function drawMini(){
   if(state.elapsed-lastMiniDraw<.12&&lastMiniFloor===state.floor&&lastMiniRoom===state.room)return;
   lastMiniDraw=state.elapsed;lastMiniFloor=state.floor;lastMiniRoom=state.room;
@@ -6838,6 +7061,14 @@ function drawMini(){
   }
   mctx.fillStyle='#152319';
   mctx.fillRect(2,2,mw-4,mh-4);
+  mctx.strokeStyle='#6b7354';
+  mctx.lineWidth=1.15;
+  for(const points of FOOTPATHS){
+    mctx.beginPath();
+    mctx.moveTo(points[0].x/WORLD.w*mw,points[0].y/WORLD.h*mh);
+    for(let i=1;i<points.length;i++)mctx.lineTo(points[i].x/WORLD.w*mw,points[i].y/WORLD.h*mh);
+    mctx.stroke();
+  }
   mctx.strokeStyle='#5e604d';
   mctx.lineWidth=3;
   for(const points of roadNetworks()){
@@ -6849,7 +7080,7 @@ function drawMini(){
   for(const o of objects){
     if(o.type!=='building')continue;
     const bx=o.x/WORLD.w*mw,by=o.y/WORLD.h*mh;
-    mctx.fillStyle='#a0a18a';mctx.fillRect(bx-2,by-2,4,4);
+    mctx.fillStyle=state.exploredRoomIds.includes(o.room)?'#66715e':'#a0a18a';mctx.fillRect(bx-2,by-2,4,4);
   }
   for(const o of objects){
     const x=o.x/WORLD.w*mw;
@@ -7081,6 +7312,7 @@ function bindEvents(){
   $('enableVoiceWhispers').addEventListener('change',e=>state.options.voiceWhispers=e.target.checked);
   $('objectiveToggle').addEventListener('click',openObjectives);
   $('closeObjectives').addEventListener('click',closeOverlay);
+  $('closeMemorial').addEventListener('click',closeOverlay);
   $('evidenceBoard').addEventListener('click',e=>{
     const button=e.target.closest('[data-study-id]');
     if(button)studyEvidence(button.dataset.studyId);
@@ -7219,7 +7451,7 @@ function onKeyDown(e){
   if(e.repeat)return;
   if(key==='escape'){
     if(state.screen==='game')pauseGame();
-    else if(['objectives','inventory','radio'].includes(state.screen))closeOverlay();
+    else if(['objectives','inventory','radio','memorial'].includes(state.screen))closeOverlay();
     else if(state.screen==='pause')closeOverlay();
     else if(state.screen!=='menu')setScreen('menu');
     return;
