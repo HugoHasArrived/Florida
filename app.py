@@ -492,6 +492,12 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 .memorial-photo { min-height:86px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; padding:10px 5px; border:1px solid #59533e; background:#0b0f0a; color:#cabb95; text-align:center; font-size:10px; letter-spacing:1px; }
 .memorial-photo strong { font-size:25px; line-height:1; font-weight:normal; color:#e0d0a6; }
 .memorial-note { color:#a9ad9d; font-size:10px; line-height:1.7; }
+.inspiration-home { border-color:#5f715d; border-left-color:#9ab095; background:linear-gradient(120deg,rgba(27,43,30,.82),rgba(9,15,11,.97) 72%); }
+.inspiration-home .memorial-home-title { color:#d2e0c8; }
+.inspiration-home .memorial-mark { border-color:#71896b; color:#d6e3c8; }
+.credits-yumi-tribute { border-left-color:#92a789; background:linear-gradient(115deg,rgba(28,43,30,.42),rgba(8,11,8,.25)); }
+.credits-yumi-tribute > b { color:#d4e2c9; letter-spacing:1.1px; }
+.memorial-subtitle { margin:22px 0 6px; color:#e0d1a9; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; }
 @media(max-width:760px) { .memorial-photo-row { gap:5px; } .memorial-photo { min-height:73px; font-size:8px; } .memorial-photo strong { font-size:20px; } .memorial-home p { font-size:10px; } }
 .section-title {
   margin: 7px 0 12px;
@@ -623,6 +629,20 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 }
 .credits-lines p {
   margin: 11px 0 0;
+}
+.credits-memory {
+  border-left-color: #b6a06b;
+  padding: 14px 16px;
+  background: linear-gradient(115deg, rgba(45, 41, 29, .38), rgba(8, 11, 8, .22));
+  color: #d4cfbd;
+}
+.credits-memory > b {
+  color: #ead9ab;
+  letter-spacing: 1.2px;
+}
+.credits-memory .credit-name {
+  font-size: 15px;
+  margin-top: 4px;
 }
 .credits-quote {
   border-color: #65563a;
@@ -1353,6 +1373,11 @@ body.hunting #survivorLocator{opacity:0}
           <p>He was a great man who lived a long, full life. His passing came suddenly in the early morning, but the things he loved and the memories he leaves behind will continue to matter. May the journeys he admired, the photographs he treasured, and the stories he shared bring comfort to everyone who loves him.</p>
           <span class="memorial-signoff">With heartfelt sympathy to Yumi and her family. May he rest in peace.</span>
         </section>
+        <section class="memorial-home inspiration-home" aria-label="A dedication to Yumi, who inspired this game">
+          <div class="memorial-home-head"><span class="memorial-mark" aria-hidden="true">✧</span><div><strong class="memorial-home-title">WITH GRATITUDE TO YUMI</strong><small class="memorial-home-date">A friend, classmate, and creative inspiration</small></div></div>
+          <p>Mayumi “Yumi” Alingarog helped inspire this project through her kindness, creativity, and the encouragement she has shared. This small dedication is offered with care for her and her family. There are no perfect words for a sudden loss, and no one should have to rush through grief or pretend to be okay before they are ready.</p>
+          <span class="memorial-signoff">Yumi, you matter. You are appreciated, and you do not have to carry every difficult day alone.</span>
+        </section>
         <div class="pc-hint">THE SEVENTH ARRIVAL · SCREAM JAM 2026 · HEADPHONES RECOMMENDED</div>
       </div>
       <div class="menu-art">
@@ -1418,7 +1443,9 @@ body.hunting #survivorLocator{opacity:0}
       <div class="credits-mark">FS</div>
       <div><b>FLORIDA SHADOWS</b><span>STATE TROOPER HORROR FILES</span><small>Pixel horror project · Scream Jam 2026</small></div>
     </div>
-    <div class="credits-lines"><b>WITH APPRECIATION TO</b><br><strong class="credit-name">Mayumi Alingarog</strong><br><span class="credit-alias">Also known as Yumi, Mimi, and Yumimi</span><p>To Mayumi Alingarog, my classmate and fellow developer: thank you for being such a helpful, kind, and respectful person. Your support, encouragement, and willingness to share this creative journey mean a lot. Your kindness makes collaboration better, and I am grateful to have you as a classmate and fellow developer.</p><p>This project is a little more special because of the people who offer encouragement along the way. Thank you for being one of them.</p></div>
+    <div class="credits-lines"><b>WITH APPRECIATION TO</b><br><strong class="credit-name">Mayumi Alingarog</strong><br><span class="credit-alias">Also known as Yumi, Mimi, and Yumimi</span><p>To Mayumi Alingarog, my classmate and fellow developer: thank you for being such a helpful, kind, and respectful person. Your support, encouragement, creativity, and willingness to share this journey have helped inspire Florida Shadows. You reminded me that a project is not only about code or scares; it is also about the people who encourage us to keep creating.</p><p>I am grateful to know you and to have had your inspiration as part of this game. I hope this tribute gives a little warmth without asking you to feel any particular way. You can grieve, remember, cry, laugh at an old story, or simply take each day as it comes. You deserve kindness through all of it.</p></div>
+    <div class="credits-lines credits-memory"><b>IN LOVING MEMORY — YUMI’S GRANDFATHER</b><br><span class="memorial-home-date">October 16, 2026 · A life remembered with love</span><p>This game also carries a quiet tribute to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026. He was a great man who lived a long life, and he loved planes, cars, and photographs—the journeys they carried, the places they could take us, and the moments worth keeping.</p><p>May the photographs he left behind keep his stories close, may every passing plane and every beloved car bring back a good memory, and may the years he lived be remembered with gratitude as well as sadness. His life mattered, and the memories and love he leaves behind will continue.</p><p><strong class="credit-name">May he rest in peace.</strong></p></div>
+    <div class="credits-lines credits-yumi-tribute"><b>FOR YUMI — WHO HELPED INSPIRE THIS STORY</b><p>Some people leave a mark on a project simply by being themselves. Yumi’s kindness, creativity, and encouragement helped make this game more meaningful to its creator. This dedication cannot fix the hurt of losing someone you love, and it is not meant to ask anyone to be strong all the time. It is a small way to say: your feelings matter, your grandfather’s life matters, and you deserve gentleness and support while you grieve.</p><p>May the people around you give you room to cry, space to remember, and moments of warmth when the days feel heavy. You do not need to find the right words or hide your sadness to be cared for. Thank you for inspiring this project and for being the person you are.</p><p><strong class="credit-name">With gratitude, care, and friendship.</strong></p></div>
     <div class="credits-lines"><b>TO EVERYONE WHO PLAYS</b><br>Thank you for stepping into the swamp, investigating the case, and helping bring this horror story to life. Keep exploring, keep creating, and never ignore strange sounds on the radio.</div>
     <div class="info-card credits-quote">“Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.”</div>
     <div class="page-buttons"><button id="backCredits">Return to menu</button></div>
@@ -1437,6 +1464,9 @@ body.hunting #survivorLocator{opacity:0}
       <p>Dedicated to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026.</p>
       <p>He loved planes, cars, and photographs—the journeys they represented, the details worth noticing, and the moments worth keeping. He lived a long life and was a great man. A sudden goodbye cannot take away the years he lived, the memories he made, or the love that remains.</p>
       <p>May every photograph bring back a story, every passing plane remind those who loved him of the wonder he saw in the world, and every memory make the loss a little gentler with time. May he rest in peace.</p>
+      <div class="memorial-subtitle">A note for Yumi</div>
+      <p>Yumi, your kindness and creativity helped inspire this game, and this memorial is also a small way of thanking you. There are no words that can make a sudden loss feel fair. You do not have to be okay on anyone else’s schedule, and you never have to hide your sadness to deserve care. I hope you have people beside you who will listen, sit quietly with you, and help carry the ordinary days when they feel unusually heavy.</p>
+      <p>Your grandfather’s life deserves to be remembered with love, and you deserve kindness as you remember him. Thank you for inspiring this story. This little corner is here as a place for reflection, not fear.</p>
     </div>
     <p class="memorial-note">This is a quiet tribute offered with respect and sympathy to Yumi and her family. It is not evidence in the case, and nothing here is meant to turn their loss into a scare.</p>
     <div class="page-buttons"><button id="closeMemorial">Leave the memory in peace</button></div>
