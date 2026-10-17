@@ -492,11 +492,14 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
 .memorial-photo { min-height:86px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; padding:10px 5px; border:1px solid #59533e; background:#0b0f0a; color:#cabb95; text-align:center; font-size:10px; letter-spacing:1px; }
 .memorial-photo strong { font-size:25px; line-height:1; font-weight:normal; color:#e0d0a6; }
 .memorial-note { color:#a9ad9d; font-size:10px; line-height:1.7; }
+.memorial-prayer { color:#d8d0b7!important; font-style:italic; border-left:2px solid #7d765e; padding:9px 13px; margin:12px 0!important; background:rgba(19,22,16,.58); }
 .inspiration-home { border-color:#5f715d; border-left-color:#9ab095; background:linear-gradient(120deg,rgba(27,43,30,.82),rgba(9,15,11,.97) 72%); }
 .inspiration-home .memorial-home-title { color:#d2e0c8; }
 .inspiration-home .memorial-mark { border-color:#71896b; color:#d6e3c8; }
 .credits-yumi-tribute { border-left-color:#92a789; background:linear-gradient(115deg,rgba(28,43,30,.42),rgba(8,11,8,.25)); }
 .credits-yumi-tribute > b { color:#d4e2c9; letter-spacing:1.1px; }
+.credits-letter { border-left:3px solid #b9aa84; background:linear-gradient(115deg,rgba(51,45,31,.36),rgba(8,11,8,.28)); }
+.credits-letter > b { color:#e5d8b8; letter-spacing:1.1px; }
 .memorial-subtitle { margin:22px 0 6px; color:#e0d1a9; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; }
 @media(max-width:760px) { .memorial-photo-row { gap:5px; } .memorial-photo { min-height:73px; font-size:8px; } .memorial-photo strong { font-size:20px; } .memorial-home p { font-size:10px; } }
 .section-title {
@@ -952,55 +955,7 @@ body.prologue-mode.prologue-drive.mobile-mode #touchControls { display: block; }
   font-size: 18px;
 }
 
-#partnerChat {
-  position:fixed;
-  z-index:8;
-  top:14px;
-  left:14px;
-  width:min(310px,34vw);
-  max-height:36vh;
-  overflow:hidden;
-  display:none;
-  flex-direction:column;
-  color:#e7ebdf;
-  background:linear-gradient(180deg,rgba(5,12,10,.98),rgba(8,15,12,.96));
-  border:1px solid #82927c;
-  box-shadow:0 5px 24px #000b,inset 0 0 0 1px #17231a;
-  text-shadow:0 1px 3px #000;
-  pointer-events:auto;
-}
-body.prologue-mode.prologue-drive #partnerChat,
-body.prologue-mode.prologue-arrival #partnerChat,
-body.game-active:not(.prologue-mode) #partnerChat { display:flex; }
-body.game-active:not(.prologue-mode) #partnerChat { top:142px; }
-.partner-head {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:8px 10px;
-  background:#1b2a20;
-  border-bottom:1px solid #4e624d;
-  color:#d7d8bc;
-  font-size:10px;
-  letter-spacing:1px;
-}
-.partner-live { color:#9fc18c; white-space:nowrap; }
-.partner-live::before { content:"● "; color:#8cc77c; }
-#partnerMessages { padding:7px 8px 8px; display:flex; flex-direction:column; gap:6px; max-height:calc(36vh - 84px); min-height:58px; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; flex:1 1 auto; }
-.partner-message { max-width:96%; padding:6px 8px; font-size:10px; line-height:1.45; white-space:pre-wrap; overflow-wrap:anywhere; background:#151e18; border-left:2px solid #8ca47e; }
-.partner-message.outgoing { align-self:flex-end; background:#20231b; border-left:0; border-right:2px solid #c5ae70; color:#e1d8bc; }
-.partner-sender { display:block; margin-bottom:2px; color:#a7c19a; font-size:8px; letter-spacing:.7px; }
-.partner-message.outgoing .partner-sender { color:#d2b979; }
-.partner-message.unknown { align-self:center; width:100%; max-width:100%; color:#f0c7c4; background:repeating-linear-gradient(180deg,#211011 0 3px,#120a0b 3px 6px); border:1px solid #8d363b; box-shadow:inset 0 0 18px #740e1833,0 0 12px #8c1e2833; animation:unknownSignal .22s steps(2,end) 5; }
-.partner-message.unknown .partner-sender { color:#ff7777; }
-@keyframes unknownSignal { 0%{transform:translateX(0);opacity:1} 25%{transform:translateX(2px);opacity:.72} 50%{transform:translateX(-2px);opacity:1} 75%{transform:translateX(1px);opacity:.82} 100%{transform:translateX(0);opacity:1} }
-#partnerComposer { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px; padding:6px; border-top:1px solid #485847; background:#080e0b; pointer-events:auto; }
-#partnerInput { display:block; width:100%; min-width:0; padding:8px 9px; border:1px solid #4a5b4a; border-radius:0; background:#111a13; color:#f1f0df; font-size:11px; line-height:1.2; letter-spacing:0; text-transform:none; user-select:text; -webkit-user-select:text; pointer-events:auto; }
-#partnerInput::placeholder { color:#849183; opacity:1; }
-#partnerInput:focus { outline:1px solid #d0b773; border-color:#d0b773; }
-#partnerSend { padding:7px 9px; font-size:9px; letter-spacing:.5px; white-space:nowrap; }
-.partner-hint { padding:0 8px 5px; color:#788676; font-size:8px; line-height:1.3; }
+
 #driveLaneHUD {
   display:none;
   position:fixed;
@@ -1026,13 +981,6 @@ body.prologue-mode.prologue-drive #driveLaneHUD { display:block; }
 .lane-labels { display:flex; justify-content:space-between; margin-top:4px; color:#9da99a; font-size:8px; }
 #laneAdvice { margin-top:6px; color:#c4cebd; font-size:9px; line-height:1.4; }
 @media(max-width:700px) {
-  #partnerChat { width:min(270px,66vw); max-height:37vh; top:8px; left:8px; }
-  body.game-active:not(.prologue-mode) #partnerChat { top:128px; }
-  #partnerMessages { max-height:calc(37vh - 84px); min-height:44px; }
-  #partnerInput { padding:7px 6px; font-size:10px; }
-  #partnerSend { padding:7px 6px; font-size:8px; }
-  .partner-head { font-size:9px; padding:6px 7px; }
-  .partner-message { font-size:9px; padding:5px 6px; }
   #driveLaneHUD { top:8px; right:8px; width:min(195px,40vw); padding:7px; }
   .drive-lane-kicker { font-size:8px; }
   #driveLaneLabel { font-size:10px; }
@@ -1230,9 +1178,6 @@ body.game-active.mobile-mode #minimap {
 #survivalActions #helpAction { border-color:#607c70; color:#b8d2c4; }
 #survivalStatus { display:block; padding:6px; border:1px solid #334033; background:#030504eF; color:#9fac97; font:8px/1.45 monospace; text-align:center; letter-spacing:.3px; }
 @media(max-width:700px) { #survivalActions { top:auto; right:10px; bottom:180px; width:84px; gap:4px; } #survivalActions button { padding:7px 4px; font-size:8px; } #survivalStatus { font-size:7px; padding:4px 2px; } }
-
-#partnerChat.radio-silenced{filter:grayscale(1) brightness(.58);border-color:#803c40!important;box-shadow:0 0 24px #c01a2622}
-#partnerChat.radio-silenced .partner-live{color:#e46b70}
 #huntBanner{position:fixed;z-index:48;top:18px;left:50%;transform:translateX(-50%);width:min(560px,88vw);display:none;pointer-events:none;border:1px solid #8d3537;background:linear-gradient(90deg,rgba(8,2,3,.98),rgba(27,4,6,.95),rgba(8,2,3,.98));box-shadow:0 0 32px #9b101c40,inset 0 0 20px #6f0b1428;padding:10px 15px;text-align:center;color:#f1d6ca;letter-spacing:1.2px;font: bold 11px/1.45 monospace;text-shadow:0 0 8px #bb2626;animation:huntPulse .9s steps(2,end) infinite}
 body.hunting #survivorLocator{opacity:0}
 #huntBanner.active{display:block}
@@ -1261,15 +1206,7 @@ body.hunting #survivorLocator{opacity:0}
 </head>
 <body>
 <canvas id="game"></canvas>
-<div id="partnerChat" aria-label="Partner officer radio chat">
-  <div class="partner-head"><span id="partnerTitle">SECURE OFFICER CHAT</span><span class="partner-live">LINK ACTIVE</span></div>
-  <div id="partnerMessages" aria-live="polite" aria-relevant="additions text"></div>
-  <form id="partnerComposer" autocomplete="off">
-    <input id="partnerInput" type="text" maxlength="180" placeholder="Message your partner…" aria-label="Type a message to the other officer" autocomplete="off" spellcheck="false">
-    <button id="partnerSend" type="submit">SEND ↗</button>
-  </form>
-  <div class="partner-hint">ENTER TO SEND · SECURE CHANNEL</div>
-</div>
+
 <div id="driveLaneHUD" aria-label="Driving lane indicator">
   <div class="drive-lane-kicker">FIELD MOVEMENT · OBJECTIVE GUIDE</div>
   <div id="driveLaneLabel">RIGHT / TRAVEL LANE</div>
@@ -1370,13 +1307,18 @@ body.hunting #survivorLocator{opacity:0}
         <section class="memorial-home" aria-label="In loving memory of Yumi's grandfather">
           <div class="memorial-home-head"><span class="memorial-mark" aria-hidden="true">✦</span><div><strong class="memorial-home-title">IN LOVING MEMORY</strong><small class="memorial-home-date">Yumi’s grandfather · October 16, 2026</small></div></div>
           <div class="memorial-icons" aria-label="His loves"><span>✈ PLANES</span><span>▰ CARS</span><span>▣ PHOTOGRAPHY</span></div>
-          <p>He was a great man who lived a long, full life. His passing came suddenly in the early morning, but the things he loved and the memories he leaves behind will continue to matter. May the journeys he admired, the photographs he treasured, and the stories he shared bring comfort to everyone who loves him.</p>
-          <span class="memorial-signoff">With heartfelt sympathy to Yumi and her family. May he rest in peace.</span>
+          <p>He was a great man who lived a long, full life. His passing came suddenly in the early morning, and even when someone has lived many years, goodbye can still arrive before the heart is ready. The things he loved—planes, cars, and photographs—are small windows into a life that mattered. They remind us that a person's story is made not only of years, but of the wonder they carried, the moments they noticed, and the people who will remember them.</p>
+          <p>May a plane crossing the sky, a familiar car passing by, or a photograph held between someone's hands bring back a good story when it is needed most. May grief slowly make room for gratitude without ever asking anyone to stop missing him. A long life is still a precious life, and his deserves to be remembered with tenderness.</p>
+          <div class="memorial-subtitle">A Prayer for Yumi’s Lolo</div>
+          <p class="memorial-prayer">Lord, please welcome Yumi’s lolo into Your peace. Thank You for the long life he lived, for the things that made him smile, and for the love and memories he leaves with his family. Please hold Yumi and her loved ones close through the shock of his sudden passing. Give them rest when they are tired, comfort when the sadness returns, and caring people who will listen without asking them to hurry through grief. May the stories, photographs, and ordinary reminders of him become gentle treasures in time. Amen.</p>
+          <span class="memorial-signoff">With heartfelt sympathy to Yumi and her family. May his memory remain a blessing, and may he rest in peace.</span>
         </section>
         <section class="memorial-home inspiration-home" aria-label="A dedication to Yumi, who inspired this game">
           <div class="memorial-home-head"><span class="memorial-mark" aria-hidden="true">✧</span><div><strong class="memorial-home-title">WITH GRATITUDE TO YUMI</strong><small class="memorial-home-date">A friend, classmate, and creative inspiration</small></div></div>
-          <p>Mayumi “Yumi” Alingarog helped inspire this project through her kindness, creativity, and the encouragement she has shared. This small dedication is offered with care for her and her family. There are no perfect words for a sudden loss, and no one should have to rush through grief or pretend to be okay before they are ready.</p>
-          <span class="memorial-signoff">Yumi, you matter. You are appreciated, and you do not have to carry every difficult day alone.</span>
+          <p>Mayumi “Yumi” Alingarog helped inspire this project through her kindness, creativity, and the encouragement she has shared. This dedication is offered with care for her and her family. There are no perfect words for a sudden loss, and no one should have to rush through grief or pretend to be okay before they are ready.</p>
+          <p>Yumi, I wish I could make even a small part of this hurt feel lighter. I know a game, a tribute, or a few sentences cannot undo a goodbye, and I would never ask them to. I can only offer this as a reminder that you are appreciated for more than the inspiration you gave this project: you matter as a person, exactly as you are, on the difficult days as well as the good ones.</p>
+          <p>You do not owe anyone a brave face. If you need to cry, be quiet, tell a story, laugh at a memory, or take some time away from everything, those are all human ways of carrying love through loss. I hope the people around you give you room to feel what you feel and stay beside you without asking you to hurry.</p>
+          <span class="memorial-signoff">Thank you for inspiring me, Yumi. I hope this little corner gives you a moment of warmth. You are cared about, and you do not have to carry every difficult day alone.</span>
         </section>
         <div class="pc-hint">THE SEVENTH ARRIVAL · SCREAM JAM 2026 · HEADPHONES RECOMMENDED</div>
       </div>
@@ -1429,9 +1371,9 @@ body.hunting #survivorLocator{opacity:0}
       <div class="rule"><b>08 / BREAK THE SIGNAL</b>Optional: destroy the black signal seals in the County Police Station, Pine Rest Motel, and St. Mercy Chapel. They weaken the mimic network and unlock a true-ending variation.</div>
       <div class="rule"><b>09 / SEARCH BUILDINGS</b>Press E at doors. Search five different buildings, and check rooms again: items may vanish when you look away. Important mission keys remain recoverable.</div>
       <div class="rule"><b>10 / ESCAPE</b>Rescue both survivors, recover and study six clues, generate four distinct cross-reference reports, defend the theory, recover the relay override key, search five buildings, save Silas Venn’s statement, then survive the 30-second extraction defense.</div>
-      <div class="rule"><b>11 / A MOMENT OF REMEMBRANCE</b>Optional: inside the County Police Station, look for the framed tribute along the east side of the room. Press E to read it. This quiet memorial is separate from the investigation objectives.</div>
+      <div class="rule"><b>11 / A MOMENT OF REMEMBRANCE</b>Optional: read the framed tribute on the east side of the County Police Station, or find the small tombstone in a clearing along the southeast footpath. Approach it and press E to read the tribute and prayer. These quiet memorials are separate from the investigation objectives.</div>
     </div>
-    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Inside the County Police Station, chat with six visitors, inspect their ID cards, compare their explanations with the roster, and decide who should be admitted or detained. At least five decisions must be correct; flagged files can be re-audited after studying four clues. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a corroborated witness statement, a completed intake audit, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
+    <p class="intro">Search buildings for ammunition, bandages, batteries, and clues. Press J to study collected evidence, compare contradictory details, and submit a supported case theory. Inside the County Police Station, question six visitors, inspect their ID cards, compare their explanations with the roster, and decide who should be admitted or detained. At least five decisions must be correct; flagged files can be re-audited after studying four clues. Extraction requires both survivors, six collected and studied clues, four distinct cross-reference reports, the accepted case theory, a corroborated witness statement, a completed intake audit, the relay override key, five different buildings searched, and a 30-second holdout under attack.</p>
     <div class="page-buttons"><button id="backHow">Return to menu</button></div>
   </div>
 </div>
@@ -1444,8 +1386,10 @@ body.hunting #survivorLocator{opacity:0}
       <div><b>FLORIDA SHADOWS</b><span>STATE TROOPER HORROR FILES</span><small>Pixel horror project · Scream Jam 2026</small></div>
     </div>
     <div class="credits-lines"><b>WITH APPRECIATION TO</b><br><strong class="credit-name">Mayumi Alingarog</strong><br><span class="credit-alias">Also known as Yumi, Mimi, and Yumimi</span><p>To Mayumi Alingarog, my classmate and fellow developer: thank you for being such a helpful, kind, and respectful person. Your support, encouragement, creativity, and willingness to share this journey have helped inspire Florida Shadows. You reminded me that a project is not only about code or scares; it is also about the people who encourage us to keep creating.</p><p>I am grateful to know you and to have had your inspiration as part of this game. I hope this tribute gives a little warmth without asking you to feel any particular way. You can grieve, remember, cry, laugh at an old story, or simply take each day as it comes. You deserve kindness through all of it.</p></div>
-    <div class="credits-lines credits-memory"><b>IN LOVING MEMORY — YUMI’S GRANDFATHER</b><br><span class="memorial-home-date">October 16, 2026 · A life remembered with love</span><p>This game also carries a quiet tribute to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026. He was a great man who lived a long life, and he loved planes, cars, and photographs—the journeys they carried, the places they could take us, and the moments worth keeping.</p><p>May the photographs he left behind keep his stories close, may every passing plane and every beloved car bring back a good memory, and may the years he lived be remembered with gratitude as well as sadness. His life mattered, and the memories and love he leaves behind will continue.</p><p><strong class="credit-name">May he rest in peace.</strong></p></div>
-    <div class="credits-lines credits-yumi-tribute"><b>FOR YUMI — WHO HELPED INSPIRE THIS STORY</b><p>Some people leave a mark on a project simply by being themselves. Yumi’s kindness, creativity, and encouragement helped make this game more meaningful to its creator. This dedication cannot fix the hurt of losing someone you love, and it is not meant to ask anyone to be strong all the time. It is a small way to say: your feelings matter, your grandfather’s life matters, and you deserve gentleness and support while you grieve.</p><p>May the people around you give you room to cry, space to remember, and moments of warmth when the days feel heavy. You do not need to find the right words or hide your sadness to be cared for. Thank you for inspiring this project and for being the person you are.</p><p><strong class="credit-name">With gratitude, care, and friendship.</strong></p></div>
+    <div class="credits-lines credits-memory"><b>IN LOVING MEMORY — YUMI’S GRANDFATHER</b><br><span class="memorial-home-date">October 16, 2026 · A life remembered with love</span><p>This game carries a quiet tribute to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026. He was a great man who lived a long life, and he loved planes, cars, and photographs—the journeys they suggest, the engineering and design that catch the eye, and the moments people choose to keep.</p><p>There is something tender about the things a person loves: they can become little doorways back to them. A plane overhead may bring back a conversation; a familiar car may recall a day out; a photograph may hold a face, a place, or a moment someone never wants to forget. I hope the things he loved continue to bring his family stories to share, even on days when the missing feels sharp.</p><p>A sudden goodbye can make the world feel unreal for a while. No one needs to turn that sorrow into a lesson or find a bright side before they are ready. It is enough to acknowledge that he mattered, that he was loved, and that a long life leaves more behind than its final morning. May the memories of his life be met with tenderness, and may the people who love him find comfort in one another.</p><p><strong class="credit-name">May he rest in peace. May his memory be held with love.</strong></p></div>
+    <div class="credits-lines credits-letter"><b>A PRAYER FOR YUMI’S LOLO</b><p class="memorial-prayer">Heavenly Father, please receive Yumi’s lolo into eternal rest. Thank You for the years he was given, for the paths he travelled, the planes and cars he enjoyed, and the photographs that keep precious moments close. Bring comfort to Yumi and her family as they miss him. Let them grieve without pressure, support one another in quiet ways, and find peace when a memory catches them by surprise. May the love he shared continue to live in the stories they tell and the care they show one another. May he rest in peace. Amen.</p></div>
+    <div class="credits-lines credits-yumi-tribute"><b>FOR YUMI — WHO HELPED INSPIRE THIS STORY</b><p>Some people change a project without ever asking to be its inspiration. They do it by being thoughtful, creative, encouraging, and themselves. Yumi, your kindness has helped make this game feel connected to a real person and not just a list of features to finish. I am genuinely grateful for that. I wanted this tribute to say thank you, but also to remind you that your worth is not measured by how much you help other people or how well you manage a difficult day.</p><p>I felt deeply for you when I understood how much you were hurting. I cannot take that hurt away, and I do not want to pretend there is a perfect sentence that can. I can only hope you are surrounded by people who let you be honest—people who will listen when you want to talk, sit with you when you do not, and remember your grandfather with you when you feel like sharing a story.</p><p>You are allowed to have a hard morning after an okay afternoon, to smile at a memory and then miss him all over again, or to focus on ordinary things when everything feels too big. None of those things means you loved him any less. Grief does not have to look a certain way to be real.</p><p>Thank you for inspiring this story, for the kindness you have shown, and for being someone worth appreciating in your own right. I hope that, with time, the memories that hurt today can also become memories that comfort you. Until then, you deserve patience, gentleness, and friendship—without any pressure to be okay before you are.</p><p><strong class="credit-name">With gratitude, care, and friendship. This game is better for the inspiration you shared.</strong></p></div>
+    <div class="credits-lines credits-letter"><b>A SMALL LETTER, WITH NO EXPECTATION OF AN ANSWER</b><p>Yumi, this dedication is not meant to ask you to feel better, and it does not need you to say anything back. I just wanted to make a small space in a project you helped inspire to say that your grandfather’s life deserves to be remembered, and your sadness deserves to be treated gently.</p><p>I hope there are people who will help keep his stories alive with you. I hope you can remember the things he loved—planes, cars, photographs—and let them bring whatever comes: tears, a smile, a story, or just a quiet moment. You do not have to carry every memory alone, and you do not have to turn your grief into strength for somebody else’s sake.</p><p>Thank you for being part of the reason this game exists. I hope life gives you and your family room to grieve, people who stay close, and small moments of peace when you need them most.</p></div>
     <div class="credits-lines"><b>TO EVERYONE WHO PLAYS</b><br>Thank you for stepping into the swamp, investigating the case, and helping bring this horror story to life. Keep exploring, keep creating, and never ignore strange sounds on the radio.</div>
     <div class="info-card credits-quote">“Every mystery leaves a trace. Every crime leaves a shadow. And some shadows are always watching.”</div>
     <div class="page-buttons"><button id="backCredits">Return to menu</button></div>
@@ -1453,7 +1397,7 @@ body.hunting #survivorLocator{opacity:0}
 </div>
 <div id="memorialPanel" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="grandfatherMemorialTitle">
   <div class="panel memorial-panel">
-    <div class="kicker">A quiet corner of the County Police Station</div>
+    <div class="kicker">A quiet corner of remembrance · Also marked by a stone along the southeast trail</div>
     <h2 id="grandfatherMemorialTitle" class="section-title">In Loving Memory</h2>
     <div class="memorial-photo-row" aria-label="A small tribute to his favourite things">
       <div class="memorial-photo"><strong>✈</strong><span>THE PLANES HE LOVED</span></div>
@@ -1462,14 +1406,21 @@ body.hunting #survivorLocator{opacity:0}
     </div>
     <div class="memorial-letter">
       <p>Dedicated to Yumi’s grandfather, who passed away suddenly in the early morning of October 16, 2026.</p>
-      <p>He loved planes, cars, and photographs—the journeys they represented, the details worth noticing, and the moments worth keeping. He lived a long life and was a great man. A sudden goodbye cannot take away the years he lived, the memories he made, or the love that remains.</p>
-      <p>May every photograph bring back a story, every passing plane remind those who loved him of the wonder he saw in the world, and every memory make the loss a little gentler with time. May he rest in peace.</p>
+      <p>He loved planes, cars, and photographs—the journeys they represented, the details worth noticing, and the moments worth keeping. He lived a long life and was a great man. A sudden goodbye cannot take away the years he lived, the parts of the world he enjoyed, or the love that remains in the people who remember him.</p>
+      <p>May every photograph bring back a story, every passing plane remind those who loved him of the wonder he saw in the world, and every familiar car open the door to a cherished memory. May the family he leaves behind have time to speak his name, share the stories that make them smile, and miss him honestly when the sadness comes. The happiness of remembering and the ache of missing someone can sit side by side. May he rest in peace.</p>
+      <div class="memorial-subtitle">A Prayer for Yumi’s Lolo</div>
+      <p class="memorial-prayer">Lord, please shelter Yumi’s lolo in peace. Let him be remembered for the full life he lived and for the things he loved. Comfort Yumi and her family through this sudden goodbye. Give them strength for difficult hours, gentle companionship in their grief, and the freedom to cry, speak, pray, or be quiet in whatever way they need. May the memories they carry become a source of warmth and gratitude. Amen.</p>
       <div class="memorial-subtitle">A note for Yumi</div>
-      <p>Yumi, your kindness and creativity helped inspire this game, and this memorial is also a small way of thanking you. There are no words that can make a sudden loss feel fair. You do not have to be okay on anyone else’s schedule, and you never have to hide your sadness to deserve care. I hope you have people beside you who will listen, sit quietly with you, and help carry the ordinary days when they feel unusually heavy.</p>
-      <p>Your grandfather’s life deserves to be remembered with love, and you deserve kindness as you remember him. Thank you for inspiring this story. This little corner is here as a place for reflection, not fear.</p>
+      <p>Yumi, your kindness and creativity helped inspire this game, and this memorial is one small way of saying thank you. I wish there were a way to make a sudden loss hurt less, even for a moment. I know there isn't a perfect sentence, and I cannot make this fair. I can only hope this little tribute helps you feel that the people who care about you see your sadness and do not expect you to hide it.</p>
+      <p>You do not have to be okay on anyone else’s schedule. You can cry, be quiet, tell a story, laugh at something that reminds you of him, or need a break from thinking about everything. Those moments do not cancel each other out. You do not have to be strong every minute to be loved, and you do not have to find a lesson in this loss.</p>
+      <p>I hope you have people beside you who will listen without trying to fix everything, sit with you when you do not know what to say, and help with ordinary things when ordinary things feel difficult. I hope the memories of your grandfather bring warmth as time goes on, even if they still make you miss him. Thank you for inspiring this story and for being you. You matter beyond what you contribute to anyone else’s life.</p>
+      <p>Your grandfather’s life deserves to be remembered with love, and you deserve kindness as you remember him. This little corner is here for reflection, not fear. There is no need to hurry through it.</p>
     </div>
-    <p class="memorial-note">This is a quiet tribute offered with respect and sympathy to Yumi and her family. It is not evidence in the case, and nothing here is meant to turn their loss into a scare.</p>
-    <div class="page-buttons"><button id="closeMemorial">Leave the memory in peace</button></div>
+    <div class="memorial-subtitle">A second prayer for comfort</div>
+    <p class="memorial-prayer">God of mercy, welcome him into peace and light. Thank You for the long road he was given and for the way his love still lives in family stories and photographs. Be near Yumi and her family when the house feels quieter, when an ordinary sight reminds them of him, and when sadness comes without warning. Give them companions who listen, rest when they are weary, and hope that does not rush their grief. Amen.</p>
+    <p class="memorial-note">This is a quiet tribute offered with respect and sympathy to Yumi and her family. It is not evidence in the case, and nothing here is meant to turn their loss into a scare. Take as much time as you need here. The game will wait.</p>
+    <p id="memorialFlowerFeedback" class="memorial-note" role="status">You may leave a flower beside the stone as a small sign of remembrance. This is optional.</p>
+    <div class="page-buttons"><button id="leaveMemorialFlower" type="button">Leave a flower in remembrance</button><button id="closeMemorial">Leave the memory in peace</button></div>
   </div>
 </div>
 <div id="objectivePanel" class="overlay hidden">
@@ -1708,7 +1659,6 @@ const state={
   driveSkid:0,
   driveHydroplane:0,
   partnerSent:{},
-  partnerChatCount:0,
   lastBuildingExit:null,
   sceneFade:0,
   horrorBeat:0,
@@ -1824,7 +1774,9 @@ const state={
   realityPulseCooldown:0,
   realityPulseCount:0,
   lastRealityRoom:'',
-  memorialTributeViewed:false
+  memorialTributeViewed:false,
+  memorialVisitedAt:0,
+  memorialFlowerLeft:false
 };
 let W=innerWidth;
 let H=innerHeight;
@@ -2053,6 +2005,46 @@ function oneShotWhisper(key,line,side='center',who='VOICE UNDER THE STATIC'){
   if(state.voiceEventFlags[key])return;
   if(triggerWhisper(line,side,who))state.voiceEventFlags[key]=true;
 }
+function syncMemorialFlowerUI(){
+  const button=$('leaveMemorialFlower');
+  const feedback=$('memorialFlowerFeedback');
+  if(button){button.disabled=!!state.memorialFlowerLeft;button.textContent=state.memorialFlowerLeft?'FLOWER LEFT WITH LOVE':'Leave a flower in remembrance';}
+  if(feedback)feedback.textContent=state.memorialFlowerLeft?'A small flower rests beside the stone. You can take your time; there is nothing else you need to do here.':'You may leave a flower beside the stone as a small sign of remembrance. This is optional.';
+}
+function leaveMemorialFlower(){
+  if(state.memorialFlowerLeft){syncMemorialFlowerUI();return;}
+  state.memorialFlowerLeft=true;
+  syncMemorialFlowerUI();
+  sound('pickup');
+  tone(392,.42,'sine',.035,-90);
+  toast('A FLOWER LEFT IN QUIET REMEMBRANCE.',2.6);
+}
+function updateMemorialSmilerDialogue(){
+  if(!state.running||state.paused||state.gameOver||state.prologueStage!=='swamp'||state.floor!=='outside')return;
+  const stone=objects.find(o=>o.type==='tombstone');
+  if(!stone||!player)return;
+  const d=dist(player.x,player.y,stone.x,stone.y);
+  const officer=specs[state.selectedCharacter].name.replace(/^Officer\s+/i,'');
+  if(d<285&&!state.horrorEventFlags.smilerMemorialGreeting){
+    if(triggerWhisper('How’s life, '+officer+'?','right','THE SMILER / BEYOND THE TREES'))state.horrorEventFlags.smilerMemorialGreeting=true;
+  }
+  if(d<430&&state.memorialTributeViewed&&!state.horrorEventFlags.smilerMemorialCondolence&&state.elapsed-(state.memorialVisitedAt||0)>2.5){
+    const condolence=state.selectedCharacter==='yumi'?'I heard about your lolo’s passing, Yumi. I offer my condolences.':'I heard about Yumi’s lolo. I offer my condolences, Hugo.';
+    if(triggerWhisper(condolence,'left','THE SMILER / DISTANT RADIO')){
+      state.horrorEventFlags.smilerMemorialCondolence=true;
+      toast('A VOICE SPEAKS SOFTLY, THEN THE FOREST GOES QUIET.',2.5);
+    }
+  }
+  if(d<430&&state.horrorEventFlags.smilerMemorialCondolence&&!state.horrorEventFlags.smilerMemorialRememberance&&state.elapsed-(state.memorialVisitedAt||0)>13){
+    if(triggerWhisper('He loved planes, cars, and photographs. A life is more than the morning it ended.','center','THE SMILER / OUTSIDE THE LIGHT'))state.horrorEventFlags.smilerMemorialRememberance=true;
+  }
+  if(d<430&&state.memorialTributeViewed&&state.elapsed-(state.memorialVisitedAt||0)>22&&!state.horrorEventFlags.smilerMemorialPrayer){
+    if(triggerWhisper('I heard the prayer. I will not speak over it. May he rest in peace.','right','THE SMILER / BEYOND THE STONE'))state.horrorEventFlags.smilerMemorialPrayer=true;
+  }
+  if(d<430&&state.memorialFlowerLeft&&state.elapsed-(state.memorialVisitedAt||0)>28&&!state.horrorEventFlags.smilerMemorialFlower){
+    if(triggerWhisper('You left a flower. I will not touch it. Even the dark can leave one thing alone.','left','THE SMILER / FAR BEYOND THE TREES'))state.horrorEventFlags.smilerMemorialFlower=true;
+  }
+}
 function updateWhispers(dt){
   state.voiceCooldown=Math.max(0,state.voiceCooldown-dt);
   if(state.voiceCaptionTimer>0){
@@ -2221,13 +2213,14 @@ function initializeAssets(){
       const onRoad=nearRoad(tx,ty);
       const nearBuilding=buildingAt(tx,ty,110);
       const onFootpath=nearFootpath(tx,ty,61);
-      if(n>.57&&!onRoad&&!nearBuilding&&!onFootpath){
+      const memorialClearing=Math.hypot(tx-2650,ty-2105)<132;
+      if(n>.57&&!onRoad&&!nearBuilding&&!onFootpath&&!memorialClearing){
         trees.push({x:tx,y:ty,s:.62+seeded(x+4,y+7)*.92,shade:Math.floor(seeded(x+7,y+3)*3),phase:seeded(y,x)*6.28,solid:true});
       }
-      if(n<.09&&!onRoad){
+      if(n<.09&&!onRoad&&!memorialClearing){
         wetPatches.push({x:x+10,y:y+14,w:18+seeded(x+2,y)*42,h:5+seeded(x,y+8)*10});
       }
-      if(n>.86&&!onRoad){
+      if(n>.86&&!onRoad&&!memorialClearing){
         reeds.push({x:x+12,y:y+8,h:9+seeded(y+1,x)*17,phase:seeded(x+5,y)*6});
       }
     }
@@ -2372,6 +2365,7 @@ function makeObjects(){
     {id:'cloth',x:1040,y:360,type:'evidence',name:'Torn uniform patch',detail:'The fabric is wet, but there has been no rain indoors.',found:false,icon:'▧'},
     {id:'prints',x:1425,y:970,type:'evidence',name:'Oversized footprints',detail:'The prints lead into the black water. None lead back.',found:false,icon:'⌁'},
     {id:'badge',x:1990,y:1450,type:'evidence',name:'Deputy Harlow’s badge',detail:'The metal is warm. Someone recently held it.',found:false,icon:'★'},
+    {id:'grandfather-tombstone',x:2650,y:2105,type:'tombstone',name:'In Loving Memory — Yumi’s Lolo',detail:'A quiet memorial stone among the trees, dedicated with respect to Yumi’s grandfather. Planes, cars, and photographs are carved into the base as reminders of what he loved. Press E to pause, remember him, and read a prayer.',icon:'†'},
     {id:'shack',x:375,y:390,type:'building',name:'Checkpoint shack',detail:'A roadside patrol hut with a jammed window.',room:'checkpoint',w:145,h:112},
     {id:'station',x:930,y:735,type:'building',name:'County Police Station',detail:'The night intake desk is still processing visitors although the station was evacuated.',room:'station',w:170,h:132},
     {id:'gas',x:1480,y:470,type:'building',name:'Swamp gas stop',detail:'A shut-down gas stop with an office in back.',room:'gas',w:164,h:120},
@@ -2535,8 +2529,9 @@ function resetGame(){
   bullets=[];
   particles=[];
   crawlers=[];
-  for(let i=0;i<5;i++){
-    crawlers.push({x:760+i*410,y:420+(i%3)*450,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false,hiddenUntil:14});
+  const initialCrawlerSpawns=[{x:1180,y:680}];
+  for(const point of initialCrawlerSpawns){
+    crawlers.push({x:point.x,y:point.y,r:9,hp:2,speed:70+Math.random()*15,phase:Math.random()*8,alert:false,attack:0,dead:false,hiddenUntil:14});
   }
   monster={x:2800,y:2080,r:15,stun:0,phase:0,active:false,spotted:false,attack:0,lastMove:0,warpCooldown:0,hidden:false,vanishTimer:0,vanishCooldown:4.5+Math.random()*3.4,activeTime:0,pendingX:0,pendingY:0,reappearGlow:0,blinkCount:0};
   makeObjects();
@@ -2556,6 +2551,9 @@ function resetGame(){
   state.apparitionX=0;
   state.apparitionY=0;
   state.horrorEventFlags={};
+  state.memorialTributeViewed=false;
+  state.memorialVisitedAt=0;
+  state.memorialFlowerLeft=false;
   state.storyScareQueue=[];
   state.indoorPresence={timer:0,cooldown:7+Math.random()*5,x:0,y:0,phase:0,arming:0,appearances:0};
   indoorEchoHistory=[];indoorEcho={active:false,timer:0,cooldown:11+Math.random()*5,x:0,y:0,angle:0,phase:Math.random()*9,roomId:'',roomAge:0};indoorEchoSampleTimer=0;indoorEchoRoomId='';
@@ -2625,7 +2623,7 @@ function resetGame(){
   lastMiniDraw=-999;lastMiniFloor=null;lastMiniRoom=null;
   interiorBaseCache={room:null,canvas:null};
   $('officerName').textContent=spec.name.replace(/^Officer\s+/i,'').toUpperCase();
-  resetPartnerChat();
+  resetPartnerRadio();
   $('hud').style.display='block';
   document.body.classList.add('game-active','prologue-mode','prologue-call');
   applyControlMode();
@@ -2653,7 +2651,7 @@ function setPrologueStage(stage){
   document.body.classList.toggle('prologue-drive',stage==='drive');
   document.body.classList.toggle('prologue-arrival',stage==='arrival');
   document.body.classList.toggle('prologue-mode',stage!=='swamp');
-  if(stage==='drive'){if(!state.partnerSent||Object.keys(state.partnerSent).length===0)resetPartnerChat();state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;state.driveCollisionCooldown=1.2;state.driveCrashTimer=0;state.driveDamage=0;state.driveCollisionCount=0;state.driveWheel=0;state.driveGear=1;state.driveRpm=900;state.driveWiper=0;state.driveSkid=0;state.driveHydroplane=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
+  if(stage==='drive'){if(!state.partnerSent||Object.keys(state.partnerSent).length===0)resetPartnerRadio();state.driveProgress=0;state.driveSpeed=0;state.driveLane=0;state.driveScroll=0;state.driveShake=0;state.driveSirenPhase=0;state.driveNearMissTimer=0;state.drivePassedCars=0;state.driveCollisionCooldown=1.2;state.driveCrashTimer=0;state.driveDamage=0;state.driveCollisionCount=0;state.driveWheel=0;state.driveGear=1;state.driveRpm=900;state.driveWiper=0;state.driveSkid=0;state.driveHydroplane=0;tone(540,.18,'sawtooth',.06,-210);toast('DISPATCH: Proceed to mile marker nine. You are the only available unit.',4);}
   if(stage==='arrival'){state.driveSpeed=0;sound('radio');tone(76,.75,'triangle',.08,-34);}
 }
 function acceptDispatch(){
@@ -2692,18 +2690,23 @@ function currentDriveLane(){
 }
 function partnerOfficerKey(){return state.selectedCharacter==='yumi'?'hugo':'yumi';}
 function partnerOfficerName(){return specs[partnerOfficerKey()].name;}
-function resetPartnerChat(){
+function resetPartnerRadio(){
   state.partnerSent={};
-  state.partnerChatCount=0;
+  
   const title=$('partnerTitle');
   const box=$('partnerMessages');
-  if(title)title.textContent=partnerOfficerName().toUpperCase()+' // SECURE CHAT';
+  if(title)title.textContent=partnerOfficerName().toUpperCase()+' // SECURE RADIO';
   if(box)box.replaceChildren();
-  addPartnerMessage('Secure channel connected. I’m staying on your line.','incoming');
+  if(box)addPartnerMessage('Secure channel connected. I’m staying on your line.','incoming');
 }
 function addPartnerMessage(message,side='incoming'){
   const box=$('partnerMessages');
-  if(!box)return;
+  if(!box){
+    if(side==='outgoing')return;
+    showRadioText(side==='unknown'?'UNVERIFIED RADIO VOICE':partnerOfficerName(),message);
+    if(side==='unknown'&&state.options.voiceWhispers)triggerWhisper(message,'left','UNVERIFIED RADIO VOICE');
+    return;
+  }
   const row=document.createElement('div');
   row.className='partner-message '+(side==='outgoing'?'outgoing':side==='unknown'?'unknown':'incoming');
   const sender=document.createElement('span');
@@ -2715,7 +2718,6 @@ function addPartnerMessage(message,side='incoming'){
   box.appendChild(row);
   while(box.children.length>5)box.removeChild(box.firstElementChild);
   box.scrollTop=box.scrollHeight;
-  state.partnerChatCount++;
 }
 function partnerExchange(key,incoming,outgoing){
   if(state.partnerSent[key])return;
@@ -2725,37 +2727,7 @@ function partnerExchange(key,incoming,outgoing){
     if(state.running&&!state.gameOver)addPartnerMessage(outgoing,'outgoing');
   },850);
 }
-function partnerReplyFor(message){
-  const text=message.toLowerCase();
-  if(/\b(help|scared|afraid|panic|hurt|injured)\b/.test(text))return 'Stay with me. Press H for a short signal pulse if you need help. Find cover with C, but keep still—your breathing is coming through the line.';
-  if(/\b(hide|hiding|closet|cabinet|table)\b/.test(text))return 'Use C near a cabinet, bed, table, shelves, tree, or reeds. Stay still and keep quiet. If it starts searching the same spot, leave before your breath gives you away.';
-  if(/\b(scream|shout|yell)\b/.test(text))return 'G will let you scream. It may stagger nearby crawlers, but it will tell the Smiler exactly where you are. Do not use it when you need silence.';
-  if(/\b(anchor|seal|motel mirror|chapel)\b/.test(text))return 'I found references to three signal anchors: the police station, Pine Rest Motel, and St. Mercy Chapel. Break all three if you want to weaken the extraction and unlock the true ending.';
-  if(/\b(where|location|position|map)\b/.test(text))return 'Your signal is moving even when the map says you’re standing still. Follow the evidence markers and don’t trust the minimap blindly.';
-  if(/\b(backup|police|dispatch|unit)\b/.test(text))return 'Dispatch says you are still the only unit assigned to this call. I’m checking the roster again. Please don’t answer any other voice using our call signs.';
-  if(/\b(smiler|monster|creature|thing|figure|someone|person)\b/.test(text))return 'Don’t approach it. Keep distance and use the light only when you need to. If it stops moving, that does not mean it is gone.';
-  if(/\b(car|drive|traffic|road|crash|lane|speed)\b/.test(text))return 'There are no vehicles on this assignment. Follow the footpath, stay near the flashlight beam, and watch for a shape that copies your movement.';
-  if(/\b(evidence|clue|file|case)\b/.test(text))return 'Copy. Log everything you find, but don’t read the personnel details over the radio. The file system has been showing records that do not exist.';
-  if(/\b(hello|hey|hi|you there|copy)\b/.test(text))return 'I’m here. Radio is clear on my end, although I keep hearing your microphone open when you are not speaking.';
-  if(/\b(trust|fake|real|you)\b/.test(text))return 'Listen carefully: I will never ask you for your real name, address, or personal details. If a message asks for that, it is not me.';
-  return 'Received. I’m still here on the secure channel. Keep moving, keep your flashlight ready, and tell me if you see another figure.';
-}
-function sendPartnerChat(){
-  if(state.radioSilenceUntil>state.elapsed){toast('CHANNEL CUT. RADIO RETURNS IN '+Math.ceil(state.radioSilenceUntil-state.elapsed)+'s.',1.8);return;}
-  const input=$('partnerInput');
-  if(!input)return;
-  const message=input.value.trim();
-  if(!message)return;
-  if(!state.running||state.gameOver){toast('CHAT CHANNEL IS NOT ACTIVE.',1.3);return;}
-  if(!['call','drive','arrival','swamp'].includes(state.prologueStage)){toast('WAIT UNTIL THE DISPATCH CALL CONNECTS.',1.4);return;}
-  input.value='';
-  addPartnerMessage(message,'outgoing');
-  const reply=partnerReplyFor(message);
-  window.setTimeout(()=>{
-    if(state.running&&!state.gameOver)addPartnerMessage(reply,'incoming');
-  },450+Math.random()*550);
-}
-function updatePartnerChat(){
+function updatePartnerRadioNarrative(){
   const stage=state.prologueStage;
   if(stage==='drive'){
     const p=state.driveProgress;
@@ -2769,7 +2741,7 @@ function updatePartnerChat(){
   }else if(stage==='swamp'){
     if(state.elapsed>5.2)partnerExchange('swamp5','Your bodycam shows a second figure following your steps. It stops every time you turn around.','I’m looking at the treeline. There’s nothing there.');
     if(state.elapsed>16)partnerExchange('swamp16','That voice on channel two isn’t me. I haven’t said a word for the last minute.','Then who keeps answering my radio?');
-    if(evidence>=1)partnerExchange('evidence1','I’m getting text from the case file. It says “stop trusting the person on this chat.”','Is that supposed to be a joke?');
+    if(evidence>=1)partnerExchange('evidence1','The case file says, “stop trusting the voice on this channel.”','That is not a joke. Verify every transmission.');
     if(evidence>=3)partnerExchange('evidence3','I can see your flashlight on the live feed. There is a second beam moving beside yours.','I only have one flashlight.');
     if(state.rescued>=1)partnerExchange('rescued1','The survivor’s file says they were rescued here years ago. Their name is on a report dated tomorrow.','I’m bringing them out. Keep the channel open.');
   }
@@ -2898,7 +2870,7 @@ function updatePrologue(dt){
   }
   for(const r of raindrops){r.y+=r.speed*dt*.65;r.x-=r.speed*.16*dt;if(r.y>H+15){r.y=-15;r.x=Math.random()*W;}if(r.x<-15)r.x=W+10;}
   state.sceneFade=Math.max(0,state.sceneFade-dt*1.7);
-  updatePartnerChat();
+  updatePartnerRadioNarrative();
   if(state.prologueStage==='drive')updateDriveLaneHUD();
 }
 function poly(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill();}
@@ -3455,8 +3427,11 @@ function interact(){
     if(evidence>=6&&!state.horrorEventFlags.sixthClueWhisper){state.horrorEventFlags.sixthClueWhisper=true;state.flashlightFlickerTimer=2.3;triggerWhisper('That was the last clue. I was hoping you would never find it.','center','VOICE INSIDE THE FILE');toast('THE SIXTH CLUE HAS YOUR HANDWRITING ON IT.',3.8);}
     return;
   }
-  if(target.type==='memorial'){
+  if(target.type==='memorial'||target.type==='tombstone'){
     state.memorialTributeViewed=true;
+    state.memorialVisitedAt=state.elapsed;
+    state.horrorEventFlags.memorialSiteVisited=true;
+    syncMemorialFlowerUI();
     enterScreen('memorial');
     return;
   }
@@ -3631,7 +3606,8 @@ function spawnCrawlerWave(count=2,minRadius=180,speedBase=92,hp=2){
   if(state.anchorsDisabled&&state.extractionStarted)count=Math.max(1,count-1);
   let alive=crawlers.filter(c=>!c.dead).length;
   let made=0;
-  for(let i=0;i<count&&alive<10;i++){
+  const crawlerCap=state.extractionStarted?3:2;
+  for(let i=0;i<count&&alive<crawlerCap;i++){
     const angle=(Math.PI*2*i/Math.max(1,count))+Math.random()*.55;
     const radius=minRadius+Math.random()*70;
     let x=clamp(player.x+Math.cos(angle)*radius,70,WORLD.w-70);
@@ -4836,8 +4812,8 @@ function blockedAt(x,y,r){
     }
   }
   for(const o of objects){
-    if(o.type!=='building')continue;
-    if(Math.abs(o.x-x)<o.w/2+r&&Math.abs(o.y-y)<o.h/2+r)return true;
+    if(o.type==='building'&&Math.abs(o.x-x)<o.w/2+r&&Math.abs(o.y-y)<o.h/2+r)return true;
+    if(o.type==='tombstone'&&Math.abs(o.x-x)<17+r&&Math.abs(o.y-y)<12+r)return true;
   }
   return false;
 }
@@ -5556,11 +5532,6 @@ function updateAdaptiveHorror(dt){
     state.nextRadioIncidentAt=state.elapsed+58+Math.random()*22;
     return beginRadioBreach();
   }
-  if(state.radioSilenceUntil>state.elapsed){
-    const box=$('partnerChat');if(box)box.classList.add('radio-silenced');
-  }else{
-    const box=$('partnerChat');if(box)box.classList.remove('radio-silenced');
-  }
   if(state.floor==='inside'&&state.room&&state.elapsed>65&&state.realityPulseCooldown<=0&&state.exploredRoomIds.length>=2&&Math.random()<dt*.018){
     state.realityPulseCooldown=23+Math.random()*18;state.realityPulseTimer=.35+Math.random()*.75;state.realityPulseCount++;
     state.screenShake=Math.max(state.screenShake,.12);sound('radio');voiceNoise(choose(['left','right']),.12);
@@ -5590,11 +5561,12 @@ function update(dt){
   state.elapsed+=dt;
   updateSurvivalActions(dt);
   updateWhispers(dt);
+  updateMemorialSmilerDialogue();
   updateFearDirector(dt);
   updateThreatEscalation(dt);
   if(updateAdaptiveHorror(dt))return;
   state.missionClock+=dt;
-  updatePartnerChat();
+  updatePartnerRadioNarrative();
   if(state.horrorBeat===0&&state.elapsed>6.5){state.horrorBeat=1;sound('radio');toast('RADIO: “Officer… I can see you at the tree line.” DISPATCH DENIES SENDING THAT TRANSMISSION.',4.2);state.intensity=.78;state.screenShake=.19;triggerWhisper('Do not use your own voice to answer dispatch.','right','UNKNOWN OFFICER');}
   if(state.horrorBeat===1&&state.elapsed>15.5){state.horrorBeat=2;activateMonster();toast('SOMETHING BETWEEN THE TREES JUST MOVED. IT IS CLOSER THAN THE MAP SAYS.',3.4);}
   if(state.elapsed>27&&!state.horrorEventFlags.thirdFootstep){state.horrorEventFlags.thirdFootstep=true;sound('door');voiceNoise('behind',.13);toast('FOOTSTEPS: LEFT, RIGHT, LEFT, RIGHT… THEN A THIRD STEP BESIDE YOURS.',3.2);if(state.options.voiceWhispers)triggerWhisper('Do not slow down to count them.','behind','FOOTSTEPS / CHANNEL UNKNOWN');}
@@ -5956,6 +5928,48 @@ function drawEvidence(o){
   px(x-5,y-5,10,10,pulse>.5?'#e2ca86':'#a48c56');
   px(x-2,y-2,4,4,'#f6edc2');
   px(x-12,y-1,3,2,'#c9aa68');
+}
+function drawTombstone(o){
+  const x=o.x-camera.x+shakeX;
+  const y=o.y-camera.y+shakeY;
+  if(x<-80||y<-100||x>W+80||y>H+100)return;
+  const pulse=.5+.5*Math.sin(state.elapsed*.8);
+  ctx.save();
+  ctx.globalCompositeOperation='screen';
+  const glow=ctx.createRadialGradient(x,y+8,2,x,y+8,47);
+  glow.addColorStop(0,'rgba(213,190,126,'+(.13+.08*pulse)+')');
+  glow.addColorStop(.45,'rgba(118,94,55,.07)');
+  glow.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=glow;
+  ctx.fillRect(x-50,y-48,100,100);
+  ctx.restore();
+  ctx.save();
+  px(x-25,y+19,50,8,'#0a0d09');
+  px(x-19,y-24,38,44,'#2a2d26');
+  px(x-15,y-30,30,10,'#33362d');
+  px(x-18,y-22,36,38,'#626052');
+  px(x-15,y-19,30,32,'#494b40');
+  px(x-12,y-16,24,2,'#8d896f');
+  px(x-10,y-11,20,2,'#6d6c59');
+  px(x-11,y-7,22,12,'#42463a');
+  px(x-1,y-21,2,7,'#cfc29e');px(x-4,y-18,8,2,'#cfc29e');
+  ctx.fillStyle='#d8caa1';
+  ctx.font='bold 5px monospace';
+  ctx.textAlign='center';
+  ctx.fillText('YUMI’S LOLO',x,y-5);
+  ctx.font='bold 6px monospace';
+  ctx.fillText('IN LOVING',x,y+2);
+  ctx.fillText('MEMORY',x,y+9);
+  ctx.fillStyle='#b8b09a';ctx.font='4px monospace';ctx.fillText('OCT 16 2026',x,y+15);
+  px(x-18,y+23,6,4,'#b4a16f');px(x-17,y+22,4,2,'#e8d5a8');
+  px(x+13,y+23,6,4,'#b4a16f');px(x+14,y+22,4,2,'#e8d5a8');
+  px(x-5,y+23,3,5,'#647b4e');px(x-8,y+25,3,3,'#6b8a51');px(x+2,y+24,3,4,'#718a55');
+  if(state.memorialFlowerLeft){px(x-2,y+24,5,3,'#b36c7e');px(x-1,y+23,3,5,'#e0a5ae');px(x+1,y+25,3,3,'#e0d0a6');}
+  if(dist(player.x,player.y,o.x,o.y)<135){
+    ctx.fillStyle='rgba(1,3,2,.88)';ctx.fillRect(x-93,y-57,186,12);
+    ctx.fillStyle='#e5d7b3';ctx.font='bold 8px monospace';ctx.textAlign='center';ctx.fillText('E · PAUSE AND REMEMBER',x,y-48);
+  }
+  ctx.restore();
 }
 function drawLoot(o){
   if(o.found)return;
@@ -6435,6 +6449,7 @@ function drawWorld(){
     if(o.type==='building')drawBuilding(o);
     if(o.type==='evidence')drawEvidence(o);
     if(o.type==='loot')drawLoot(o);
+    if(o.type==='tombstone')drawTombstone(o);
     if(o.type==='exit')drawExit(o);
   }
   drawSurvivors();
@@ -6805,7 +6820,7 @@ function updateHauntingDirector(dt){
       if(!state.running||state.gameOver||state.prologueStage!=='swamp')return;
       addPartnerMessage('I am standing inside the next building. Leave the flashlight off. I need you to come alone.','unknown');
       tone(49,.72,'sawtooth',.08,-22);
-      toast('AN UNVERIFIED MESSAGE HAS ENTERED THE SECURE CHAT.',3.5);
+      toast('AN UNVERIFIED VOICE CUTS INTO THE RADIO.',3.5);
       setTimeout(()=>{
         if(!state.running||state.gameOver||state.prologueStage!=='swamp')return;
         addPartnerMessage('That message was not me. My radio has been unplugged for the last minute. Please confirm my call sign before acting.','incoming');
@@ -7119,8 +7134,9 @@ function drawMini(){
     if(o.type==='evidence'&&!o.found)color='#e1be65';
     if(o.type==='loot'&&!o.found)color='#93c68c';
     if(o.type==='exit')color='#d5d0ad';
+    if(o.type==='tombstone')color='#e5d4aa';
     mctx.fillStyle=color;
-    mctx.fillRect(x-2,y-2,4,4);
+    mctx.fillRect(x-2,y-2,o.type==='tombstone'?6:4,o.type==='tombstone'?6:4);
   }
   for(const s of survivors){
     if(s.delivered)continue;
@@ -7287,8 +7303,6 @@ function drawPortraits(){
   });
 }
 function bindEvents(){
-  const partnerComposer=$('partnerComposer');
-  if(partnerComposer)partnerComposer.addEventListener('submit',e=>{e.preventDefault();sendPartnerChat();});
   $('radioBreachPanel').addEventListener('click',e=>{const choice=e.target.closest('[data-radio-breach-choice]');if(choice)resolveRadioBreach(choice.dataset.radioBreachChoice);});
   $('start').addEventListener('click',()=>{audioStart();resetGame();});
   $('characterBtn').addEventListener('click',()=>{
@@ -7343,6 +7357,7 @@ function bindEvents(){
   $('objectiveToggle').addEventListener('click',openObjectives);
   $('closeObjectives').addEventListener('click',closeOverlay);
   $('closeMemorial').addEventListener('click',closeOverlay);
+  $('leaveMemorialFlower').addEventListener('click',leaveMemorialFlower);
   $('evidenceBoard').addEventListener('click',e=>{
     const button=e.target.closest('[data-study-id]');
     if(button)studyEvidence(button.dataset.studyId);
@@ -7464,11 +7479,6 @@ function toggleFlashlight(){
   toast(flashlight?'FLASHLIGHT ON. STAY ALERT.':'FLASHLIGHT OFF. MOVE QUIETLY.',1.3);
 }
 function onKeyDown(e){
-  if(e.target&&e.target.id==='partnerInput'){
-    if(e.key==='Enter'){e.preventDefault();sendPartnerChat();}
-    if(e.key==='Escape'){e.preventDefault();e.target.blur();}
-    return;
-  }
   if(e.target&&e.target.id==='stationChatInput'){
     if(e.key==='Enter'){e.preventDefault();sendStationChat();}
     if(e.key==='Escape'){e.preventDefault();e.target.blur();}
